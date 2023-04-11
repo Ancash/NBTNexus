@@ -1,0 +1,10 @@
+name: IItems
+version: 1.0.0
+main: de.ancash.minecraft.serde.IItems
+api-version: 1.13
+
+commands:
+   serde:
+      usage: "/serde"
+   deserialize:
+   
