@@ -1,13 +1,37 @@
 package de.ancash.minecraft.serde;
 
-import static de.ancash.minecraft.serde.IItemTags.*;
+import static de.ancash.minecraft.serde.IItemTags.AMOUNT_TAG;
+import static de.ancash.minecraft.serde.IItemTags.BLUE_TAG;
+import static de.ancash.minecraft.serde.IItemTags.FIREWORK_EFFECT_COLORS_TAG;
+import static de.ancash.minecraft.serde.IItemTags.FIREWORK_EFFECT_FADE_COLORS_TAG;
+import static de.ancash.minecraft.serde.IItemTags.FIREWORK_EFFECT_FLICKER_TAG;
+import static de.ancash.minecraft.serde.IItemTags.FIREWORK_EFFECT_TRAIL_TAG;
+import static de.ancash.minecraft.serde.IItemTags.FIREWORK_EFFECT_TYPE_TAG;
+import static de.ancash.minecraft.serde.IItemTags.GREEN_TAG;
+import static de.ancash.minecraft.serde.IItemTags.ITEM_STACK_ARRAY_TAG;
+import static de.ancash.minecraft.serde.IItemTags.ITEM_STACK_LIST_TAG;
+import static de.ancash.minecraft.serde.IItemTags.ITEM_STACK_TAG;
+import static de.ancash.minecraft.serde.IItemTags.POTION_EFFECT_AMBIENT_TAG;
+import static de.ancash.minecraft.serde.IItemTags.POTION_EFFECT_AMPLIFIER_TAG;
+import static de.ancash.minecraft.serde.IItemTags.POTION_EFFECT_DURATION_TAG;
+import static de.ancash.minecraft.serde.IItemTags.POTION_EFFECT_SHOW_ICON_TAG;
+import static de.ancash.minecraft.serde.IItemTags.POTION_EFFECT_SHOW_PARTICLES_TAG;
+import static de.ancash.minecraft.serde.IItemTags.POTION_EFFECT_TYPE_TAG;
+import static de.ancash.minecraft.serde.IItemTags.RED_TAG;
+import static de.ancash.minecraft.serde.IItemTags.SPLITTER_REGEX;
+import static de.ancash.minecraft.serde.IItemTags.UUID_TAG;
+import static de.ancash.minecraft.serde.IItemTags.XMATERIAL_TAG;
 
 import java.io.StringReader;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -20,28 +44,31 @@ import javax.json.JsonString;
 import javax.json.JsonValue;
 
 import org.bukkit.Color;
-import org.bukkit.DyeColor;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.attribute.AttributeModifier.Operation;
-import org.bukkit.block.banner.Pattern;
-import org.bukkit.block.banner.PatternType;
+import org.bukkit.FireworkEffect;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BannerMeta;
-import org.bukkit.inventory.meta.BookMeta;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 
-import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 
+import de.ancash.minecraft.serde.impl.AxolotlBucketMetaSerDe;
+import de.ancash.minecraft.serde.impl.BannerMetaSerDe;
+import de.ancash.minecraft.serde.impl.BookMetaSerDe;
+import de.ancash.minecraft.serde.impl.BundleMetaSerDe;
+import de.ancash.minecraft.serde.impl.CompassMetaSerDe;
+import de.ancash.minecraft.serde.impl.FireworkEffectMetaSerDe;
+import de.ancash.minecraft.serde.impl.FireworkMetaSerDe;
+import de.ancash.minecraft.serde.impl.IItemDeserializer;
+import de.ancash.minecraft.serde.impl.KnowledgeBookMetaSerDe;
+import de.ancash.minecraft.serde.impl.LeatherArmorMetaSerDe;
+import de.ancash.minecraft.serde.impl.MusicInstrumentMetaSerDe;
+import de.ancash.minecraft.serde.impl.PotionMetaSerDe;
+import de.ancash.minecraft.serde.impl.SimpleMetaSerDe;
+import de.ancash.minecraft.serde.impl.SpawnEggMetaSerDe;
+import de.ancash.minecraft.serde.impl.TropicalFishBucketMetaSerDe;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTCompoundList;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
@@ -49,14 +76,47 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NBTList;
 import de.tr7zw.changeme.nbtapi.NBTType;
 
-public class IItemDeserializer {
+public class ItemDeserializer {
 
-	IItemDeserializer() {
+	public static final ItemDeserializer INSTANCE = new ItemDeserializer();
 
+	private final Set<IItemDeserializer> itemDeserializer = new HashSet<>();
+
+	private ItemDeserializer() {
+		itemDeserializer.add(AxolotlBucketMetaSerDe.INSTANCE);
+		itemDeserializer.add(BannerMetaSerDe.INSTANCE);
+		itemDeserializer.add(BookMetaSerDe.INSTANCE);
+		itemDeserializer.add(BundleMetaSerDe.INSTANCE);
+		itemDeserializer.add(CompassMetaSerDe.INSTANCE);
+		itemDeserializer.add(FireworkEffectMetaSerDe.INSTANCE);
+		itemDeserializer.add(FireworkMetaSerDe.INSTANCE);
+		itemDeserializer.add(KnowledgeBookMetaSerDe.INSTANCE);
+		itemDeserializer.add(LeatherArmorMetaSerDe.INSTANCE);
+		itemDeserializer.add(MusicInstrumentMetaSerDe.INSTANCE);
+		itemDeserializer.add(PotionMetaSerDe.INSTANCE);
+		itemDeserializer.add(SimpleMetaSerDe.INSTANCE);
+		itemDeserializer.add(SpawnEggMetaSerDe.INSTANCE);
+		itemDeserializer.add(TropicalFishBucketMetaSerDe.INSTANCE);
 	}
 
 	public Map<String, Object> deserializeYaml(String s) {
 		return deserializeYaml(YamlConfiguration.loadConfiguration(new StringReader(s)));
+	}
+
+	public Color deserializeColor(Map<String, Object> map) {
+		return Color.fromRGB((int) map.get(RED_TAG), (int) map.get(GREEN_TAG), (int) map.get(BLUE_TAG));
+	}
+
+	@SuppressWarnings({ "deprecation", "nls" })
+	public NamespacedKey deserializeNamespacedKey(String s) {
+		return new NamespacedKey(s.split(":")[0], s.split(":")[1]);
+	}
+
+	public PotionEffect deserializePotionEffect(Map<String, Object> effect) {
+		return new PotionEffect(PotionEffectType.getByName((String) effect.get(POTION_EFFECT_TYPE_TAG)),
+				(int) effect.get(POTION_EFFECT_DURATION_TAG), (int) effect.get(POTION_EFFECT_AMPLIFIER_TAG),
+				(boolean) effect.get(POTION_EFFECT_AMBIENT_TAG), (boolean) effect.get(POTION_EFFECT_SHOW_PARTICLES_TAG),
+				(boolean) effect.get(POTION_EFFECT_SHOW_ICON_TAG));
 	}
 
 	private Map<String, Object> deserializeYaml(ConfigurationSection cs) {
@@ -70,108 +130,45 @@ public class IItemDeserializer {
 	}
 
 	@SuppressWarnings("unchecked")
+	public FireworkEffect deserializeFireworkEffect(Map<String, Object> map) {
+		FireworkEffect.Builder builder = null;
+		try {
+			builder = FireworkEffect.Builder.class.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new IllegalStateException(e);
+		}
+		builder.trail((boolean) map.get(FIREWORK_EFFECT_TRAIL_TAG))
+				.flicker((boolean) map.get(FIREWORK_EFFECT_FLICKER_TAG))
+				.with(FireworkEffect.Type.valueOf((String) map.get(FIREWORK_EFFECT_TYPE_TAG)))
+				.withColor(((List<Map<String, Object>>) map.get(FIREWORK_EFFECT_COLORS_TAG)).stream()
+						.map(ItemDeserializer.INSTANCE::deserializeColor).collect(Collectors.toList()))
+				.withFade(((List<Map<String, Object>>) map.get(FIREWORK_EFFECT_FADE_COLORS_TAG)).stream()
+						.map(ItemDeserializer.INSTANCE::deserializeColor).collect(Collectors.toList()));
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
 	public ItemStack deserializeItemStack(Map<String, Object> map) {
 		Optional<XMaterial> opt = XMaterial.matchXMaterial((String) map.remove(XMATERIAL_TAG));
 		if (!opt.isPresent())
 			throw new IllegalArgumentException();
 		ItemStack item = opt.get().parseItem();
 		item.setAmount((int) map.remove(AMOUNT_TAG));
-
-		if (map.containsKey(ENCHANTMENTS_TAG)) {
-			List<Map<String, Object>> enchs = (List<Map<String, Object>>) map.remove(ENCHANTMENTS_TAG);
-			for (Map<String, Object> ench : enchs) {
-				item.addUnsafeEnchantment(
-						XEnchantment.matchXEnchantment((String) ench.get(ENCHANTMENT_TYPE_TAG)).get().getEnchant(),
-						(int) ench.get(ENCHANTMENT_LEVEL_TAG));
-			}
+		Iterator<Entry<String, Object>> iter = map.entrySet().iterator();
+		Entry<String, Object> e = null;
+		while (iter.hasNext()) {
+			e = iter.next();
+			for (IItemDeserializer itd : itemDeserializer)
+				if (itd.getKey().equals(e.getKey())) {
+					itd.deserialize(item, (Map<String, Object>) map.get(e.getKey()));
+					iter.remove();
+				}
 		}
 
-		if (map.containsKey(DISPLAY_TAG)) {
-			Map<String, Object> serMeta = (Map<String, Object>) map.remove(DISPLAY_TAG);
-			ItemMeta meta = item.getItemMeta();
-			meta.setLore((List<String>) serMeta.get(LORE_TAG));
-			meta.setDisplayName((String) serMeta.get(DISPLAYNAME_TAG));
-			meta.setLocalizedName((String) serMeta.get(LOCALIZED_NAME_TAG));
-			item.setItemMeta(meta);
-		}
-
-		if (item.getItemMeta() instanceof BookMeta)
-			deserializeBookMeta(item, map);
-
-		if (item.getItemMeta() instanceof BannerMeta)
-			deserializeBannerMeta(item, map);
-
-		if (map.containsKey(ATTRIBUTES_TAG))
-			deserializeAttributeModifiers(item, map);
-
-		if (item.getItemMeta() instanceof PotionMeta)
-			deserializePotionMeta(item, map);
 		NBTItem nbt = new NBTItem(item);
 		deserialize(nbt, map);
 		nbt.applyNBT(item);
 		return item;
-	}
-
-	@SuppressWarnings("unchecked")
-	private void deserializePotionMeta(ItemStack item, Map<String, Object> map) {
-		if (!map.containsKey(CUSTOM_POTION_EFFECTS_TAG))
-			return;
-		PotionMeta meta = (PotionMeta) item.getItemMeta();
-		for (Map<String, Object> effect : (List<Map<String, Object>>) map.remove(CUSTOM_POTION_EFFECTS_TAG)) {
-			meta.addCustomEffect(
-					new PotionEffect(PotionEffectType.getByName((String) effect.get(CUSTOM_POTION_EFFECT_TYPE_TAG)),
-							(int) effect.get(CUSTOM_POTION_EFFECT_DURATION_TAG),
-							(int) effect.get(CUSTOM_POTION_EFFECT_AMPLIFIER_TAG),
-							(boolean) effect.get(CUSTOM_POTION_EFFECT_AMBIENT_TAG),
-							(boolean) effect.get(CUSTOM_POTION_EFFECT_SHOW_PARTICLES_TAG),
-							(boolean) effect.get(CUSTOM_POTION_EFFECT_SHOW_ICON_TAG)),
-					true);
-		}
-		Map<String, Object> potionBase = (Map<String, Object>) map.remove(BASE_POTION_TAG);
-		meta.setBasePotionData(new PotionData(PotionType.valueOf((String) potionBase.get(BASE_POTION_TYPE_TAG)),
-				(boolean) potionBase.get(BASE_POTION_EXTENDED_TAG),
-				(boolean) potionBase.get(BASE_POTION_UPGRADED_TAG)));
-		
-		Map<String, Object> color = (Map<String, Object>) map.remove(POTION_COLOR_TAG);
-		
-		meta.setColor(Color.fromRGB((int) color.remove(RED_TAG), (int) color.remove(GREEN_TAG), (int) color.remove(BLUE_TAG)));
-		
-		item.setItemMeta(meta);
-	}
-
-	@SuppressWarnings("unchecked")
-	private void deserializeAttributeModifiers(ItemStack item, Map<String, Object> map) {
-		ItemMeta meta = item.getItemMeta();
-		for (Map<String, Object> attribute : (List<Map<String, Object>>) map.remove(ATTRIBUTES_TAG)) {
-			meta.addAttributeModifier(Attribute.valueOf((String) attribute.get(ATTRIBUTE_TYPE_TAG)),
-					new AttributeModifier(UUID.fromString((String) attribute.get(ATTRIBUTE_UUID_TAG)),
-							(String) attribute.get(ATTRIBUTE_NAME_TAG), (double) attribute.get(ATTRIBUTE_AMOUNT_TAG),
-							Operation.valueOf((String) attribute.get(ATTRIBUTE_OPERATION_TAG)),
-							attribute.containsKey(ATTRIBUTE_SLOT_TAG)
-									? EquipmentSlot.valueOf((String) attribute.get(ATTRIBUTE_SLOT_TAG))
-									: null));
-		}
-		item.setItemMeta(meta);
-	}
-
-	@SuppressWarnings("unchecked")
-	private void deserializeBannerMeta(ItemStack item, Map<String, Object> map) {
-		BannerMeta bm = (BannerMeta) item.getItemMeta();
-		List<Map<String, Object>> patterns = (List<Map<String, Object>>) map.remove(BANNER_PATTERNS_TAG);
-		for (Map<String, Object> pattern : patterns)
-			bm.addPattern(new Pattern(DyeColor.valueOf((String) pattern.get(BANNER_PATTERN_COLOR_TAG)),
-					PatternType.valueOf((String) pattern.get(BANNER_PATTERN_TYPE_TAG))));
-		item.setItemMeta(bm);
-	}
-
-	@SuppressWarnings("unchecked")
-	private void deserializeBookMeta(ItemStack item, Map<String, Object> map) {
-		BookMeta bm = (BookMeta) item.getItemMeta();
-		bm.setAuthor((String) map.remove(BOOK_AUTHOR_TAG));
-		bm.setTitle((String) map.remove(BOOK_TITLE_TAG));
-		if (map.containsKey(BOOK_PAGES_TAG))
-			bm.setPages((List<String>) map.remove(BOOK_PAGES_TAG));
-		item.setItemMeta(bm);
 	}
 
 	public ItemStack yamlToItemStack(String s) {

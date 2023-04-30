@@ -79,6 +79,12 @@
 			<version>2.11.2</version>
 		</dependency>
 		<dependency>
+			<groupId>de.ancash</groupId>
+			<artifactId>ilibrary</artifactId>
+			<version>3.7.6</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>me.carleslc.Simple-YAML</groupId>
 			<artifactId>Simple-Yaml</artifactId>
 			<version>1.8.4</version>
@@ -87,7 +93,7 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.19-R0.1-SNAPSHOT</version>
+			<version>1.19.4-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

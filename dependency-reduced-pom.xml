@@ -70,6 +70,12 @@
   </repositories>
   <dependencies>
     <dependency>
+      <groupId>de.ancash</groupId>
+      <artifactId>ilibrary</artifactId>
+      <version>3.7.6</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>me.carleslc.Simple-YAML</groupId>
       <artifactId>Simple-Yaml</artifactId>
       <version>1.8.4</version>

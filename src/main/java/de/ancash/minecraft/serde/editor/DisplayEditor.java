@@ -1,6 +1,9 @@
 package de.ancash.minecraft.serde.editor;
 
-import static de.ancash.minecraft.serde.IItemTags.*;
+import static de.ancash.minecraft.serde.IItemTags.DISPLAYNAME_TAG;
+import static de.ancash.minecraft.serde.IItemTags.DISPLAY_TAG;
+import static de.ancash.minecraft.serde.IItemTags.LOCALIZED_NAME_TAG;
+import static de.ancash.minecraft.serde.IItemTags.LORE_TAG;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,7 +19,7 @@ public class DisplayEditor implements IEditor {
 	}
 
 	public DisplayEditor setDisplayName(String string) {
-		if(string == null)
+		if (string == null)
 			display.remove(DISPLAYNAME_TAG);
 		else
 			display.put(DISPLAYNAME_TAG, string);
@@ -26,9 +29,9 @@ public class DisplayEditor implements IEditor {
 	public String getDisplayName() {
 		return (String) display.get(DISPLAYNAME_TAG);
 	}
-	
+
 	public DisplayEditor setLocalizedName(String string) {
-		if(string == null)
+		if (string == null)
 			display.remove(LOCALIZED_NAME_TAG);
 		else
 			display.put(LOCALIZED_NAME_TAG, string);
@@ -40,17 +43,17 @@ public class DisplayEditor implements IEditor {
 	}
 
 	public DisplayEditor setLore(List<String> lore) {
-		if(lore == null || lore.isEmpty())
+		if (lore == null || lore.isEmpty())
 			display.remove(LORE_TAG);
 		else
 			display.put(LORE_TAG, lore);
 		return this;
 	}
-	
-	public DisplayEditor setLore(String...lore) {
+
+	public DisplayEditor setLore(String... lore) {
 		return setLore(Arrays.asList(lore));
 	}
-	
+
 	@Override
 	public Map<String, Object> asMap() {
 		return Collections.unmodifiableMap(display);

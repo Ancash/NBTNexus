@@ -17,14 +17,14 @@ public class Serializer {
 		map.forEach(yaml::set);
 		return yaml.saveToString();
 	}
-	
+
 	public static String toJson(Map<String, Object> map) throws IOException {
 		YamlFile yaml = YamlFile.loadConfiguration(() -> new StringReader(toYaml(map)));
 		JsonObjectBuilder base = Json.createObjectBuilder();
 		add(base, yaml);
 		return base.build().toString();
 	}
-	
+
 	protected static void add(JsonObjectBuilder parent, ConfigurationSection cs) {
 		for (String key : cs.getKeys(false)) {
 			if (!cs.isConfigurationSection(key)) {
