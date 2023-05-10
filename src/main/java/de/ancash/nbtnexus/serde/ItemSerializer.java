@@ -1,36 +1,50 @@
-package de.ancash.minecraft.serde;
+package de.ancash.nbtnexus.serde;
 
-import static de.ancash.minecraft.serde.IItemTags.AMOUNT_TAG;
-import static de.ancash.minecraft.serde.IItemTags.BLUE_TAG;
-import static de.ancash.minecraft.serde.IItemTags.FIREWORK_EFFECT_COLORS_TAG;
-import static de.ancash.minecraft.serde.IItemTags.FIREWORK_EFFECT_FADE_COLORS_TAG;
-import static de.ancash.minecraft.serde.IItemTags.FIREWORK_EFFECT_FLICKER_TAG;
-import static de.ancash.minecraft.serde.IItemTags.FIREWORK_EFFECT_TRAIL_TAG;
-import static de.ancash.minecraft.serde.IItemTags.FIREWORK_EFFECT_TYPE_TAG;
-import static de.ancash.minecraft.serde.IItemTags.GREEN_TAG;
-import static de.ancash.minecraft.serde.IItemTags.ITEM_STACK_ARRAY_TAG;
-import static de.ancash.minecraft.serde.IItemTags.ITEM_STACK_LIST_TAG;
-import static de.ancash.minecraft.serde.IItemTags.ITEM_STACK_TAG;
-import static de.ancash.minecraft.serde.IItemTags.POTION_EFFECT_AMBIENT_TAG;
-import static de.ancash.minecraft.serde.IItemTags.POTION_EFFECT_AMPLIFIER_TAG;
-import static de.ancash.minecraft.serde.IItemTags.POTION_EFFECT_DURATION_TAG;
-import static de.ancash.minecraft.serde.IItemTags.POTION_EFFECT_SHOW_ICON_TAG;
-import static de.ancash.minecraft.serde.IItemTags.POTION_EFFECT_SHOW_PARTICLES_TAG;
-import static de.ancash.minecraft.serde.IItemTags.POTION_EFFECT_TYPE_TAG;
-import static de.ancash.minecraft.serde.IItemTags.RED_TAG;
-import static de.ancash.minecraft.serde.IItemTags.SPLITTER;
-import static de.ancash.minecraft.serde.IItemTags.SPLITTER_REGEX;
-import static de.ancash.minecraft.serde.IItemTags.UUID_TAG;
-import static de.ancash.minecraft.serde.IItemTags.XMATERIAL_TAG;
+import static de.ancash.nbtnexus.Tags.AMOUNT_TAG;
+import static de.ancash.nbtnexus.Tags.BLUE_TAG;
+import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_COLORS_TAG;
+import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_FADE_COLORS_TAG;
+import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_FLICKER_TAG;
+import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_TRAIL_TAG;
+import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_TYPE_TAG;
+import static de.ancash.nbtnexus.Tags.GREEN_TAG;
+import static de.ancash.nbtnexus.Tags.ITEM_STACK_ARRAY_TAG;
+import static de.ancash.nbtnexus.Tags.ITEM_STACK_LIST_TAG;
+import static de.ancash.nbtnexus.Tags.ITEM_STACK_TAG;
+import static de.ancash.nbtnexus.Tags.MAP_VIEW_CENTER_X_TAG;
+import static de.ancash.nbtnexus.Tags.MAP_VIEW_CENTER_Z_TAG;
+import static de.ancash.nbtnexus.Tags.MAP_VIEW_LOCKED_TAG;
+import static de.ancash.nbtnexus.Tags.MAP_VIEW_SCALE_TAG;
+import static de.ancash.nbtnexus.Tags.MAP_VIEW_TRACKING_POSITION_TAG;
+import static de.ancash.nbtnexus.Tags.MAP_VIEW_UNLIMITED_TRACKING_TAG;
+import static de.ancash.nbtnexus.Tags.MAP_VIEW_WORLD_TAG;
+import static de.ancash.nbtnexus.Tags.NBT_NEXUS_ITEM_PROPERTIES_TAG;
+import static de.ancash.nbtnexus.Tags.NBT_NEXUS_ITEM_TYPE_TAG;
+import static de.ancash.nbtnexus.Tags.POTION_EFFECT_AMBIENT_TAG;
+import static de.ancash.nbtnexus.Tags.POTION_EFFECT_AMPLIFIER_TAG;
+import static de.ancash.nbtnexus.Tags.POTION_EFFECT_DURATION_TAG;
+import static de.ancash.nbtnexus.Tags.POTION_EFFECT_SHOW_ICON_TAG;
+import static de.ancash.nbtnexus.Tags.POTION_EFFECT_SHOW_PARTICLES_TAG;
+import static de.ancash.nbtnexus.Tags.POTION_EFFECT_TYPE_TAG;
+import static de.ancash.nbtnexus.Tags.PROPERTY_NAME_TAG;
+import static de.ancash.nbtnexus.Tags.PROPERTY_SIGNATURE_TAG;
+import static de.ancash.nbtnexus.Tags.PROPERTY_VALUE_TAG;
+import static de.ancash.nbtnexus.Tags.RED_TAG;
+import static de.ancash.nbtnexus.Tags.SPLITTER;
+import static de.ancash.nbtnexus.Tags.SPLITTER_REGEX;
+import static de.ancash.nbtnexus.Tags.UUID_TAG;
+import static de.ancash.nbtnexus.Tags.XMATERIAL_TAG;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -43,32 +57,39 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.map.MapView;
 import org.bukkit.potion.PotionEffect;
-import org.simpleyaml.configuration.file.YamlFile;
 
-import com.cryptomorin.xseries.XMaterial;
+import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.properties.PropertyMap;
 
-import de.ancash.minecraft.serde.impl.AxolotlBucketMetaSerDe;
-import de.ancash.minecraft.serde.impl.BannerMetaSerDe;
-import de.ancash.minecraft.serde.impl.BookMetaSerDe;
-import de.ancash.minecraft.serde.impl.BundleMetaSerDe;
-import de.ancash.minecraft.serde.impl.CompassMetaSerDe;
-import de.ancash.minecraft.serde.impl.FireworkEffectMetaSerDe;
-import de.ancash.minecraft.serde.impl.FireworkMetaSerDe;
-import de.ancash.minecraft.serde.impl.IItemSerializer;
-import de.ancash.minecraft.serde.impl.KnowledgeBookMetaSerDe;
-import de.ancash.minecraft.serde.impl.LeatherArmorMetaSerDe;
-import de.ancash.minecraft.serde.impl.MusicInstrumentMetaSerDe;
-import de.ancash.minecraft.serde.impl.PotionMetaSerDe;
-import de.ancash.minecraft.serde.impl.SimpleMetaSerDe;
-import de.ancash.minecraft.serde.impl.SpawnEggMetaSerDe;
-import de.ancash.minecraft.serde.impl.TropicalFishBucketMetaSerDe;
+import de.ancash.libs.org.simpleyaml.configuration.file.YamlFile;
+import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
+import de.ancash.nbtnexus.NBTNexusItem;
+import de.ancash.nbtnexus.serde.handler.AxolotlBucketMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.BannerMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.BookMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.BundleMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.CompassMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.FireworkEffectMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.FireworkMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.KnowledgeBookMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.LeatherArmorMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.MapMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.MusicInstrumentMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.PotionMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.SimpleMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.SkullMetaMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.SpawnEggMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.SuspiciousStewMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.TropicalFishBucketMetaSerDe;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTCompoundList;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NBTType;
 
+@SuppressWarnings("deprecation")
 public class ItemSerializer {
 
 	public static final ItemSerializer INSTANCE = new ItemSerializer();
@@ -79,7 +100,7 @@ public class ItemSerializer {
 
 	// private final Set<IItemSerializer> defaultSerializer = new HashSet<>();
 
-	private ItemSerializer() {
+	ItemSerializer() {
 		itemSerializer.add(AxolotlBucketMetaSerDe.INSTANCE);
 		itemSerializer.add(BannerMetaSerDe.INSTANCE);
 		itemSerializer.add(BookMetaSerDe.INSTANCE);
@@ -89,10 +110,13 @@ public class ItemSerializer {
 		itemSerializer.add(FireworkMetaSerDe.INSTANCE);
 		itemSerializer.add(KnowledgeBookMetaSerDe.INSTANCE);
 		itemSerializer.add(LeatherArmorMetaSerDe.INSTANCE);
+		itemSerializer.add(MapMetaSerDe.INSTANCE);
 		itemSerializer.add(MusicInstrumentMetaSerDe.INSTANCE);
 		itemSerializer.add(PotionMetaSerDe.INSTANCE);
 		itemSerializer.add(SimpleMetaSerDe.INSTANCE);
+		itemSerializer.add(SkullMetaMetaSerDe.INSTANCE);
 		itemSerializer.add(SpawnEggMetaSerDe.INSTANCE);
+		itemSerializer.add(SuspiciousStewMetaSerDe.INSTANCE);
 		itemSerializer.add(TropicalFishBucketMetaSerDe.INSTANCE);
 	}
 
@@ -100,7 +124,7 @@ public class ItemSerializer {
 		itemSerializer.add(ims);
 	}
 
-	public Map<String, Object> serialize(Color c) {
+	public Map<String, Object> serializeColor(Color c) {
 		Map<String, Object> map = new HashMap<>();
 		map.put(RED_TAG, c.getRed());
 		map.put(GREEN_TAG, c.getGreen());
@@ -109,11 +133,45 @@ public class ItemSerializer {
 	}
 
 	@SuppressWarnings("nls")
-	public String serialize(NamespacedKey key) {
+	public Map<String, Object> serializeMapView(MapView mv) {
+		Map<String, Object> map = new HashMap<>();
+		map.put(MAP_VIEW_CENTER_X_TAG, mv.getCenterX());
+		map.put(MAP_VIEW_CENTER_Z_TAG, mv.getCenterX());
+		map.put(MAP_VIEW_SCALE_TAG, mv.getScale().name());
+		map.put(MAP_VIEW_WORLD_TAG, mv.getWorld().getName());
+		map.put(MAP_VIEW_LOCKED_TAG, mv.isLocked());
+		map.put(MAP_VIEW_TRACKING_POSITION_TAG, mv.isTrackingPosition());
+		map.put(MAP_VIEW_UNLIMITED_TRACKING_TAG, mv.isUnlimitedTracking());
+		if (mv.isVirtual() || mv.getRenderers().size() > 1)
+			throw new UnsupportedOperationException("cannot serialize map renderer");
+		return map;
+	}
+
+	@SuppressWarnings("nls")
+	public String serializeNamespacedKey(NamespacedKey key) {
 		return key.getNamespace() + ":" + key.getKey();
 	}
 
-	public Map<String, Object> serialize(PotionEffect effect) {
+	public Map<String, Object> serialzePropertyMap(PropertyMap props) {
+		Map<String, Object> mprops = new HashMap<>();
+		if (!props.isEmpty()) {
+			for (Entry<String, Collection<Property>> p : props.asMap().entrySet()) {
+				mprops.put(p.getKey(), p.getValue().stream().map(this::serializeProperty).collect(Collectors.toList()));
+			}
+		}
+		return mprops;
+	}
+
+	public Map<String, Object> serializeProperty(Property p) {
+		Map<String, Object> m = new HashMap<>();
+		if (p.hasSignature())
+			m.put(PROPERTY_SIGNATURE_TAG, p.getSignature());
+		m.put(PROPERTY_NAME_TAG, p.getName());
+		m.put(PROPERTY_VALUE_TAG, p.getValue());
+		return m;
+	}
+
+	public Map<String, Object> serializePotionEffect(PotionEffect effect) {
 		Map<String, Object> ser = new HashMap<>();
 		ser.put(POTION_EFFECT_AMPLIFIER_TAG, effect.getAmplifier());
 		ser.put(POTION_EFFECT_DURATION_TAG, effect.getDuration());
@@ -124,42 +182,91 @@ public class ItemSerializer {
 		return ser;
 	}
 
-	public Map<String, Object> serialize(FireworkEffect effect) {
+	public Map<String, Object> serializeFireworkEffect(FireworkEffect effect) {
 		Map<String, Object> map = new HashMap<>();
 		map.put(FIREWORK_EFFECT_TRAIL_TAG, effect.hasTrail());
 		map.put(FIREWORK_EFFECT_FLICKER_TAG, effect.hasFlicker());
 		map.put(FIREWORK_EFFECT_TYPE_TAG, effect.getType().name());
 		map.put(FIREWORK_EFFECT_COLORS_TAG,
-				effect.getColors().stream().map(ItemSerializer.INSTANCE::serialize).collect(Collectors.toList()));
-		map.put(FIREWORK_EFFECT_FADE_COLORS_TAG,
-				effect.getFadeColors().stream().map(ItemSerializer.INSTANCE::serialize).collect(Collectors.toList()));
+				effect.getColors().stream().map(ItemSerializer.INSTANCE::serializeColor).collect(Collectors.toList()));
+		map.put(FIREWORK_EFFECT_FADE_COLORS_TAG, effect.getFadeColors().stream()
+				.map(ItemSerializer.INSTANCE::serializeColor).collect(Collectors.toList()));
 		return map;
 	}
 
-	public String toJson(ItemStack is) throws IOException {
-		YamlFile yaml = YamlFile.loadConfiguration(() -> new StringReader(toYaml(is)));
+	public String serializeItemStackToJson(ItemStack is) throws IOException {
+		YamlFile yaml = YamlFile.loadConfiguration(() -> new StringReader(serializeItemStackToYaml(is)));
 		JsonObjectBuilder base = Json.createObjectBuilder();
 		Serializer.add(base, yaml);
 		return base.build().toString();
 	}
 
-	public String toYaml(ItemStack is) throws IOException {
-		return Serializer.toYaml(serialize(is));
+	public String serializeItemStackToYaml(ItemStack is) throws IOException {
+		return Serializer.toYaml(serializeItemStack(is));
 	}
 
-	public Map<String, Object> serialize(ItemStack is) {
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> serializeItemStack(ItemStack is) {
 		is = is.clone();
 		Map<String, Object> map = new HashMap<>();
 
-		for (IItemSerializer ims : itemSerializer) {
-			if (ims.isValid(is))
-				map.put(ims.getKey(), ims.serialize(is));
-		}
+		Set<String> blacklisted = new HashSet<>();
 		map.put(XMATERIAL_TAG, XMaterial.matchXMaterial(is).name());
-		serializeNBTCompound(new NBTItem(is)).forEach(map::put);
 		map.put(AMOUNT_TAG, is.getAmount());
+		Map<String, String> relocate = new HashMap<>();
+		for (IItemSerializer ims : itemSerializer) {
+			if (ims.isValid(is)) {
+				map.put(ims.getKey(), ims.serialize(is));
+				if (ims.hasKeysToRelocate())
+					relocate.putAll(ims.getKeysToRelocate());
+				if (ims.hasBlacklistedKeys())
+					blacklisted.addAll(ims.getBlacklistedKeys());
+			}
+		}
+		serializeNBTCompound(new NBTItem(is)).forEach(map::put);
+		blacklisted.forEach(map::remove);
+		Map<String, Object> nexus = (Map<String, Object>) map.computeIfAbsent(NBT_NEXUS_ITEM_PROPERTIES_TAG,
+				k -> new HashMap<>());
+		nexus.computeIfAbsent(NBT_NEXUS_ITEM_TYPE_TAG, k -> NBTNexusItem.Type.SERIALIZED.name());
+//		relocate(map, relocate);
 		return map;
 	}
+
+//	@SuppressWarnings({ "nls", "unchecked" })
+//	private void relocate(Map<String, Object> map, Map<String, String> relocate) {
+//		for(Entry<String, String> reloc : relocate.entrySet()) {
+//			String[] keys = reloc.getKey().split("\\.");
+//			Map<String, Object> tempMap = map;
+//			Object orig = null;
+//			for(int i = 0; i<keys.length; i++) {
+//				if(tempMap.containsKey(keys[i])) {
+//					orig = tempMap.get(keys[i]);
+//					if(orig instanceof Map)
+//						tempMap = (Map<String, Object>) orig;
+//					else if(i != keys.length - 1) {
+//						tempMap = null;
+//						break;
+//					}
+//				} else{
+//					tempMap = null;
+//				}
+//			}
+//			if(tempMap == null)
+//				continue;
+//			orig = tempMap.remove(keys[keys.length - 1]);
+//			tempMap = map;
+//			keys = reloc.getValue().split("\\.");
+//			for(int i = 0; i<keys.length; i++) {
+//				if(i == keys.length - 1) {
+//					tempMap.put(keys[i], orig);
+//					break;
+//				}
+//				if((!tempMap.containsKey(keys[i]) || !(tempMap.get(keys[i]) instanceof Map)))
+//					tempMap.put(keys[i], new HashMap<>());
+//				tempMap = (Map<String, Object>) tempMap.get(keys[i]);
+//			}
+//		}
+//	}
 
 	private boolean trySerializeUUID(NBTCompound nbt, String key, Map<String, Object> map) {
 		UUID uuid = null;
@@ -178,7 +285,7 @@ public class ItemSerializer {
 			return false;
 		ItemStack item = nbt.getItemStack(key);
 		if (item != null && item.getType() != Material.AIR)
-			map.put(key + SPLITTER + ITEM_STACK_TAG, serialize(item));
+			map.put(key + SPLITTER + ITEM_STACK_TAG, serializeItemStack(item));
 		return item != null && item.getType() != Material.AIR;
 	}
 
@@ -188,7 +295,7 @@ public class ItemSerializer {
 		ItemStack item = nbt.getItemStack(key);
 		if (item == null || item.getType() == Material.AIR)
 			return null;
-		return serialize(item);
+		return serializeItemStack(item);
 	}
 
 	private boolean trySerializeItemStackArray(NBTCompound nbt, String key, Map<String, Object> map) {
@@ -197,7 +304,7 @@ public class ItemSerializer {
 		ItemStack[] itemArr = nbt.getItemStackArray(key);
 		if (itemArr != null)
 			map.put(key + SPLITTER + ITEM_STACK_ARRAY_TAG,
-					Arrays.stream(itemArr).map(this::serialize).collect(Collectors.toList()));
+					Arrays.stream(itemArr).map(this::serializeItemStack).collect(Collectors.toList()));
 		return itemArr != null;
 	}
 
@@ -282,7 +389,7 @@ public class ItemSerializer {
 	}
 
 	@SuppressWarnings("nls")
-	private List<?> serializeNBTList(NBTCompound nbt, String fullKey) {
+	public List<?> serializeNBTList(NBTCompound nbt, String fullKey) {
 		String name = fullKey.split(SPLITTER_REGEX)[0];
 		NBTType type = nbt.getListType(name);
 		switch (type) {

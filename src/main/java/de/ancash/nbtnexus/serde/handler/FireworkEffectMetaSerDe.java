@@ -1,6 +1,6 @@
-package de.ancash.minecraft.serde.impl;
+package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.minecraft.serde.IItemTags.FIREWORK_EFFECT_TAG;
+import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_TAG;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,8 +8,10 @@ import java.util.Map;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkEffectMeta;
 
-import de.ancash.minecraft.serde.ItemDeserializer;
-import de.ancash.minecraft.serde.ItemSerializer;
+import de.ancash.nbtnexus.serde.IItemDeserializer;
+import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.serde.ItemDeserializer;
+import de.ancash.nbtnexus.serde.ItemSerializer;
 
 public class FireworkEffectMetaSerDe implements IItemSerializer, IItemDeserializer {
 
@@ -23,7 +25,7 @@ public class FireworkEffectMetaSerDe implements IItemSerializer, IItemDeserializ
 		Map<String, Object> map = new HashMap<>();
 		FireworkEffectMeta meta = (FireworkEffectMeta) item.getItemMeta();
 		if (meta.hasEffect()) {
-			map = ItemSerializer.INSTANCE.serialize(meta.getEffect());
+			map = ItemSerializer.INSTANCE.serializeFireworkEffect(meta.getEffect());
 			meta.setEffect(null);
 		}
 		item.setItemMeta(meta);

@@ -1,7 +1,7 @@
-package de.ancash.minecraft.serde.impl;
+package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.minecraft.serde.IItemTags.SUSPICIOUS_STEW_EFFECTS_TAG;
-import static de.ancash.minecraft.serde.IItemTags.SUSPICIOUS_STEW_TAG;
+import static de.ancash.nbtnexus.Tags.SUSPICIOUS_STEW_EFFECTS_TAG;
+import static de.ancash.nbtnexus.Tags.SUSPICIOUS_STEW_TAG;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,10 +11,11 @@ import java.util.stream.Collectors;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SuspiciousStewMeta;
 
-import com.cryptomorin.xseries.XMaterial;
-
-import de.ancash.minecraft.serde.ItemDeserializer;
-import de.ancash.minecraft.serde.ItemSerializer;
+import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
+import de.ancash.nbtnexus.serde.IItemDeserializer;
+import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.serde.ItemDeserializer;
+import de.ancash.nbtnexus.serde.ItemSerializer;
 
 public class SuspiciousStewMetaSerDe implements IItemSerializer, IItemDeserializer {
 
@@ -28,8 +29,9 @@ public class SuspiciousStewMetaSerDe implements IItemSerializer, IItemDeserializ
 		Map<String, Object> map = new HashMap<>();
 		SuspiciousStewMeta meta = (SuspiciousStewMeta) item.getItemMeta();
 		if (meta.hasCustomEffects()) {
-			map.put(SUSPICIOUS_STEW_TAG, meta.getCustomEffects().stream().map(ItemSerializer.INSTANCE::serialize)
-					.collect(Collectors.toList()));
+			map.put(SUSPICIOUS_STEW_TAG, meta.getCustomEffects().stream()
+					.map(ItemSerializer.INSTANCE::serializePotionEffect).collect(Collectors.toList()));
+			meta.clearCustomEffects();
 		}
 		return map;
 	}

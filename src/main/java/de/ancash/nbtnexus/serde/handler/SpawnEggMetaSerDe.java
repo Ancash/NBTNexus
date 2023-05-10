@@ -1,7 +1,7 @@
-package de.ancash.minecraft.serde.impl;
+package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.minecraft.serde.IItemTags.SPAWN_EGG_TAG;
-import static de.ancash.minecraft.serde.IItemTags.SPAWN_EGG_TYPE_TAG;
+import static de.ancash.nbtnexus.Tags.SPAWN_EGG_TAG;
+import static de.ancash.nbtnexus.Tags.SPAWN_EGG_TYPE_TAG;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +9,9 @@ import java.util.Map;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SpawnEggMeta;
+
+import de.ancash.nbtnexus.serde.IItemDeserializer;
+import de.ancash.nbtnexus.serde.IItemSerializer;
 
 public class SpawnEggMetaSerDe implements IItemSerializer, IItemDeserializer {
 

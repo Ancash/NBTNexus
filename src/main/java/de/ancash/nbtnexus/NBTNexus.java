@@ -1,4 +1,4 @@
-package de.ancash.minecraft.serde;
+package de.ancash.nbtnexus;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -17,19 +17,25 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.cryptomorin.xseries.XMaterial;
-
 import de.ancash.minecraft.IItemStack;
-import de.ancash.minecraft.serde.editor.DisplayEditor;
-import de.ancash.minecraft.serde.editor.SkullEditor;
+import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
+import de.ancash.nbtnexus.serde.ItemDeserializer;
+import de.ancash.nbtnexus.serde.ItemSerializer;
+import de.ancash.nbtnexus.serde.SerializedItem;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NBTList;
 
-public class IItems extends JavaPlugin {
+public class NBTNexus extends JavaPlugin {
+
+//	private ProtocolManager protocolManager;
+	private static NBTNexus singleton;
 
 	@Override
 	public void onEnable() {
+		singleton = this;
+//		protocolManager = ProtocolLibrary.getProtocolManager();
+//		protocolManager.addPacketListener(new SetSlotAdapter(this));
 		getCommand("serde").setExecutor(this);
 		getCommand("deserialize").setExecutor(this);
 		ItemStack item = XMaterial.PLAYER_HEAD.parseItem();
@@ -81,30 +87,26 @@ public class IItems extends JavaPlugin {
 				new ItemStack[] { XMaterial.DIAMOND.parseItem(), XMaterial.OAK_LOG.parseItem() });
 		item = nbt.getItem();
 
-		SerializedItem serialized = new SerializedItem(ItemSerializer.INSTANCE.serialize(item));
-		DisplayEditor de = serialized.getDisplayEditor();
-		de.setLore("§a§ka§7lol", "§kcb");
-		de.setDisplayName("asds");
-		SkullEditor se = serialized.getSkullEditor();
-		se.setTexture(
-				"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOThmZTk3YjI0MGUwNzkzNGQwOWRiZjhiZDVhMzk3ZTFlMmRjOGE0YTFkY2UzYjExYzVjMTkzNDg3NDRkNDY1NCJ9fX0=");
-
+		SerializedItem serialized = SerializedItem.of(item);
 		try {
 			System.out.println("orig: " + item);
-			System.out.println("1. yaml: " + ItemSerializer.INSTANCE.toYaml(item));
-			System.out.println("2. yaml: " + ItemSerializer.INSTANCE
-					.toYaml(ItemDeserializer.INSTANCE.yamlToItemStack(ItemSerializer.INSTANCE.toYaml(item))));
-			System.out.println("1. json: " + ItemSerializer.INSTANCE.toJson(item));
-			System.out.println("2. json: " + ItemSerializer.INSTANCE
-					.toJson(ItemDeserializer.INSTANCE.jsonToItemStack(ItemSerializer.INSTANCE.toJson(item))));
-			System.out.println("alroundd: " + ItemDeserializer.INSTANCE.jsonToItemStack(ItemSerializer.INSTANCE
-					.toJson(ItemDeserializer.INSTANCE.yamlToItemStack(ItemSerializer.INSTANCE.toYaml(item)))));
-			System.out.println("yaml eq: " + ItemSerializer.INSTANCE.toYaml(item).equals(ItemSerializer.INSTANCE
-					.toYaml(ItemDeserializer.INSTANCE.yamlToItemStack(ItemSerializer.INSTANCE.toYaml(item)))));
-			System.out.println("json eq: " + ItemSerializer.INSTANCE.toJson(item).equals(ItemSerializer.INSTANCE
-					.toJson(ItemDeserializer.INSTANCE.jsonToItemStack(ItemSerializer.INSTANCE.toJson(item)))));
-			System.out.println("IItemStack eq: " + new IItemStack(item)
-					.isSimilar(ItemDeserializer.INSTANCE.yamlToItemStack(ItemSerializer.INSTANCE.toYaml(item))));
+			System.out.println("1. yaml: " + ItemSerializer.INSTANCE.serializeItemStackToYaml(item));
+			System.out.println("2. yaml: " + ItemSerializer.INSTANCE.serializeItemStackToYaml(ItemDeserializer.INSTANCE
+					.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item))));
+			System.out.println("1. json: " + ItemSerializer.INSTANCE.serializeItemStackToJson(item));
+			System.out.println("2. json: " + ItemSerializer.INSTANCE.serializeItemStackToJson(ItemDeserializer.INSTANCE
+					.deserializeJsonToItemStack(ItemSerializer.INSTANCE.serializeItemStackToJson(item))));
+			System.out.println("alroundd: " + ItemDeserializer.INSTANCE.deserializeJsonToItemStack(
+					ItemSerializer.INSTANCE.serializeItemStackToJson(ItemDeserializer.INSTANCE
+							.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item)))));
+			System.out.println("yaml eq: " + ItemSerializer.INSTANCE.serializeItemStackToYaml(item)
+					.equals(ItemSerializer.INSTANCE.serializeItemStackToYaml(ItemDeserializer.INSTANCE
+							.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item)))));
+			System.out.println("json eq: " + ItemSerializer.INSTANCE.serializeItemStackToJson(item)
+					.equals(ItemSerializer.INSTANCE.serializeItemStackToJson(ItemDeserializer.INSTANCE
+							.deserializeJsonToItemStack(ItemSerializer.INSTANCE.serializeItemStackToJson(item)))));
+			System.out.println("IItemStack eq: " + new IItemStack(item).isSimilar(ItemDeserializer.INSTANCE
+					.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item))));
 			checkEnchantedBook();
 			checkBook();
 
@@ -122,10 +124,11 @@ public class IItems extends JavaPlugin {
 		meta.setTitle("titlaaa");
 		item.setItemMeta(meta);
 		System.out.println(item);
-		System.out.println(ItemSerializer.INSTANCE.toYaml(item));
-		System.out.println(ItemDeserializer.INSTANCE.yamlToItemStack(ItemSerializer.INSTANCE.toYaml(item)));
-		System.out.println(ItemSerializer.INSTANCE
-				.toYaml(ItemDeserializer.INSTANCE.yamlToItemStack(ItemSerializer.INSTANCE.toYaml(item))));
+		System.out.println(ItemSerializer.INSTANCE.serializeItemStackToYaml(item));
+		System.out.println(ItemDeserializer.INSTANCE
+				.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item)));
+		System.out.println(ItemSerializer.INSTANCE.serializeItemStackToYaml(ItemDeserializer.INSTANCE
+				.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item))));
 	}
 
 	private void checkEnchantedBook() throws IOException {
@@ -135,10 +138,11 @@ public class IItems extends JavaPlugin {
 		item.setItemMeta(meta);
 		item.addUnsafeEnchantment(Enchantment.ARROW_FIRE, 3);
 		System.out.println(item);
-		System.out.println(ItemSerializer.INSTANCE.toYaml(item));
-		System.out.println(ItemDeserializer.INSTANCE.yamlToItemStack(ItemSerializer.INSTANCE.toYaml(item)));
-		System.out.println(ItemSerializer.INSTANCE
-				.toYaml(ItemDeserializer.INSTANCE.yamlToItemStack(ItemSerializer.INSTANCE.toYaml(item))));
+		System.out.println(ItemSerializer.INSTANCE.serializeItemStackToYaml(item));
+		System.out.println(ItemDeserializer.INSTANCE
+				.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item)));
+		System.out.println(ItemSerializer.INSTANCE.serializeItemStackToYaml(ItemDeserializer.INSTANCE
+				.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item))));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -153,14 +157,14 @@ public class IItems extends JavaPlugin {
 			try {
 				if (item == null)
 					return false;
-				String yaml = ItemSerializer.INSTANCE.toYaml(item);
-				System.out.println(item);
-				item = ItemDeserializer.INSTANCE.yamlToItemStack(yaml);
-				String json = ItemSerializer.INSTANCE.toJson(item);
-				System.out.println(json);
-				System.out.println(yaml);
-				item = ItemDeserializer.INSTANCE.jsonToItemStack(json);
-				System.out.println(item);
+				String yaml = ItemSerializer.INSTANCE.serializeItemStackToYaml(item.clone());
+				System.out.println("orig: " + item);
+				item = ItemDeserializer.INSTANCE.deserializeYamlToItemStack(yaml);
+				String json = ItemSerializer.INSTANCE.serializeItemStackToJson(item);
+				System.out.println("json: " + json);
+				System.out.println("yaml: " + yaml);
+				item = ItemDeserializer.INSTANCE.deserializeJsonToItemStack(json);
+				System.out.println("serde: " + item);
 				player.getInventory().addItem(item);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -170,18 +174,18 @@ public class IItems extends JavaPlugin {
 			String data = String.join(" ", args);
 			ItemStack item = null;
 			try {
-				item = ItemDeserializer.INSTANCE.jsonToItemStack(data);
+				item = ItemDeserializer.INSTANCE.deserializeJsonToItemStack(data);
 				for (Player p : Bukkit.getOnlinePlayers())
 					p.getInventory().addItem(item);
-				System.out.println("yaml: " + ItemSerializer.INSTANCE.toYaml(item));
-				System.out.println("json: " + ItemSerializer.INSTANCE.toJson(item));
+				System.out.println("yaml: " + ItemSerializer.INSTANCE.serializeItemStackToYaml(item));
+				System.out.println("json: " + ItemSerializer.INSTANCE.serializeItemStackToJson(item));
 			} catch (Exception e) {
 				try {
-					item = ItemDeserializer.INSTANCE.yamlToItemStack(data);
+					item = ItemDeserializer.INSTANCE.deserializeYamlToItemStack(data);
 					for (Player p : Bukkit.getOnlinePlayers())
 						p.getInventory().addItem(item);
-					System.out.println("yaml: " + ItemSerializer.INSTANCE.toYaml(item));
-					System.out.println("json: " + ItemSerializer.INSTANCE.toJson(item));
+					System.out.println("yaml: " + ItemSerializer.INSTANCE.serializeItemStackToYaml(item));
+					System.out.println("json: " + ItemSerializer.INSTANCE.serializeItemStackToJson(item));
 				} catch (Exception e2) {
 					sender.sendMessage(e.getMessage());
 					sender.sendMessage(e2.getMessage());
@@ -192,5 +196,9 @@ public class IItems extends JavaPlugin {
 			return true;
 		}
 		return true;
+	}
+
+	public static NBTNexus getInstance() {
+		return singleton;
 	}
 }

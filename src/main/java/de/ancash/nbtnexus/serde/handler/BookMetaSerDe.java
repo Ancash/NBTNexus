@@ -1,9 +1,9 @@
-package de.ancash.minecraft.serde.impl;
+package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.minecraft.serde.IItemTags.BOOK_AUTHOR_TAG;
-import static de.ancash.minecraft.serde.IItemTags.BOOK_PAGES_TAG;
-import static de.ancash.minecraft.serde.IItemTags.BOOK_TAG;
-import static de.ancash.minecraft.serde.IItemTags.BOOK_TITLE_TAG;
+import static de.ancash.nbtnexus.Tags.BOOK_AUTHOR_TAG;
+import static de.ancash.nbtnexus.Tags.BOOK_PAGES_TAG;
+import static de.ancash.nbtnexus.Tags.BOOK_TAG;
+import static de.ancash.nbtnexus.Tags.BOOK_TITLE_TAG;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +12,9 @@ import java.util.Map;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
+
+import de.ancash.nbtnexus.serde.IItemDeserializer;
+import de.ancash.nbtnexus.serde.IItemSerializer;
 
 public class BookMetaSerDe implements IItemSerializer, IItemDeserializer {
 

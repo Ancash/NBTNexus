@@ -1,7 +1,7 @@
-package de.ancash.minecraft.serde.impl;
+package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.minecraft.serde.IItemTags.BUNDLE_ITEMS_TAG;
-import static de.ancash.minecraft.serde.IItemTags.BUNDLE_TAG;
+import static de.ancash.nbtnexus.Tags.BUNDLE_ITEMS_TAG;
+import static de.ancash.nbtnexus.Tags.BUNDLE_TAG;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,10 +11,11 @@ import java.util.stream.Collectors;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BundleMeta;
 
-import com.cryptomorin.xseries.XMaterial;
-
-import de.ancash.minecraft.serde.ItemDeserializer;
-import de.ancash.minecraft.serde.ItemSerializer;
+import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
+import de.ancash.nbtnexus.serde.IItemDeserializer;
+import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.serde.ItemDeserializer;
+import de.ancash.nbtnexus.serde.ItemSerializer;
 
 public class BundleMetaSerDe implements IItemSerializer, IItemDeserializer {
 
@@ -28,8 +29,8 @@ public class BundleMetaSerDe implements IItemSerializer, IItemDeserializer {
 		Map<String, Object> map = new HashMap<>();
 		BundleMeta meta = (BundleMeta) item.getItemMeta();
 		if (meta.hasItems())
-			map.put(BUNDLE_ITEMS_TAG,
-					meta.getItems().stream().filter(i -> i != null).map(i -> ItemSerializer.INSTANCE.serialize(i)));
+			map.put(BUNDLE_ITEMS_TAG, meta.getItems().stream().filter(i -> i != null)
+					.map(i -> ItemSerializer.INSTANCE.serializeItemStack(i)));
 		meta.setItems(null);
 		item.setItemMeta(meta);
 		return map;

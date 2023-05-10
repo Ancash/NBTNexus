@@ -1,7 +1,7 @@
-package de.ancash.minecraft.serde.impl;
+package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.minecraft.serde.IItemTags.MUSIC_INSTRUMENT_TAG;
-import static de.ancash.minecraft.serde.IItemTags.MUSIC_INSTRUMENT_TYPE_TAG;
+import static de.ancash.nbtnexus.Tags.MUSIC_INSTRUMENT_TAG;
+import static de.ancash.nbtnexus.Tags.MUSIC_INSTRUMENT_TYPE_TAG;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,10 +10,11 @@ import org.bukkit.MusicInstrument;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MusicInstrumentMeta;
 
-import com.cryptomorin.xseries.XMaterial;
-
-import de.ancash.minecraft.serde.ItemDeserializer;
-import de.ancash.minecraft.serde.ItemSerializer;
+import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
+import de.ancash.nbtnexus.serde.IItemDeserializer;
+import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.serde.ItemDeserializer;
+import de.ancash.nbtnexus.serde.ItemSerializer;
 
 public class MusicInstrumentMetaSerDe implements IItemSerializer, IItemDeserializer {
 
@@ -27,7 +28,7 @@ public class MusicInstrumentMetaSerDe implements IItemSerializer, IItemDeseriali
 		Map<String, Object> map = new HashMap<>();
 		MusicInstrumentMeta meta = (MusicInstrumentMeta) item.getItemMeta();
 		MusicInstrument mi = meta.getInstrument();
-		map.put(MUSIC_INSTRUMENT_TYPE_TAG, ItemSerializer.INSTANCE.serialize(mi.getKey()));
+		map.put(MUSIC_INSTRUMENT_TYPE_TAG, ItemSerializer.INSTANCE.serializeNamespacedKey(mi.getKey()));
 		meta.setInstrument(null);
 		item.setItemMeta(meta);
 		return map;

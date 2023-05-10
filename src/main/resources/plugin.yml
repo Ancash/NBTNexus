@@ -1,6 +1,7 @@
-name: IItems
+name: NBTNexus
 version: 1.0.0
-main: de.ancash.minecraft.serde.IItems
+main: de.ancash.nbtnexus.NBTNexus
+#depend: [ILibrary, ProtocolLib]
 api-version: 1.13
 
 commands:

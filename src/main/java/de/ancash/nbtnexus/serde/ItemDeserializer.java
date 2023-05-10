@@ -1,26 +1,38 @@
-package de.ancash.minecraft.serde;
+package de.ancash.nbtnexus.serde;
 
-import static de.ancash.minecraft.serde.IItemTags.AMOUNT_TAG;
-import static de.ancash.minecraft.serde.IItemTags.BLUE_TAG;
-import static de.ancash.minecraft.serde.IItemTags.FIREWORK_EFFECT_COLORS_TAG;
-import static de.ancash.minecraft.serde.IItemTags.FIREWORK_EFFECT_FADE_COLORS_TAG;
-import static de.ancash.minecraft.serde.IItemTags.FIREWORK_EFFECT_FLICKER_TAG;
-import static de.ancash.minecraft.serde.IItemTags.FIREWORK_EFFECT_TRAIL_TAG;
-import static de.ancash.minecraft.serde.IItemTags.FIREWORK_EFFECT_TYPE_TAG;
-import static de.ancash.minecraft.serde.IItemTags.GREEN_TAG;
-import static de.ancash.minecraft.serde.IItemTags.ITEM_STACK_ARRAY_TAG;
-import static de.ancash.minecraft.serde.IItemTags.ITEM_STACK_LIST_TAG;
-import static de.ancash.minecraft.serde.IItemTags.ITEM_STACK_TAG;
-import static de.ancash.minecraft.serde.IItemTags.POTION_EFFECT_AMBIENT_TAG;
-import static de.ancash.minecraft.serde.IItemTags.POTION_EFFECT_AMPLIFIER_TAG;
-import static de.ancash.minecraft.serde.IItemTags.POTION_EFFECT_DURATION_TAG;
-import static de.ancash.minecraft.serde.IItemTags.POTION_EFFECT_SHOW_ICON_TAG;
-import static de.ancash.minecraft.serde.IItemTags.POTION_EFFECT_SHOW_PARTICLES_TAG;
-import static de.ancash.minecraft.serde.IItemTags.POTION_EFFECT_TYPE_TAG;
-import static de.ancash.minecraft.serde.IItemTags.RED_TAG;
-import static de.ancash.minecraft.serde.IItemTags.SPLITTER_REGEX;
-import static de.ancash.minecraft.serde.IItemTags.UUID_TAG;
-import static de.ancash.minecraft.serde.IItemTags.XMATERIAL_TAG;
+import static de.ancash.nbtnexus.Tags.AMOUNT_TAG;
+import static de.ancash.nbtnexus.Tags.BLUE_TAG;
+import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_COLORS_TAG;
+import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_FADE_COLORS_TAG;
+import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_FLICKER_TAG;
+import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_TRAIL_TAG;
+import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_TYPE_TAG;
+import static de.ancash.nbtnexus.Tags.GREEN_TAG;
+import static de.ancash.nbtnexus.Tags.ITEM_STACK_ARRAY_TAG;
+import static de.ancash.nbtnexus.Tags.ITEM_STACK_LIST_TAG;
+import static de.ancash.nbtnexus.Tags.ITEM_STACK_TAG;
+import static de.ancash.nbtnexus.Tags.MAP_VIEW_CENTER_X_TAG;
+import static de.ancash.nbtnexus.Tags.MAP_VIEW_CENTER_Z_TAG;
+import static de.ancash.nbtnexus.Tags.MAP_VIEW_LOCKED_TAG;
+import static de.ancash.nbtnexus.Tags.MAP_VIEW_SCALE_TAG;
+import static de.ancash.nbtnexus.Tags.MAP_VIEW_TRACKING_POSITION_TAG;
+import static de.ancash.nbtnexus.Tags.MAP_VIEW_UNLIMITED_TRACKING_TAG;
+import static de.ancash.nbtnexus.Tags.MAP_VIEW_WORLD_TAG;
+import static de.ancash.nbtnexus.Tags.NBT_NEXUS_ITEM_PROPERTIES_TAG;
+import static de.ancash.nbtnexus.Tags.NBT_NEXUS_ITEM_TYPE_TAG;
+import static de.ancash.nbtnexus.Tags.POTION_EFFECT_AMBIENT_TAG;
+import static de.ancash.nbtnexus.Tags.POTION_EFFECT_AMPLIFIER_TAG;
+import static de.ancash.nbtnexus.Tags.POTION_EFFECT_DURATION_TAG;
+import static de.ancash.nbtnexus.Tags.POTION_EFFECT_SHOW_ICON_TAG;
+import static de.ancash.nbtnexus.Tags.POTION_EFFECT_SHOW_PARTICLES_TAG;
+import static de.ancash.nbtnexus.Tags.POTION_EFFECT_TYPE_TAG;
+import static de.ancash.nbtnexus.Tags.PROPERTY_NAME_TAG;
+import static de.ancash.nbtnexus.Tags.PROPERTY_SIGNATURE_TAG;
+import static de.ancash.nbtnexus.Tags.PROPERTY_VALUE_TAG;
+import static de.ancash.nbtnexus.Tags.RED_TAG;
+import static de.ancash.nbtnexus.Tags.SPLITTER_REGEX;
+import static de.ancash.nbtnexus.Tags.UUID_TAG;
+import static de.ancash.nbtnexus.Tags.XMATERIAL_TAG;
 
 import java.io.StringReader;
 import java.util.Collection;
@@ -43,32 +55,40 @@ import javax.json.JsonReader;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.map.MapView;
+import org.bukkit.map.MapView.Scale;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.cryptomorin.xseries.XMaterial;
+import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.properties.PropertyMap;
 
-import de.ancash.minecraft.serde.impl.AxolotlBucketMetaSerDe;
-import de.ancash.minecraft.serde.impl.BannerMetaSerDe;
-import de.ancash.minecraft.serde.impl.BookMetaSerDe;
-import de.ancash.minecraft.serde.impl.BundleMetaSerDe;
-import de.ancash.minecraft.serde.impl.CompassMetaSerDe;
-import de.ancash.minecraft.serde.impl.FireworkEffectMetaSerDe;
-import de.ancash.minecraft.serde.impl.FireworkMetaSerDe;
-import de.ancash.minecraft.serde.impl.IItemDeserializer;
-import de.ancash.minecraft.serde.impl.KnowledgeBookMetaSerDe;
-import de.ancash.minecraft.serde.impl.LeatherArmorMetaSerDe;
-import de.ancash.minecraft.serde.impl.MusicInstrumentMetaSerDe;
-import de.ancash.minecraft.serde.impl.PotionMetaSerDe;
-import de.ancash.minecraft.serde.impl.SimpleMetaSerDe;
-import de.ancash.minecraft.serde.impl.SpawnEggMetaSerDe;
-import de.ancash.minecraft.serde.impl.TropicalFishBucketMetaSerDe;
+import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
+import de.ancash.nbtnexus.NBTNexusItem.Type;
+import de.ancash.nbtnexus.serde.handler.AxolotlBucketMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.BannerMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.BookMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.BundleMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.CompassMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.FireworkEffectMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.FireworkMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.KnowledgeBookMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.LeatherArmorMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.MapMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.MusicInstrumentMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.PotionMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.SimpleMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.SkullMetaMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.SpawnEggMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.SuspiciousStewMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.TropicalFishBucketMetaSerDe;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTCompoundList;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
@@ -76,13 +96,14 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NBTList;
 import de.tr7zw.changeme.nbtapi.NBTType;
 
+@SuppressWarnings("deprecation")
 public class ItemDeserializer {
 
 	public static final ItemDeserializer INSTANCE = new ItemDeserializer();
 
 	private final Set<IItemDeserializer> itemDeserializer = new HashSet<>();
 
-	private ItemDeserializer() {
+	ItemDeserializer() {
 		itemDeserializer.add(AxolotlBucketMetaSerDe.INSTANCE);
 		itemDeserializer.add(BannerMetaSerDe.INSTANCE);
 		itemDeserializer.add(BookMetaSerDe.INSTANCE);
@@ -92,11 +113,18 @@ public class ItemDeserializer {
 		itemDeserializer.add(FireworkMetaSerDe.INSTANCE);
 		itemDeserializer.add(KnowledgeBookMetaSerDe.INSTANCE);
 		itemDeserializer.add(LeatherArmorMetaSerDe.INSTANCE);
+		itemDeserializer.add(MapMetaSerDe.INSTANCE);
 		itemDeserializer.add(MusicInstrumentMetaSerDe.INSTANCE);
 		itemDeserializer.add(PotionMetaSerDe.INSTANCE);
 		itemDeserializer.add(SimpleMetaSerDe.INSTANCE);
+		itemDeserializer.add(SkullMetaMetaSerDe.INSTANCE);
 		itemDeserializer.add(SpawnEggMetaSerDe.INSTANCE);
+		itemDeserializer.add(SuspiciousStewMetaSerDe.INSTANCE);
 		itemDeserializer.add(TropicalFishBucketMetaSerDe.INSTANCE);
+	}
+
+	public void registerDeserializer(IItemDeserializer des) {
+		itemDeserializer.add(des);
 	}
 
 	public Map<String, Object> deserializeYaml(String s) {
@@ -107,7 +135,32 @@ public class ItemDeserializer {
 		return Color.fromRGB((int) map.get(RED_TAG), (int) map.get(GREEN_TAG), (int) map.get(BLUE_TAG));
 	}
 
-	@SuppressWarnings({ "deprecation", "nls" })
+	public MapView deserializeMapView(Map<String, Object> map) {
+		MapView view = Bukkit.createMap(Bukkit.getWorld((String) map.get(MAP_VIEW_WORLD_TAG)));
+		view.setCenterX((int) map.get(MAP_VIEW_CENTER_X_TAG));
+		view.setCenterZ((int) map.get(MAP_VIEW_CENTER_Z_TAG));
+		view.setScale(Scale.valueOf((String) map.get(MAP_VIEW_SCALE_TAG)));
+		view.setLocked((boolean) map.get(MAP_VIEW_LOCKED_TAG));
+		view.setTrackingPosition((boolean) map.get(MAP_VIEW_TRACKING_POSITION_TAG));
+		view.setUnlimitedTracking((boolean) map.get(MAP_VIEW_UNLIMITED_TRACKING_TAG));
+		return view;
+	}
+
+	@SuppressWarnings("unchecked")
+	public PropertyMap deserializePropertyMap(Map<String, Object> map) {
+		PropertyMap pm = new PropertyMap();
+		for (Entry<String, Object> e : map.entrySet())
+			pm.putAll(e.getKey(), ((List<Map<String, Object>>) e.getValue()).stream().map(this::deserializeProperty)
+					.collect(Collectors.toList()));
+		return pm;
+	}
+
+	public Property deserializeProperty(Map<String, Object> map) {
+		return new Property((String) map.get(PROPERTY_VALUE_TAG), (String) map.get(PROPERTY_NAME_TAG),
+				(String) map.get(PROPERTY_SIGNATURE_TAG));
+	}
+
+	@SuppressWarnings({ "nls" })
 	public NamespacedKey deserializeNamespacedKey(String s) {
 		return new NamespacedKey(s.split(":")[0], s.split(":")[1]);
 	}
@@ -131,24 +184,21 @@ public class ItemDeserializer {
 
 	@SuppressWarnings("unchecked")
 	public FireworkEffect deserializeFireworkEffect(Map<String, Object> map) {
-		FireworkEffect.Builder builder = null;
-		try {
-			builder = FireworkEffect.Builder.class.newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new IllegalStateException(e);
-		}
-		builder.trail((boolean) map.get(FIREWORK_EFFECT_TRAIL_TAG))
+		return FireworkEffect.builder().trail((boolean) map.get(FIREWORK_EFFECT_TRAIL_TAG))
 				.flicker((boolean) map.get(FIREWORK_EFFECT_FLICKER_TAG))
 				.with(FireworkEffect.Type.valueOf((String) map.get(FIREWORK_EFFECT_TYPE_TAG)))
 				.withColor(((List<Map<String, Object>>) map.get(FIREWORK_EFFECT_COLORS_TAG)).stream()
 						.map(ItemDeserializer.INSTANCE::deserializeColor).collect(Collectors.toList()))
 				.withFade(((List<Map<String, Object>>) map.get(FIREWORK_EFFECT_FADE_COLORS_TAG)).stream()
-						.map(ItemDeserializer.INSTANCE::deserializeColor).collect(Collectors.toList()));
-		return null;
+						.map(ItemDeserializer.INSTANCE::deserializeColor).collect(Collectors.toList()))
+				.build();
 	}
 
 	@SuppressWarnings("unchecked")
 	public ItemStack deserializeItemStack(Map<String, Object> map) {
+		Map<String, Object> nexus = (Map<String, Object>) map.get(NBT_NEXUS_ITEM_PROPERTIES_TAG);
+		if (nexus.get(NBT_NEXUS_ITEM_TYPE_TAG).equals(Type.SERIALIZED.name()))
+			map.remove(NBT_NEXUS_ITEM_PROPERTIES_TAG);
 		Optional<XMaterial> opt = XMaterial.matchXMaterial((String) map.remove(XMATERIAL_TAG));
 		if (!opt.isPresent())
 			throw new IllegalArgumentException();
@@ -156,22 +206,62 @@ public class ItemDeserializer {
 		item.setAmount((int) map.remove(AMOUNT_TAG));
 		Iterator<Entry<String, Object>> iter = map.entrySet().iterator();
 		Entry<String, Object> e = null;
+		Set<String> remove = new HashSet<>();
 		while (iter.hasNext()) {
 			e = iter.next();
 			for (IItemDeserializer itd : itemDeserializer)
 				if (itd.getKey().equals(e.getKey())) {
+					if (itd.hasKeysToReverseRelocate()) {
+						// relocate(map, itd.getKeysToReverseRelocate());
+					}
 					itd.deserialize(item, (Map<String, Object>) map.get(e.getKey()));
-					iter.remove();
+					remove.add(e.getKey());
 				}
 		}
-
+		remove.forEach(map::remove);
 		NBTItem nbt = new NBTItem(item);
 		deserialize(nbt, map);
 		nbt.applyNBT(item);
 		return item;
 	}
 
-	public ItemStack yamlToItemStack(String s) {
+//	@SuppressWarnings({ "nls", "unchecked" })
+//	private void relocate(Map<String, Object> map, Map<String, String> relocate) {
+//		for(Entry<String, String> reloc : relocate.entrySet()) {
+//			String[] keys = reloc.getKey().split("\\.");
+//			Map<String, Object> tempMap = map;
+//			Object orig = null;
+//			for(int i = 0; i<keys.length; i++) {
+//				if(tempMap.containsKey(keys[i])) {
+//					orig = tempMap.get(keys[i]);
+//					if(orig instanceof Map)
+//						tempMap = (Map<String, Object>) orig;
+//					else if(i != keys.length - 1) {
+//						tempMap = null;
+//						break;
+//					}
+//				} else{
+//					tempMap = null;
+//				}
+//			}
+//			if(tempMap == null)
+//				continue;
+//			orig = tempMap.remove(keys[keys.length - 1]);
+//			tempMap = map;
+//			keys = reloc.getValue().split("\\.");
+//			for(int i = 0; i<keys.length; i++) {
+//				if(i == keys.length - 1) {
+//					tempMap.put(keys[i], orig);
+//					break;
+//				}
+//				if((!tempMap.containsKey(keys[i]) || !(tempMap.get(keys[i]) instanceof Map)))
+//					tempMap.put(keys[i], new HashMap<>());
+//				tempMap = (Map<String, Object>) tempMap.get(keys[i]);
+//			}
+//		}
+//	}
+
+	public ItemStack deserializeYamlToItemStack(String s) {
 		return deserializeItemStack(deserializeYaml(s));
 	}
 
@@ -327,12 +417,12 @@ public class ItemDeserializer {
 		}
 	}
 
-	public ItemStack jsonToItemStack(String s) {
+	public ItemStack deserializeJsonToItemStack(String s) {
 		JsonReader reader = Json.createReader(new StringReader(s));
 		JsonObject obj = reader.readObject();
 		YamlConfiguration yaml = new YamlConfiguration();
 		add(obj, yaml);
-		return yamlToItemStack(yaml.saveToString());
+		return deserializeYamlToItemStack(yaml.saveToString());
 	}
 
 	private void add(JsonObject obj, ConfigurationSection cs) {
@@ -365,6 +455,7 @@ public class ItemDeserializer {
 		}
 	}
 
+	@SuppressWarnings("nls")
 	private Object match(JsonValue val) {
 		switch (val.getValueType()) {
 		case ARRAY:
@@ -386,7 +477,7 @@ public class ItemDeserializer {
 		case TRUE:
 			return true;
 		default:
-			return null;
+			throw new IllegalArgumentException("null type: " + val);
 		}
 	}
 

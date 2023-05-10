@@ -1,8 +1,8 @@
-package de.ancash.minecraft.serde.impl;
+package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.minecraft.serde.IItemTags.FIREWORK_EFFECTS_TAG;
-import static de.ancash.minecraft.serde.IItemTags.FIREWORK_POWER_TAG;
-import static de.ancash.minecraft.serde.IItemTags.FIREWORK_TAG;
+import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECTS_TAG;
+import static de.ancash.nbtnexus.Tags.FIREWORK_POWER_TAG;
+import static de.ancash.nbtnexus.Tags.FIREWORK_TAG;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,8 +12,10 @@ import java.util.stream.Collectors;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 
-import de.ancash.minecraft.serde.ItemDeserializer;
-import de.ancash.minecraft.serde.ItemSerializer;
+import de.ancash.nbtnexus.serde.IItemDeserializer;
+import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.serde.ItemDeserializer;
+import de.ancash.nbtnexus.serde.ItemSerializer;
 
 public class FireworkMetaSerDe implements IItemSerializer, IItemDeserializer {
 
@@ -28,8 +30,8 @@ public class FireworkMetaSerDe implements IItemSerializer, IItemDeserializer {
 		FireworkMeta meta = (FireworkMeta) item.getItemMeta();
 		map.put(FIREWORK_POWER_TAG, meta.getPower());
 		if (meta.hasEffects())
-			map.put(FIREWORK_EFFECTS_TAG,
-					meta.getEffects().stream().map(ItemSerializer.INSTANCE::serialize).collect(Collectors.toList()));
+			map.put(FIREWORK_EFFECTS_TAG, meta.getEffects().stream()
+					.map(ItemSerializer.INSTANCE::serializeFireworkEffect).collect(Collectors.toList()));
 		meta.clearEffects();
 		item.setItemMeta(meta);
 		return map;

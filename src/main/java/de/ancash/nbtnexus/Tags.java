@@ -1,7 +1,17 @@
-package de.ancash.minecraft.serde;
+package de.ancash.nbtnexus;
 
 @SuppressWarnings("nls")
-public class IItemTags {
+public class Tags {
+
+	public static final char ALTERNATE_COLOR_CODE = '§';
+
+	public static final String NBT_NEXUS_ITEM_PROPERTIES_TAG = "NBTNexusItem";
+	public static final String NBT_NEXUS_ITEM_TYPE_TAG = "type";
+	public static final String NBT_NEXUS_ITEM_PROXY_TAG = "proxy";
+
+	public static final String SPLITTER = "$";
+	public static final String SPLITTER_REGEX = "\\$";
+
 	public static final String NBT_COMPOUND_TAG = "NBTTagCompound";
 	public static final String NBT_LIST_TAG = "NBTTagList";
 	public static final String NBT_STRING_TAG = "NBTTagString";
@@ -11,8 +21,6 @@ public class IItemTags {
 	public static final String ITEM_STACK_LIST_TAG = "ItemStackList";
 
 	public static final String UUID_TAG = "UUID";
-	public static final String SPLITTER = "$";
-	public static final String SPLITTER_REGEX = "\\$";
 
 	public static final String XMATERIAL_TAG = "XMaterial";
 	public static final String AMOUNT_TAG = "Amount";
@@ -81,6 +89,8 @@ public class IItemTags {
 
 	public static final String AXOLOTL_BUCKET_TAG = "AxolotlBucket";
 	public static final String AXOLOTL_BUCKET_VARIANT_TAG = "Variant";
+	public static final String AXOLOTL_BUCKET_AGE_TAG = "Age";
+	public static final String AXOLOTL_BUCKET_HEALTH_TAG = "Health";
 
 	public static final String TROPICAL_FISH_BUCKET_TAG = "TropicalFishBucket";
 	public static final String TROPICAL_FISH_BUCKET_BODY_COLOR_TAG = "BodyColor";
@@ -109,4 +119,30 @@ public class IItemTags {
 
 	public static final String SUSPICIOUS_STEW_TAG = "SusStew";
 	public static final String SUSPICIOUS_STEW_EFFECTS_TAG = "Effects";
+
+	public static final String SKULL_TAG = "Skull";
+	public static final String SKULL_OWNER_TAG = "Owner";
+	public static final String SKULL_NOTE_BLOCK_SOUND_TAG = "Sound";
+
+	public static final String GAME_PROFILE_TAG = "GameProfile";
+	public static final String GAME_PROFILE_ID_TAG = "Id";
+	public static final String GAME_PROFILE_NAME_TAG = "Name";
+	public static final String GAME_PROFILE_PROPERTIES_TAG = "Properties";
+	public static final String PROPERTY_NAME_TAG = "Name";
+	public static final String PROPERTY_VALUE_TAG = "Value";
+	public static final String PROPERTY_SIGNATURE_TAG = "Signature";
+
+	public static final String MAP_TAG = "Map";
+	public static final String MAP_COLOR_TAG = "Color";
+	public static final String MAP_ID_TAG = "Id";
+	public static final String MAP_SCALING_TAG = "Scaling";
+	public static final String MAP_VIEW_TAG = "View";
+
+	public static final String MAP_VIEW_CENTER_X_TAG = "X";
+	public static final String MAP_VIEW_CENTER_Z_TAG = "Z";
+	public static final String MAP_VIEW_SCALE_TAG = "Scale";
+	public static final String MAP_VIEW_LOCKED_TAG = "Locked";
+	public static final String MAP_VIEW_WORLD_TAG = "World";
+	public static final String MAP_VIEW_TRACKING_POSITION_TAG = "TrackingPosition";
+	public static final String MAP_VIEW_UNLIMITED_TRACKING_TAG = "UnlimitedTracking";
 }

@@ -1,9 +1,9 @@
-package de.ancash.minecraft.serde.impl;
+package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.minecraft.serde.IItemTags.BANNER_PATTERNS_TAG;
-import static de.ancash.minecraft.serde.IItemTags.BANNER_PATTERN_COLOR_TAG;
-import static de.ancash.minecraft.serde.IItemTags.BANNER_PATTERN_TYPE_TAG;
-import static de.ancash.minecraft.serde.IItemTags.BANNER_TAG;
+import static de.ancash.nbtnexus.Tags.BANNER_PATTERNS_TAG;
+import static de.ancash.nbtnexus.Tags.BANNER_PATTERN_COLOR_TAG;
+import static de.ancash.nbtnexus.Tags.BANNER_PATTERN_TYPE_TAG;
+import static de.ancash.nbtnexus.Tags.BANNER_TAG;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +15,9 @@ import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
+
+import de.ancash.nbtnexus.serde.IItemDeserializer;
+import de.ancash.nbtnexus.serde.IItemSerializer;
 
 public class BannerMetaSerDe implements IItemSerializer, IItemDeserializer {
 

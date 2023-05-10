@@ -1,30 +1,28 @@
-package de.ancash.minecraft.serde.impl;
+package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.minecraft.serde.IItemTags.BASE_POTION_EXTENDED_TAG;
-import static de.ancash.minecraft.serde.IItemTags.BASE_POTION_TAG;
-import static de.ancash.minecraft.serde.IItemTags.BASE_POTION_TYPE_TAG;
-import static de.ancash.minecraft.serde.IItemTags.BASE_POTION_UPGRADED_TAG;
-import static de.ancash.minecraft.serde.IItemTags.BLUE_TAG;
-import static de.ancash.minecraft.serde.IItemTags.GREEN_TAG;
-import static de.ancash.minecraft.serde.IItemTags.POTION_COLOR_TAG;
-import static de.ancash.minecraft.serde.IItemTags.POTION_EFFECTS_TAG;
-import static de.ancash.minecraft.serde.IItemTags.POTION_TAG;
-import static de.ancash.minecraft.serde.IItemTags.RED_TAG;
+import static de.ancash.nbtnexus.Tags.BASE_POTION_EXTENDED_TAG;
+import static de.ancash.nbtnexus.Tags.BASE_POTION_TAG;
+import static de.ancash.nbtnexus.Tags.BASE_POTION_TYPE_TAG;
+import static de.ancash.nbtnexus.Tags.BASE_POTION_UPGRADED_TAG;
+import static de.ancash.nbtnexus.Tags.POTION_COLOR_TAG;
+import static de.ancash.nbtnexus.Tags.POTION_EFFECTS_TAG;
+import static de.ancash.nbtnexus.Tags.POTION_TAG;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
-import de.ancash.minecraft.serde.ItemDeserializer;
-import de.ancash.minecraft.serde.ItemSerializer;
+import de.ancash.nbtnexus.serde.IItemDeserializer;
+import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.serde.ItemDeserializer;
+import de.ancash.nbtnexus.serde.ItemSerializer;
 
 public class PotionMetaSerDe implements IItemSerializer, IItemDeserializer {
 
@@ -37,8 +35,8 @@ public class PotionMetaSerDe implements IItemSerializer, IItemDeserializer {
 	public Map<String, Object> serialize(ItemStack item) {
 		Map<String, Object> map = new HashMap<>();
 		PotionMeta meta = (PotionMeta) item.getItemMeta();
-		map.put(POTION_EFFECTS_TAG,
-				meta.getCustomEffects().stream().map(ItemSerializer.INSTANCE::serialize).collect(Collectors.toList()));
+		map.put(POTION_EFFECTS_TAG, meta.getCustomEffects().stream().map(ItemSerializer.INSTANCE::serializePotionEffect)
+				.collect(Collectors.toList()));
 
 		PotionData potionData = meta.getBasePotionData();
 		Map<String, Object> basePotion = new HashMap<>();
@@ -47,12 +45,10 @@ public class PotionMetaSerDe implements IItemSerializer, IItemDeserializer {
 		basePotion.put(BASE_POTION_UPGRADED_TAG, potionData.isUpgraded());
 		map.put(BASE_POTION_TAG, basePotion);
 
-		Map<String, Object> color = new HashMap<>();
-		color.put(RED_TAG, meta.getColor().getRed());
-		color.put(GREEN_TAG, meta.getColor().getGreen());
-		color.put(BLUE_TAG, meta.getColor().getBlue());
-		map.put(POTION_COLOR_TAG, color);
-
+		if (meta.hasColor()) {
+			map.put(POTION_COLOR_TAG, ItemSerializer.INSTANCE.serializeColor(meta.getColor()));
+			meta.setColor(null);
+		}
 		meta.clearCustomEffects();
 		item.setItemMeta(meta);
 		item.setType(Material.BEDROCK);
@@ -75,10 +71,8 @@ public class PotionMetaSerDe implements IItemSerializer, IItemDeserializer {
 				(boolean) potionBase.get(BASE_POTION_EXTENDED_TAG),
 				(boolean) potionBase.get(BASE_POTION_UPGRADED_TAG)));
 
-		Map<String, Object> color = (Map<String, Object>) map.get(POTION_COLOR_TAG);
-
-		meta.setColor(Color.fromRGB((int) color.remove(RED_TAG), (int) color.remove(GREEN_TAG),
-				(int) color.remove(BLUE_TAG)));
+		if (map.containsKey(POTION_COLOR_TAG))
+			meta.setColor(ItemDeserializer.INSTANCE.deserializeColor((Map<String, Object>) map.get(POTION_COLOR_TAG)));
 
 		item.setItemMeta(meta);
 	}

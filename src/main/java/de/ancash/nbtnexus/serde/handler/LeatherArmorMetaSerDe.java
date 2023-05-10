@@ -1,6 +1,6 @@
-package de.ancash.minecraft.serde.impl;
+package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.minecraft.serde.IItemTags.LEATHER_ARMOR_TAG;
+import static de.ancash.nbtnexus.Tags.LEATHER_ARMOR_TAG;
 
 import java.util.Map;
 
@@ -8,8 +8,10 @@ import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-import de.ancash.minecraft.serde.ItemDeserializer;
-import de.ancash.minecraft.serde.ItemSerializer;
+import de.ancash.nbtnexus.serde.IItemDeserializer;
+import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.serde.ItemDeserializer;
+import de.ancash.nbtnexus.serde.ItemSerializer;
 
 public class LeatherArmorMetaSerDe implements IItemSerializer, IItemDeserializer {
 
@@ -24,7 +26,7 @@ public class LeatherArmorMetaSerDe implements IItemSerializer, IItemDeserializer
 		Color c = meta.getColor();
 		meta.setColor(null);
 		item.setItemMeta(meta);
-		return ItemSerializer.INSTANCE.serialize(c);
+		return ItemSerializer.INSTANCE.serializeColor(c);
 	}
 
 	@Override

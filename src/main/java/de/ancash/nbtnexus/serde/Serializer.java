@@ -1,4 +1,4 @@
-package de.ancash.minecraft.serde;
+package de.ancash.nbtnexus.serde;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -7,8 +7,8 @@ import java.util.Map;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
-import org.simpleyaml.configuration.ConfigurationSection;
-import org.simpleyaml.configuration.file.YamlFile;
+import de.ancash.libs.org.simpleyaml.configuration.ConfigurationSection;
+import de.ancash.libs.org.simpleyaml.configuration.file.YamlFile;
 
 public class Serializer {
 
