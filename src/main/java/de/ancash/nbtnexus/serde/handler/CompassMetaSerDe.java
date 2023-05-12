@@ -1,8 +1,8 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.Tags.COMPASS_TAG;
-import static de.ancash.nbtnexus.Tags.LODESTONE_LOCATION_TAG;
-import static de.ancash.nbtnexus.Tags.LODESTONE_TRACKED_TAG;
+import static de.ancash.nbtnexus.MetaTag.COMPASS_TAG;
+import static de.ancash.nbtnexus.MetaTag.LODESTONE_LOCATION_TAG;
+import static de.ancash.nbtnexus.MetaTag.LODESTONE_TRACKED_TAG;
 
 import java.util.HashMap;
 import java.util.Map;

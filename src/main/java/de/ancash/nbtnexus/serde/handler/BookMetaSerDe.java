@@ -1,9 +1,9 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.Tags.BOOK_AUTHOR_TAG;
-import static de.ancash.nbtnexus.Tags.BOOK_PAGES_TAG;
-import static de.ancash.nbtnexus.Tags.BOOK_TAG;
-import static de.ancash.nbtnexus.Tags.BOOK_TITLE_TAG;
+import static de.ancash.nbtnexus.MetaTag.BOOK_AUTHOR_TAG;
+import static de.ancash.nbtnexus.MetaTag.BOOK_PAGES_TAG;
+import static de.ancash.nbtnexus.MetaTag.BOOK_TAG;
+import static de.ancash.nbtnexus.MetaTag.BOOK_TITLE_TAG;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,7 +1,7 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.Tags.KNOWLEDGE_BOOK_RECIPES_TAG;
-import static de.ancash.nbtnexus.Tags.KNOWLEDGE_BOOK_TAG;
+import static de.ancash.nbtnexus.MetaTag.KNOWLEDGE_BOOK_RECIPES_TAG;
+import static de.ancash.nbtnexus.MetaTag.KNOWLEDGE_BOOK_TAG;
 
 import java.util.ArrayList;
 import java.util.HashMap;

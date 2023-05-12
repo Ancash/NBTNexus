@@ -1,24 +1,24 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.Tags.ALTERNATE_COLOR_CODE;
-import static de.ancash.nbtnexus.Tags.ATTRIBUTES_TAG;
-import static de.ancash.nbtnexus.Tags.ATTRIBUTE_AMOUNT_TAG;
-import static de.ancash.nbtnexus.Tags.ATTRIBUTE_NAME_TAG;
-import static de.ancash.nbtnexus.Tags.ATTRIBUTE_OPERATION_TAG;
-import static de.ancash.nbtnexus.Tags.ATTRIBUTE_SLOT_TAG;
-import static de.ancash.nbtnexus.Tags.ATTRIBUTE_TYPE_TAG;
-import static de.ancash.nbtnexus.Tags.ATTRIBUTE_UUID_TAG;
-import static de.ancash.nbtnexus.Tags.CUSTOM_MODEL_DATA;
-import static de.ancash.nbtnexus.Tags.DAMAGE_TAG;
-import static de.ancash.nbtnexus.Tags.DISPLAYNAME_TAG;
-import static de.ancash.nbtnexus.Tags.DISPLAY_TAG;
-import static de.ancash.nbtnexus.Tags.ENCHANTMENTS_TAG;
-import static de.ancash.nbtnexus.Tags.ENCHANTMENT_LEVEL_TAG;
-import static de.ancash.nbtnexus.Tags.ENCHANTMENT_TYPE_TAG;
-import static de.ancash.nbtnexus.Tags.LOCALIZED_NAME_TAG;
-import static de.ancash.nbtnexus.Tags.LORE_TAG;
-import static de.ancash.nbtnexus.Tags.REPAIR_COST_TAG;
-import static de.ancash.nbtnexus.Tags.UNSPECIFIC_META_TAG;
+import static de.ancash.nbtnexus.MetaTag.ALTERNATE_COLOR_CODE;
+import static de.ancash.nbtnexus.MetaTag.ATTRIBUTES_TAG;
+import static de.ancash.nbtnexus.MetaTag.ATTRIBUTE_AMOUNT_TAG;
+import static de.ancash.nbtnexus.MetaTag.ATTRIBUTE_NAME_TAG;
+import static de.ancash.nbtnexus.MetaTag.ATTRIBUTE_OPERATION_TAG;
+import static de.ancash.nbtnexus.MetaTag.ATTRIBUTE_SLOT_TAG;
+import static de.ancash.nbtnexus.MetaTag.ATTRIBUTE_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.ATTRIBUTE_UUID_TAG;
+import static de.ancash.nbtnexus.MetaTag.CUSTOM_MODEL_DATA;
+import static de.ancash.nbtnexus.MetaTag.DAMAGE_TAG;
+import static de.ancash.nbtnexus.MetaTag.DISPLAYNAME_TAG;
+import static de.ancash.nbtnexus.MetaTag.DISPLAY_TAG;
+import static de.ancash.nbtnexus.MetaTag.ENCHANTMENTS_TAG;
+import static de.ancash.nbtnexus.MetaTag.ENCHANTMENT_LEVEL_TAG;
+import static de.ancash.nbtnexus.MetaTag.ENCHANTMENT_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.LOCALIZED_NAME_TAG;
+import static de.ancash.nbtnexus.MetaTag.LORE_TAG;
+import static de.ancash.nbtnexus.MetaTag.REPAIR_COST_TAG;
+import static de.ancash.nbtnexus.MetaTag.UNSPECIFIC_META_TAG;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,7 +94,8 @@ public class SimpleMetaSerDe implements IItemSerializer, IItemDeserializer {
 				serMeta.put(REPAIR_COST_TAG, repairable.getRepairCost());
 			repairable.setRepairCost(0);
 		}
-		map.put(DISPLAY_TAG, serMeta);
+		if (!serMeta.isEmpty())
+			map.put(DISPLAY_TAG, serMeta);
 		item.setItemMeta(meta);
 		if (!item.getEnchantments().isEmpty()) {
 			map.put(ENCHANTMENTS_TAG, serializeEnchantments(item));

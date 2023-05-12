@@ -1,10 +1,10 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.Tags.AXOLOTL_BUCKET_AGE_TAG;
-import static de.ancash.nbtnexus.Tags.AXOLOTL_BUCKET_HEALTH_TAG;
-import static de.ancash.nbtnexus.Tags.AXOLOTL_BUCKET_TAG;
-import static de.ancash.nbtnexus.Tags.AXOLOTL_BUCKET_VARIANT_TAG;
-import static de.ancash.nbtnexus.Tags.SPLITTER;
+import static de.ancash.nbtnexus.MetaTag.AXOLOTL_BUCKET_AGE_TAG;
+import static de.ancash.nbtnexus.MetaTag.AXOLOTL_BUCKET_HEALTH_TAG;
+import static de.ancash.nbtnexus.MetaTag.AXOLOTL_BUCKET_TAG;
+import static de.ancash.nbtnexus.MetaTag.AXOLOTL_BUCKET_VARIANT_TAG;
+import static de.ancash.nbtnexus.NBTNexus.SPLITTER;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.AxolotlBucketMeta;
 
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
-import de.ancash.minecraft.nbt.NBTType;
+import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemDeserializer;
 import de.ancash.nbtnexus.serde.IItemSerializer;
 
@@ -31,12 +31,11 @@ public class AxolotlBucketMetaSerDe implements IItemSerializer, IItemDeserialize
 
 	@SuppressWarnings("nls")
 	AxolotlBucketMetaSerDe() {
-		bl.add("Variant" + SPLITTER + NBTType.NBTTagInt.name());
-		relocate.put("Age" + SPLITTER + NBTType.NBTTagInt.name(), getKey() + "." + AXOLOTL_BUCKET_AGE_TAG);
-		relocate.put("Health" + SPLITTER + NBTType.NBTTagFloat.name(), getKey() + "." + AXOLOTL_BUCKET_HEALTH_TAG);
-		reverseRelocate.put(getKey() + "." + AXOLOTL_BUCKET_HEALTH_TAG,
-				"Health" + SPLITTER + NBTType.NBTTagFloat.name());
-		reverseRelocate.put(getKey() + "." + AXOLOTL_BUCKET_AGE_TAG, "Age" + SPLITTER + NBTType.NBTTagInt.name());
+		bl.add("Variant" + SPLITTER + NBTTag.INT);
+		relocate.put("Age" + SPLITTER + NBTTag.INT, getKey() + "." + AXOLOTL_BUCKET_AGE_TAG);
+		relocate.put("Health" + SPLITTER + NBTTag.FLOAT, getKey() + "." + AXOLOTL_BUCKET_HEALTH_TAG);
+		reverseRelocate.put(getKey() + "." + AXOLOTL_BUCKET_HEALTH_TAG, "Health" + SPLITTER + NBTTag.FLOAT.name());
+		reverseRelocate.put(getKey() + "." + AXOLOTL_BUCKET_AGE_TAG, "Age" + SPLITTER + NBTTag.INT);
 	}
 
 	@Override

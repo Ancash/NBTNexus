@@ -1,7 +1,7 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.Tags.MUSIC_INSTRUMENT_TAG;
-import static de.ancash.nbtnexus.Tags.MUSIC_INSTRUMENT_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.MUSIC_INSTRUMENT_TAG;
+import static de.ancash.nbtnexus.MetaTag.MUSIC_INSTRUMENT_TYPE_TAG;
 
 import java.util.HashMap;
 import java.util.Map;

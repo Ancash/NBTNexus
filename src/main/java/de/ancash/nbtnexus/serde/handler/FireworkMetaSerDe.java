@@ -1,8 +1,8 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECTS_TAG;
-import static de.ancash.nbtnexus.Tags.FIREWORK_POWER_TAG;
-import static de.ancash.nbtnexus.Tags.FIREWORK_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECTS_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_POWER_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_TAG;
 
 import java.util.HashMap;
 import java.util.List;

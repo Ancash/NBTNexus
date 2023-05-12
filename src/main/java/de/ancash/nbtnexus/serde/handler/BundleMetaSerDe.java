@@ -1,7 +1,7 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.Tags.BUNDLE_ITEMS_TAG;
-import static de.ancash.nbtnexus.Tags.BUNDLE_TAG;
+import static de.ancash.nbtnexus.MetaTag.BUNDLE_ITEMS_TAG;
+import static de.ancash.nbtnexus.MetaTag.BUNDLE_TAG;
 
 import java.util.HashMap;
 import java.util.List;

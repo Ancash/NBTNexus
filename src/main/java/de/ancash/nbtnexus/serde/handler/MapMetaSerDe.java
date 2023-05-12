@@ -1,17 +1,23 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.Tags.MAP_COLOR_TAG;
-import static de.ancash.nbtnexus.Tags.MAP_ID_TAG;
-import static de.ancash.nbtnexus.Tags.MAP_SCALING_TAG;
-import static de.ancash.nbtnexus.Tags.MAP_TAG;
-import static de.ancash.nbtnexus.Tags.MAP_VIEW_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_COLOR_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_ID_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_SCALING_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_TAG;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 
+import de.ancash.nbtnexus.NBTNexus;
+import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemDeserializer;
 import de.ancash.nbtnexus.serde.IItemSerializer;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
@@ -22,7 +28,16 @@ public class MapMetaSerDe implements IItemSerializer, IItemDeserializer {
 
 	public static final MapMetaSerDe INSTANCE = new MapMetaSerDe();
 
+	@SuppressWarnings("nls")
+	private static final Set<String> bl = Collections
+			.unmodifiableSet(new HashSet<>(Arrays.asList("map" + NBTNexus.SPLITTER + NBTTag.INT)));
+
 	MapMetaSerDe() {
+	}
+
+	@Override
+	public Set<String> getBlacklistedKeys() {
+		return bl;
 	}
 
 	@Override
@@ -34,7 +49,8 @@ public class MapMetaSerDe implements IItemSerializer, IItemDeserializer {
 		meta.setColor(null);
 		if (meta.hasMapId())
 			map.put(MAP_ID_TAG, meta.getMapId());
-		map.put(MAP_SCALING_TAG, meta.isScaling());
+		if (meta.isScaling())
+			map.put(MAP_SCALING_TAG, meta.isScaling());
 		if (meta.hasMapView()) {
 			map.put(MAP_VIEW_TAG, ItemSerializer.INSTANCE.serializeMapView(meta.getMapView()));
 		}
@@ -62,7 +78,8 @@ public class MapMetaSerDe implements IItemSerializer, IItemDeserializer {
 			meta.setMapView(ItemDeserializer.INSTANCE.deserializeMapView((Map<String, Object>) map.get(MAP_VIEW_TAG)));
 		if (map.containsKey(MAP_ID_TAG))
 			meta.setMapId((int) map.get(MAP_ID_TAG));
-		meta.setScaling((boolean) map.get(MAP_SCALING_TAG));
+		if (map.containsKey(MAP_SCALING_TAG))
+			meta.setScaling((boolean) map.get(MAP_SCALING_TAG));
 		item.setItemMeta(meta);
 	}
 }

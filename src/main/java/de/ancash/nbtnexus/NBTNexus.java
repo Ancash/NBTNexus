@@ -19,14 +19,19 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import de.ancash.minecraft.IItemStack;
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
+import de.ancash.minecraft.nbt.NBTCompound;
+import de.ancash.minecraft.nbt.NBTItem;
+import de.ancash.minecraft.nbt.NBTList;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
 import de.ancash.nbtnexus.serde.SerializedItem;
-import de.tr7zw.changeme.nbtapi.NBTCompound;
-import de.tr7zw.changeme.nbtapi.NBTItem;
-import de.tr7zw.changeme.nbtapi.NBTList;
 
 public class NBTNexus extends JavaPlugin {
+
+	@SuppressWarnings("nls")
+	public static final String SPLITTER = "$";
+	@SuppressWarnings("nls")
+	public static final String SPLITTER_REGEX = "\\$";
 
 //	private ProtocolManager protocolManager;
 	private static NBTNexus singleton;

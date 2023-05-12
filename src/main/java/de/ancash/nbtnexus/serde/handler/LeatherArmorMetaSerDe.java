@@ -1,6 +1,6 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.Tags.LEATHER_ARMOR_TAG;
+import static de.ancash.nbtnexus.MetaTag.LEATHER_ARMOR_TAG;
 
 import java.util.Map;
 

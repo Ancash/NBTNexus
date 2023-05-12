@@ -1,6 +1,6 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_TAG;
 
 import java.util.HashMap;
 import java.util.Map;

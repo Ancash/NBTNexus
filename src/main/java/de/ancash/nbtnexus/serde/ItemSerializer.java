@@ -1,39 +1,35 @@
 package de.ancash.nbtnexus.serde;
 
-import static de.ancash.nbtnexus.Tags.AMOUNT_TAG;
-import static de.ancash.nbtnexus.Tags.BLUE_TAG;
-import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_COLORS_TAG;
-import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_FADE_COLORS_TAG;
-import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_FLICKER_TAG;
-import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_TRAIL_TAG;
-import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_TYPE_TAG;
-import static de.ancash.nbtnexus.Tags.GREEN_TAG;
-import static de.ancash.nbtnexus.Tags.ITEM_STACK_ARRAY_TAG;
-import static de.ancash.nbtnexus.Tags.ITEM_STACK_LIST_TAG;
-import static de.ancash.nbtnexus.Tags.ITEM_STACK_TAG;
-import static de.ancash.nbtnexus.Tags.MAP_VIEW_CENTER_X_TAG;
-import static de.ancash.nbtnexus.Tags.MAP_VIEW_CENTER_Z_TAG;
-import static de.ancash.nbtnexus.Tags.MAP_VIEW_LOCKED_TAG;
-import static de.ancash.nbtnexus.Tags.MAP_VIEW_SCALE_TAG;
-import static de.ancash.nbtnexus.Tags.MAP_VIEW_TRACKING_POSITION_TAG;
-import static de.ancash.nbtnexus.Tags.MAP_VIEW_UNLIMITED_TRACKING_TAG;
-import static de.ancash.nbtnexus.Tags.MAP_VIEW_WORLD_TAG;
-import static de.ancash.nbtnexus.Tags.NBT_NEXUS_ITEM_PROPERTIES_TAG;
-import static de.ancash.nbtnexus.Tags.NBT_NEXUS_ITEM_TYPE_TAG;
-import static de.ancash.nbtnexus.Tags.POTION_EFFECT_AMBIENT_TAG;
-import static de.ancash.nbtnexus.Tags.POTION_EFFECT_AMPLIFIER_TAG;
-import static de.ancash.nbtnexus.Tags.POTION_EFFECT_DURATION_TAG;
-import static de.ancash.nbtnexus.Tags.POTION_EFFECT_SHOW_ICON_TAG;
-import static de.ancash.nbtnexus.Tags.POTION_EFFECT_SHOW_PARTICLES_TAG;
-import static de.ancash.nbtnexus.Tags.POTION_EFFECT_TYPE_TAG;
-import static de.ancash.nbtnexus.Tags.PROPERTY_NAME_TAG;
-import static de.ancash.nbtnexus.Tags.PROPERTY_SIGNATURE_TAG;
-import static de.ancash.nbtnexus.Tags.PROPERTY_VALUE_TAG;
-import static de.ancash.nbtnexus.Tags.RED_TAG;
-import static de.ancash.nbtnexus.Tags.SPLITTER;
-import static de.ancash.nbtnexus.Tags.SPLITTER_REGEX;
-import static de.ancash.nbtnexus.Tags.UUID_TAG;
-import static de.ancash.nbtnexus.Tags.XMATERIAL_TAG;
+import static de.ancash.nbtnexus.MetaTag.AMOUNT_TAG;
+import static de.ancash.nbtnexus.MetaTag.BLUE_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_COLORS_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_FADE_COLORS_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_FLICKER_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_TRAIL_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.GREEN_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_CENTER_X_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_CENTER_Z_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_LOCKED_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_SCALE_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_TRACKING_POSITION_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_UNLIMITED_TRACKING_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_WORLD_TAG;
+import static de.ancash.nbtnexus.MetaTag.NBT_NEXUS_ITEM_PROPERTIES_TAG;
+import static de.ancash.nbtnexus.MetaTag.NBT_NEXUS_ITEM_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_AMBIENT_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_AMPLIFIER_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_DURATION_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_SHOW_ICON_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_SHOW_PARTICLES_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.PROPERTY_NAME_TAG;
+import static de.ancash.nbtnexus.MetaTag.PROPERTY_SIGNATURE_TAG;
+import static de.ancash.nbtnexus.MetaTag.PROPERTY_VALUE_TAG;
+import static de.ancash.nbtnexus.MetaTag.RED_TAG;
+import static de.ancash.nbtnexus.MetaTag.XMATERIAL_TAG;
+import static de.ancash.nbtnexus.NBTNexus.SPLITTER;
+import static de.ancash.nbtnexus.NBTNexus.SPLITTER_REGEX;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -65,7 +61,13 @@ import com.mojang.authlib.properties.PropertyMap;
 
 import de.ancash.libs.org.simpleyaml.configuration.file.YamlFile;
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
+import de.ancash.minecraft.nbt.NBTCompound;
+import de.ancash.minecraft.nbt.NBTCompoundList;
+import de.ancash.minecraft.nbt.NBTContainer;
+import de.ancash.minecraft.nbt.NBTItem;
+import de.ancash.minecraft.nbt.NBTType;
 import de.ancash.nbtnexus.NBTNexusItem;
+import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.handler.AxolotlBucketMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BannerMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BookMetaSerDe;
@@ -83,11 +85,6 @@ import de.ancash.nbtnexus.serde.handler.SkullMetaMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SpawnEggMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SuspiciousStewMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.TropicalFishBucketMetaSerDe;
-import de.tr7zw.changeme.nbtapi.NBTCompound;
-import de.tr7zw.changeme.nbtapi.NBTCompoundList;
-import de.tr7zw.changeme.nbtapi.NBTContainer;
-import de.tr7zw.changeme.nbtapi.NBTItem;
-import de.tr7zw.changeme.nbtapi.NBTType;
 
 @SuppressWarnings("deprecation")
 public class ItemSerializer {
@@ -216,7 +213,9 @@ public class ItemSerializer {
 		Map<String, String> relocate = new HashMap<>();
 		for (IItemSerializer ims : itemSerializer) {
 			if (ims.isValid(is)) {
-				map.put(ims.getKey(), ims.serialize(is));
+				Map<String, Object> m = ims.serialize(is);
+				if (!m.isEmpty())
+					map.put(ims.getKey(), m);
 				if (ims.hasKeysToRelocate())
 					relocate.putAll(ims.getKeysToRelocate());
 				if (ims.hasBlacklistedKeys())
@@ -273,7 +272,7 @@ public class ItemSerializer {
 		try {
 			uuid = nbt.getUUID(key);
 			if (uuid != null)
-				map.put(key + SPLITTER + UUID_TAG, uuid.toString());
+				map.put(key + SPLITTER + NBTTag.UUID, uuid.toString());
 		} catch (Exception ex) {
 
 		}
@@ -285,7 +284,7 @@ public class ItemSerializer {
 			return false;
 		ItemStack item = nbt.getItemStack(key);
 		if (item != null && item.getType() != Material.AIR)
-			map.put(key + SPLITTER + ITEM_STACK_TAG, serializeItemStack(item));
+			map.put(key + SPLITTER + NBTTag.ITEM_STACK, serializeItemStack(item));
 		return item != null && item.getType() != Material.AIR;
 	}
 
@@ -303,7 +302,7 @@ public class ItemSerializer {
 			return false;
 		ItemStack[] itemArr = nbt.getItemStackArray(key);
 		if (itemArr != null)
-			map.put(key + SPLITTER + ITEM_STACK_ARRAY_TAG,
+			map.put(key + SPLITTER + NBTTag.ITEM_STACK_ARRAY,
 					Arrays.stream(itemArr).map(this::serializeItemStack).collect(Collectors.toList()));
 		return itemArr != null;
 	}
@@ -324,15 +323,13 @@ public class ItemSerializer {
 				return false;
 			items.add(item);
 		}
-		map.put(key + SPLITTER + ITEM_STACK_LIST_TAG, items);
+		map.put(key + SPLITTER + NBTTag.ITEM_STACK_LIST, items);
 		return true;
 	}
 
 	public Map<String, Object> serializeNBTCompound(NBTCompound nbt) {
 		Map<String, Object> map = new HashMap<>();
 		for (String key : nbt.getKeys()) {
-			NBTType type = nbt.getType(key);
-
 			if (trySerializeItemStack(nbt, key, map))
 				continue;
 			if (trySerializeItemStackArray(nbt, key, map))
@@ -341,48 +338,48 @@ public class ItemSerializer {
 				continue;
 			if (trySerializeUUID(nbt, key, map))
 				continue;
-
-			switch (type) {
-			case NBTTagByte:
-				map.put(key + SPLITTER + type, nbt.getByte(key));
+			NBTTag ntype = NBTTag.getByNBTType(nbt.getType(key));
+			switch (ntype) {
+			case BYTE:
+				map.put(key + SPLITTER + ntype, nbt.getByte(key));
 				break;
-			case NBTTagCompound:
-				map.put(key + SPLITTER + type, serializeNBTCompound(nbt.getCompound(key)));
+			case COMPOUND:
+				map.put(key + SPLITTER + ntype, serializeNBTCompound(nbt.getCompound(key)));
 				break;
-			case NBTTagDouble:
-				map.put(key + SPLITTER + type, nbt.getDouble(key));
+			case DOUBLE:
+				map.put(key + SPLITTER + ntype, nbt.getDouble(key));
 				break;
-			case NBTTagFloat:
-				map.put(key + SPLITTER + type, nbt.getFloat(key));
+			case FLOAT:
+				map.put(key + SPLITTER + ntype, nbt.getFloat(key));
 				break;
-			case NBTTagInt:
-				map.put(key + SPLITTER + type, nbt.getInteger(key));
+			case INT:
+				map.put(key + SPLITTER + ntype, nbt.getInteger(key));
 				break;
-			case NBTTagString:
-				map.put(key + SPLITTER + type, nbt.getString(key));
+			case STRING:
+				map.put(key + SPLITTER + ntype, nbt.getString(key));
 				break;
-			case NBTTagShort:
-				map.put(key + SPLITTER + type, nbt.getShort(key));
+			case SHORT:
+				map.put(key + SPLITTER + ntype, nbt.getShort(key));
 				break;
-			case NBTTagLong:
-				map.put(key + SPLITTER + type, nbt.getLong(key));
+			case LONG:
+				map.put(key + SPLITTER + ntype, nbt.getLong(key));
 				break;
-			case NBTTagByteArray:
+			case BYTE_ARRAY:
 				List<Byte> byteList = new ArrayList<>();
 				for (byte b : nbt.getByteArray(key))
 					byteList.add(b);
-				map.put(key + SPLITTER + type, byteList);
+				map.put(key + SPLITTER + ntype, byteList);
 				break;
-			case NBTTagIntArray:
-				map.put(key + SPLITTER + type,
+			case INT_ARRAY:
+				map.put(key + SPLITTER + ntype,
 						Arrays.stream(nbt.getIntArray(key)).boxed().collect(Collectors.toList()));
 				break;
-			case NBTTagList:
-				map.put(key + SPLITTER + type + SPLITTER + nbt.getListType(key),
-						serializeNBTList(nbt, key + SPLITTER + type));
+			case LIST:
+				map.put(key + SPLITTER + ntype + SPLITTER + NBTTag.getByNBTType(nbt.getListType(key)),
+						serializeNBTList(nbt, key + SPLITTER + ntype));
 				break;
 			default:
-				throw new UnsupportedOperationException(type.name());
+				throw new UnsupportedOperationException(ntype.name());
 			}
 		}
 		return map;
@@ -391,25 +388,25 @@ public class ItemSerializer {
 	@SuppressWarnings("nls")
 	public List<?> serializeNBTList(NBTCompound nbt, String fullKey) {
 		String name = fullKey.split(SPLITTER_REGEX)[0];
-		NBTType type = nbt.getListType(name);
+		NBTTag type = NBTTag.getByNBTType(nbt.getListType(name));
 		switch (type) {
-		case NBTTagCompound:
+		case COMPOUND:
 			NBTCompoundList compounds = nbt.getCompoundList(name);
 			List<Map<String, Object>> list = new ArrayList<>();
 			for (int i = 0; i < compounds.size(); i++)
 				list.add(serializeNBTCompound(compounds.get(i)));
 			return list;
-		case NBTTagDouble:
+		case DOUBLE:
 			return nbt.getDoubleList(name);
-		case NBTTagFloat:
+		case FLOAT:
 			return nbt.getFloatList(name);
-		case NBTTagInt:
+		case INT:
 			return nbt.getIntegerList(name);
-		case NBTTagString:
+		case STRING:
 			return nbt.getStringList(name);
-		case NBTTagLong:
+		case LONG:
 			return nbt.getLongList(name);
-		case NBTTagIntArray:
+		case INT_ARRAY:
 			return nbt.getIntArrayList(name);
 		default:
 			throw new UnsupportedOperationException(type + " list not supported");

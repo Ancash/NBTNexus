@@ -1,9 +1,9 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.Tags.BANNER_PATTERNS_TAG;
-import static de.ancash.nbtnexus.Tags.BANNER_PATTERN_COLOR_TAG;
-import static de.ancash.nbtnexus.Tags.BANNER_PATTERN_TYPE_TAG;
-import static de.ancash.nbtnexus.Tags.BANNER_TAG;
+import static de.ancash.nbtnexus.MetaTag.BANNER_PATTERNS_TAG;
+import static de.ancash.nbtnexus.MetaTag.BANNER_PATTERN_COLOR_TAG;
+import static de.ancash.nbtnexus.MetaTag.BANNER_PATTERN_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.BANNER_TAG;
 
 import java.util.ArrayList;
 import java.util.HashMap;

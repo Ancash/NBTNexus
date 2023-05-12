@@ -1,38 +1,34 @@
 package de.ancash.nbtnexus.serde;
 
-import static de.ancash.nbtnexus.Tags.AMOUNT_TAG;
-import static de.ancash.nbtnexus.Tags.BLUE_TAG;
-import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_COLORS_TAG;
-import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_FADE_COLORS_TAG;
-import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_FLICKER_TAG;
-import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_TRAIL_TAG;
-import static de.ancash.nbtnexus.Tags.FIREWORK_EFFECT_TYPE_TAG;
-import static de.ancash.nbtnexus.Tags.GREEN_TAG;
-import static de.ancash.nbtnexus.Tags.ITEM_STACK_ARRAY_TAG;
-import static de.ancash.nbtnexus.Tags.ITEM_STACK_LIST_TAG;
-import static de.ancash.nbtnexus.Tags.ITEM_STACK_TAG;
-import static de.ancash.nbtnexus.Tags.MAP_VIEW_CENTER_X_TAG;
-import static de.ancash.nbtnexus.Tags.MAP_VIEW_CENTER_Z_TAG;
-import static de.ancash.nbtnexus.Tags.MAP_VIEW_LOCKED_TAG;
-import static de.ancash.nbtnexus.Tags.MAP_VIEW_SCALE_TAG;
-import static de.ancash.nbtnexus.Tags.MAP_VIEW_TRACKING_POSITION_TAG;
-import static de.ancash.nbtnexus.Tags.MAP_VIEW_UNLIMITED_TRACKING_TAG;
-import static de.ancash.nbtnexus.Tags.MAP_VIEW_WORLD_TAG;
-import static de.ancash.nbtnexus.Tags.NBT_NEXUS_ITEM_PROPERTIES_TAG;
-import static de.ancash.nbtnexus.Tags.NBT_NEXUS_ITEM_TYPE_TAG;
-import static de.ancash.nbtnexus.Tags.POTION_EFFECT_AMBIENT_TAG;
-import static de.ancash.nbtnexus.Tags.POTION_EFFECT_AMPLIFIER_TAG;
-import static de.ancash.nbtnexus.Tags.POTION_EFFECT_DURATION_TAG;
-import static de.ancash.nbtnexus.Tags.POTION_EFFECT_SHOW_ICON_TAG;
-import static de.ancash.nbtnexus.Tags.POTION_EFFECT_SHOW_PARTICLES_TAG;
-import static de.ancash.nbtnexus.Tags.POTION_EFFECT_TYPE_TAG;
-import static de.ancash.nbtnexus.Tags.PROPERTY_NAME_TAG;
-import static de.ancash.nbtnexus.Tags.PROPERTY_SIGNATURE_TAG;
-import static de.ancash.nbtnexus.Tags.PROPERTY_VALUE_TAG;
-import static de.ancash.nbtnexus.Tags.RED_TAG;
-import static de.ancash.nbtnexus.Tags.SPLITTER_REGEX;
-import static de.ancash.nbtnexus.Tags.UUID_TAG;
-import static de.ancash.nbtnexus.Tags.XMATERIAL_TAG;
+import static de.ancash.nbtnexus.MetaTag.AMOUNT_TAG;
+import static de.ancash.nbtnexus.MetaTag.BLUE_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_COLORS_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_FADE_COLORS_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_FLICKER_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_TRAIL_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.GREEN_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_CENTER_X_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_CENTER_Z_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_LOCKED_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_SCALE_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_TRACKING_POSITION_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_UNLIMITED_TRACKING_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_WORLD_TAG;
+import static de.ancash.nbtnexus.MetaTag.NBT_NEXUS_ITEM_PROPERTIES_TAG;
+import static de.ancash.nbtnexus.MetaTag.NBT_NEXUS_ITEM_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_AMBIENT_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_AMPLIFIER_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_DURATION_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_SHOW_ICON_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_SHOW_PARTICLES_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.PROPERTY_NAME_TAG;
+import static de.ancash.nbtnexus.MetaTag.PROPERTY_SIGNATURE_TAG;
+import static de.ancash.nbtnexus.MetaTag.PROPERTY_VALUE_TAG;
+import static de.ancash.nbtnexus.MetaTag.RED_TAG;
+import static de.ancash.nbtnexus.MetaTag.XMATERIAL_TAG;
+import static de.ancash.nbtnexus.NBTNexus.SPLITTER_REGEX;
 
 import java.io.StringReader;
 import java.util.Collection;
@@ -71,7 +67,13 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
+import de.ancash.minecraft.nbt.NBTCompound;
+import de.ancash.minecraft.nbt.NBTCompoundList;
+import de.ancash.minecraft.nbt.NBTContainer;
+import de.ancash.minecraft.nbt.NBTItem;
+import de.ancash.minecraft.nbt.NBTList;
 import de.ancash.nbtnexus.NBTNexusItem.Type;
+import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.handler.AxolotlBucketMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BannerMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BookMetaSerDe;
@@ -89,12 +91,6 @@ import de.ancash.nbtnexus.serde.handler.SkullMetaMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SpawnEggMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SuspiciousStewMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.TropicalFishBucketMetaSerDe;
-import de.tr7zw.changeme.nbtapi.NBTCompound;
-import de.tr7zw.changeme.nbtapi.NBTCompoundList;
-import de.tr7zw.changeme.nbtapi.NBTContainer;
-import de.tr7zw.changeme.nbtapi.NBTItem;
-import de.tr7zw.changeme.nbtapi.NBTList;
-import de.tr7zw.changeme.nbtapi.NBTType;
 
 @SuppressWarnings("deprecation")
 public class ItemDeserializer {
@@ -156,7 +152,7 @@ public class ItemDeserializer {
 	}
 
 	public Property deserializeProperty(Map<String, Object> map) {
-		return new Property((String) map.get(PROPERTY_VALUE_TAG), (String) map.get(PROPERTY_NAME_TAG),
+		return new Property((String) map.get(PROPERTY_NAME_TAG), (String) map.get(PROPERTY_VALUE_TAG),
 				(String) map.get(PROPERTY_SIGNATURE_TAG));
 	}
 
@@ -277,7 +273,10 @@ public class ItemDeserializer {
 
 		if (keys.length < 2)
 			throw new IllegalArgumentException("invalid key " + fullKey);
-		if (ITEM_STACK_ARRAY_TAG.equals(keys[1])) {
+
+		NBTTag tag = NBTTag.valueOf(keys[1]);
+
+		if (tag == NBTTag.ITEM_STACK_ARRAY) {
 			List<Map<?, ?>> mapList = (List<Map<?, ?>>) map.get(fullKey);
 			ItemStack[] itemArr = new ItemStack[mapList.size()];
 			for (int i = 0; i < itemArr.length; i++)
@@ -286,17 +285,17 @@ public class ItemDeserializer {
 			return;
 		}
 
-		if (ITEM_STACK_TAG.equals(keys[1])) {
+		if (tag == NBTTag.ITEM_STACK) {
 			compound.setItemStack(field, deserializeItemStack((Map<String, Object>) map.get(fullKey)));
 			return;
 		}
 
-		if (UUID_TAG.equals(keys[1])) {
+		if (tag == NBTTag.UUID) {
 			compound.setUUID(field, UUID.fromString((String) map.get(fullKey)));
 			return;
 		}
 
-		if (ITEM_STACK_LIST_TAG.equals(keys[1])) {
+		if (tag == NBTTag.ITEM_STACK_LIST) {
 			NBTCompoundList list = compound.getCompoundList(field);
 			List<Map<String, Object>> items = (List<Map<String, Object>>) map.get(fullKey);
 			items.stream().map(this::deserializeItemStack).forEach(i -> {
@@ -307,12 +306,11 @@ public class ItemDeserializer {
 			return;
 		}
 
-		NBTType type = NBTType.valueOf(keys[1]);
 		if (keys.length == 2) {
-			if (type == NBTType.NBTTagCompound) {
+			if (tag == NBTTag.COMPOUND) {
 				createNBTCompound(compound, (Map<String, Object>) map.get(fullKey), fullKey);
 			} else
-				set(compound, field, type, map.get(fullKey));
+				set(compound, field, tag, map.get(fullKey));
 		} else {
 			deserializeList(compound, map, fullKey);
 		}
@@ -322,9 +320,9 @@ public class ItemDeserializer {
 	private void deserializeList(NBTCompound compound, Map<String, Object> src, String fullKey) {
 		String[] keys = fullKey.split(SPLITTER_REGEX);
 		String field = keys[0];
-		NBTType listType = NBTType.valueOf(keys[2]);
+		NBTTag listType = NBTTag.valueOf(keys[2]);
 		switch (listType) {
-		case NBTTagCompound:
+		case COMPOUND:
 			NBTCompoundList compoundList = compound.getCompoundList(field);
 			List<Map<?, ?>> mapList = (List<Map<?, ?>>) src.get(fullKey);
 			for (Map<?, ?> temp : mapList) {
@@ -332,27 +330,27 @@ public class ItemDeserializer {
 				writeToCompound(compoundList.addCompound(), map);
 			}
 			break;
-		case NBTTagString:
+		case STRING:
 			NBTList<String> stringList = compound.getStringList(field);
 			stringList.addAll((Collection<String>) src.get(fullKey));
 			break;
-		case NBTTagDouble:
+		case DOUBLE:
 			NBTList<Double> dList = compound.getDoubleList(field);
 			dList.addAll((Collection<Double>) src.get(fullKey));
 			break;
-		case NBTTagInt:
+		case INT:
 			NBTList<Integer> iList = compound.getIntegerList(field);
 			iList.addAll((Collection<Integer>) src.get(fullKey));
 			break;
-		case NBTTagFloat:
+		case FLOAT:
 			NBTList<Float> fList = compound.getFloatList(field);
 			((Collection<Number>) src.get(fullKey)).stream().map(Number::floatValue).forEach(f -> fList.add(f));
 			break;
-		case NBTTagLong:
+		case LONG:
 			NBTList<Long> lList = compound.getLongList(field);
 			((Collection<Number>) src.get(fullKey)).stream().map(Number::longValue).forEach(l -> lList.add(l));
 			break;
-		case NBTTagIntArray:
+		case INT_ARRAY:
 			NBTList<int[]> iaList = compound.getIntArrayList(field);
 			for (List<Integer> arr : (List<List<Integer>>) src.get(fullKey))
 				iaList.add(arr.stream().mapToInt(Integer::valueOf).toArray());
@@ -372,44 +370,44 @@ public class ItemDeserializer {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void set(NBTCompound compound, String key, NBTType type, Object value) {
-		if (type == NBTType.NBTTagEnd)
+	private void set(NBTCompound compound, String key, NBTTag type, Object value) {
+		if (type == NBTTag.END)
 			return;
 		switch (type) {
-		case NBTTagByte:
+		case BYTE:
 			compound.setByte(key, (byte) ((int) value));
 			break;
-		case NBTTagByteArray:
+		case BYTE_ARRAY:
 			byte[] arr = new byte[((List<Integer>) value).size()];
 			for (int i = 0; i < arr.length; i++)
 				arr[i] = (byte) ((int) ((List<Integer>) value).get(i));
 			compound.setByteArray(key, arr);
 			break;
-		case NBTTagDouble:
+		case DOUBLE:
 			compound.setDouble(key, (double) value);
 			break;
-		case NBTTagFloat:
+		case FLOAT:
 			compound.setFloat(key, (float) ((double) value));
 			break;
-		case NBTTagInt:
+		case INT:
 			compound.setInteger(key, (int) value);
 			break;
-		case NBTTagLong:
+		case LONG:
 			compound.setLong(key, (long) value);
 			break;
-		case NBTTagShort:
+		case SHORT:
 			compound.setShort(key, (short) (int) value);
 			break;
-		case NBTTagString:
+		case STRING:
 			compound.setString(key, (String) value);
 			break;
-		case NBTTagIntArray:
+		case INT_ARRAY:
 			int[] intArr = new int[((List<Integer>) value).size()];
 			for (int i = 0; i < intArr.length; i++)
 				intArr[i] = ((List<Integer>) value).get(i);
 			compound.setIntArray(key, intArr);
 			break;
-		case NBTTagCompound:
+		case COMPOUND:
 			compound.mergeCompound((NBTCompound) value);
 			break;
 		default:

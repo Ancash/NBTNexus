@@ -1,26 +1,13 @@
 package de.ancash.nbtnexus;
 
 @SuppressWarnings("nls")
-public class Tags {
+public class MetaTag {
 
 	public static final char ALTERNATE_COLOR_CODE = '§';
 
 	public static final String NBT_NEXUS_ITEM_PROPERTIES_TAG = "NBTNexusItem";
 	public static final String NBT_NEXUS_ITEM_TYPE_TAG = "type";
 	public static final String NBT_NEXUS_ITEM_PROXY_TAG = "proxy";
-
-	public static final String SPLITTER = "$";
-	public static final String SPLITTER_REGEX = "\\$";
-
-	public static final String NBT_COMPOUND_TAG = "NBTTagCompound";
-	public static final String NBT_LIST_TAG = "NBTTagList";
-	public static final String NBT_STRING_TAG = "NBTTagString";
-
-	public static final String ITEM_STACK_TAG = "ItemStack";
-	public static final String ITEM_STACK_ARRAY_TAG = "ItemStackArray";
-	public static final String ITEM_STACK_LIST_TAG = "ItemStackList";
-
-	public static final String UUID_TAG = "UUID";
 
 	public static final String XMATERIAL_TAG = "XMaterial";
 	public static final String AMOUNT_TAG = "Amount";

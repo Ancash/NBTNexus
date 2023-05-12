@@ -1,15 +1,19 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.Tags.GAME_PROFILE_ID_TAG;
-import static de.ancash.nbtnexus.Tags.GAME_PROFILE_NAME_TAG;
-import static de.ancash.nbtnexus.Tags.GAME_PROFILE_PROPERTIES_TAG;
-import static de.ancash.nbtnexus.Tags.GAME_PROFILE_TAG;
-import static de.ancash.nbtnexus.Tags.SKULL_NOTE_BLOCK_SOUND_TAG;
-import static de.ancash.nbtnexus.Tags.SKULL_TAG;
+import static de.ancash.nbtnexus.MetaTag.GAME_PROFILE_ID_TAG;
+import static de.ancash.nbtnexus.MetaTag.GAME_PROFILE_NAME_TAG;
+import static de.ancash.nbtnexus.MetaTag.GAME_PROFILE_PROPERTIES_TAG;
+import static de.ancash.nbtnexus.MetaTag.GAME_PROFILE_TAG;
+import static de.ancash.nbtnexus.MetaTag.SKULL_NOTE_BLOCK_SOUND_TAG;
+import static de.ancash.nbtnexus.MetaTag.SKULL_TAG;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.inventory.ItemStack;
@@ -20,6 +24,8 @@ import com.mojang.authlib.GameProfile;
 import de.ancash.minecraft.ItemStackUtils;
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
 import de.ancash.minecraft.nbt.utils.MinecraftVersion;
+import de.ancash.nbtnexus.NBTNexus;
+import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemDeserializer;
 import de.ancash.nbtnexus.serde.IItemSerializer;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
@@ -30,6 +36,9 @@ public class SkullMetaMetaSerDe implements IItemSerializer, IItemDeserializer {
 
 	public static final SkullMetaMetaSerDe INSTANCE = new SkullMetaMetaSerDe();
 	private static Field gameProfileField;
+
+	private static final Set<String> bl = Collections
+			.unmodifiableSet(new HashSet<>(Arrays.asList("SkullOwner" + NBTNexus.SPLITTER + NBTTag.COMPOUND)));
 
 	static {
 		try {
@@ -42,6 +51,11 @@ public class SkullMetaMetaSerDe implements IItemSerializer, IItemDeserializer {
 	}
 
 	SkullMetaMetaSerDe() {
+	}
+
+	@Override
+	public Set<String> getBlacklistedKeys() {
+		return bl;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -91,7 +105,12 @@ public class SkullMetaMetaSerDe implements IItemSerializer, IItemDeserializer {
 		SkullMeta meta = (SkullMeta) item.getItemMeta();
 		if (map.containsKey(GAME_PROFILE_TAG)) {
 			Map<String, Object> gps = (Map<String, Object>) map.get(GAME_PROFILE_TAG);
-			GameProfile gp = new GameProfile(null, (String) gps.get(GAME_PROFILE_NAME_TAG));
+			GameProfile gp = null;
+			if (gps.containsKey(GAME_PROFILE_ID_TAG))
+				gp = new GameProfile(UUID.fromString((String) gps.get(GAME_PROFILE_ID_TAG)),
+						(String) gps.get(GAME_PROFILE_NAME_TAG));
+			else
+				gp = new GameProfile(null, (String) gps.get(GAME_PROFILE_NAME_TAG));
 			if (map.containsKey(GAME_PROFILE_PROPERTIES_TAG))
 				gp.getProperties().putAll(ItemDeserializer.INSTANCE
 						.deserializePropertyMap((Map<String, Object>) map.get(GAME_PROFILE_PROPERTIES_TAG)));

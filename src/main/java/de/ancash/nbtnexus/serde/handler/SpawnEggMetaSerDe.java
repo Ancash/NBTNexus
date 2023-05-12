@@ -1,12 +1,10 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.Tags.SPAWN_EGG_TAG;
-import static de.ancash.nbtnexus.Tags.SPAWN_EGG_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.SPAWN_EGG_TAG;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 
@@ -20,18 +18,14 @@ public class SpawnEggMetaSerDe implements IItemSerializer, IItemDeserializer {
 	SpawnEggMetaSerDe() {
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public Map<String, Object> serialize(ItemStack item) {
-		Map<String, Object> map = new HashMap<>();
-		SpawnEggMeta meta = (SpawnEggMeta) item.getItemMeta();
-		EntityType type = meta.getSpawnedType();
-		if (type != null) {
-			map.put(SPAWN_EGG_TYPE_TAG, type.name());
-		}
-		meta.setSpawnedType(null);
-		item.setItemMeta(meta);
-		return map;
+//		Map<String, Object> map = new HashMap<>();
+//		SpawnEggMeta meta = (SpawnEggMeta) item.getItemMeta();
+//		XMaterial type = XMaterial.matchXMaterial(item);
+//		map.put(SPAWN_EGG_TYPE_TAG, type.name());
+//		item.setItemMeta(meta);
+		return new HashMap<>();
 	}
 
 	@Override
@@ -44,14 +38,10 @@ public class SpawnEggMetaSerDe implements IItemSerializer, IItemDeserializer {
 		return SPAWN_EGG_TAG;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void deserialize(ItemStack item, Map<String, Object> map) {
-		SpawnEggMeta meta = (SpawnEggMeta) item.getItemMeta();
-		if (map.containsKey(SPAWN_EGG_TYPE_TAG))
-			meta.setSpawnedType(EntityType.valueOf((String) map.get(SPAWN_EGG_TYPE_TAG)));
-		else
-			meta.setSpawnedType(null);
-		item.setItemMeta(meta);
+//		item.setType(XMaterial.matchXMaterial((String) map.get(SPAWN_EGG_TYPE_TAG)).get().parseMaterial());
+//		SpawnEggMeta meta = (SpawnEggMeta) item.getItemMeta();
+//		item.setItemMeta(meta);
 	}
 }

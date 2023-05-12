@@ -1,12 +1,12 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.Tags.BASE_POTION_EXTENDED_TAG;
-import static de.ancash.nbtnexus.Tags.BASE_POTION_TAG;
-import static de.ancash.nbtnexus.Tags.BASE_POTION_TYPE_TAG;
-import static de.ancash.nbtnexus.Tags.BASE_POTION_UPGRADED_TAG;
-import static de.ancash.nbtnexus.Tags.POTION_COLOR_TAG;
-import static de.ancash.nbtnexus.Tags.POTION_EFFECTS_TAG;
-import static de.ancash.nbtnexus.Tags.POTION_TAG;
+import static de.ancash.nbtnexus.MetaTag.BASE_POTION_EXTENDED_TAG;
+import static de.ancash.nbtnexus.MetaTag.BASE_POTION_TAG;
+import static de.ancash.nbtnexus.MetaTag.BASE_POTION_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.BASE_POTION_UPGRADED_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_COLOR_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECTS_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_TAG;
 
 import java.util.HashMap;
 import java.util.List;
