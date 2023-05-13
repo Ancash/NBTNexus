@@ -22,6 +22,8 @@ import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
 import de.ancash.minecraft.nbt.NBTCompound;
 import de.ancash.minecraft.nbt.NBTItem;
 import de.ancash.minecraft.nbt.NBTList;
+import de.ancash.nbtnexus.command.EditCommand;
+import de.ancash.nbtnexus.command.NBTNexusCommand;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
 import de.ancash.nbtnexus.serde.SerializedItem;
@@ -35,10 +37,14 @@ public class NBTNexus extends JavaPlugin {
 
 //	private ProtocolManager protocolManager;
 	private static NBTNexus singleton;
+	private NBTNexusCommand cmd;
 
 	@Override
 	public void onEnable() {
 		singleton = this;
+		cmd = new NBTNexusCommand(this);
+		cmd.addSubCommand(new EditCommand(this));
+		getCommand("nbtn").setExecutor(cmd);
 //		protocolManager = ProtocolLibrary.getProtocolManager();
 //		protocolManager.addPacketListener(new SetSlotAdapter(this));
 		getCommand("serde").setExecutor(this);

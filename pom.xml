@@ -21,23 +21,6 @@
 						</goals>
 						<configuration>
 							<relocations></relocations>
-							<filters>
-								<filter>
-									<artifact>*:*</artifact>
-									<excludeDefaults>false</excludeDefaults>
-									<excludes>
-										<exclude>com/cryptomorin/xseries/XBiome*</exclude>
-										<exclude>com/cryptomorin/xseries/NMSExtras*</exclude>
-										<exclude>com/cryptomorin/xseries/NoteBlockMusic*</exclude>
-										<exclude>com/cryptomorin/xseries/Skull*</exclude>
-										<exclude>com/cryptomorin/xseries/Reflection*</exclude>
-										<exclude>com/cryptomorin/xseries/XEntity*</exclude>
-										<exclude>com/cryptomorin/xseries/XItemStack*</exclude>
-										<exclude>com/cryptomorin/xseries/messages/*</exclude>
-										<exclude>com/cryptomorin/xseries/particles/*</exclude>
-									</excludes>
-								</filter>
-							</filters>
 						</configuration>
 					</execution>
 				</executions>
@@ -83,7 +66,7 @@
 		<dependency>
 			<groupId>de.ancash</groupId>
 			<artifactId>ilibrary</artifactId>
-			<version>3.7.6</version>
+			<version>3.8.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

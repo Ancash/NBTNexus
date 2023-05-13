@@ -5,6 +5,9 @@ main: de.ancash.nbtnexus.NBTNexus
 api-version: 1.13
 
 commands:
+   nbtn:
+      usage:
+      - "§7/nbtn edit"
    serde:
       usage: "/serde"
    deserialize:
