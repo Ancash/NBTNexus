@@ -15,6 +15,7 @@ import static de.ancash.nbtnexus.MetaTag.DISPLAY_TAG;
 import static de.ancash.nbtnexus.MetaTag.ENCHANTMENTS_TAG;
 import static de.ancash.nbtnexus.MetaTag.ENCHANTMENT_LEVEL_TAG;
 import static de.ancash.nbtnexus.MetaTag.ENCHANTMENT_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.ITEM_FLAGS_TAG;
 import static de.ancash.nbtnexus.MetaTag.LOCALIZED_NAME_TAG;
 import static de.ancash.nbtnexus.MetaTag.LORE_TAG;
 import static de.ancash.nbtnexus.MetaTag.REPAIR_COST_TAG;
@@ -34,6 +35,7 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -101,6 +103,13 @@ public class SimpleMetaSerDe implements IItemSerializer, IItemDeserializer {
 			map.put(ENCHANTMENTS_TAG, serializeEnchantments(item));
 			item.getEnchantments().keySet().forEach(item::removeEnchantment);
 		}
+		meta = item.getItemMeta();
+
+		if (!meta.getItemFlags().isEmpty()) {
+			map.put(ITEM_FLAGS_TAG, meta.getItemFlags().stream().map(ItemFlag::name).collect(Collectors.toList()));
+			meta.getItemFlags().forEach(meta::removeItemFlags);
+		}
+
 		if (meta.hasAttributeModifiers()) {
 			List<Map<String, Object>> attributes = new ArrayList<>();
 			for (Entry<Attribute, AttributeModifier> modifier : meta.getAttributeModifiers().entries()) {
@@ -150,9 +159,10 @@ public class SimpleMetaSerDe implements IItemSerializer, IItemDeserializer {
 						(int) ench.get(ENCHANTMENT_LEVEL_TAG));
 			}
 		}
+
+		ItemMeta meta = item.getItemMeta();
 		if (map.containsKey(DISPLAY_TAG)) {
 			Map<String, Object> serMeta = (Map<String, Object>) map.get(DISPLAY_TAG);
-			ItemMeta meta = item.getItemMeta();
 			if (serMeta.containsKey(LORE_TAG))
 				meta.setLore(((List<String>) serMeta.get(LORE_TAG)).stream()
 						.map(s -> ChatColor.translateAlternateColorCodes(ALTERNATE_COLOR_CODE, s))
@@ -164,8 +174,12 @@ public class SimpleMetaSerDe implements IItemSerializer, IItemDeserializer {
 				meta.setLocalizedName(ChatColor.translateAlternateColorCodes(ALTERNATE_COLOR_CODE,
 						(String) serMeta.get(LOCALIZED_NAME_TAG)));
 			meta.setCustomModelData((Integer) serMeta.get(CUSTOM_MODEL_DATA));
-			item.setItemMeta(meta);
 		}
+
+		if (map.containsKey(ITEM_FLAGS_TAG))
+			((List<String>) map.get(ITEM_FLAGS_TAG)).stream().map(ItemFlag::valueOf).forEach(meta::addItemFlags);
+
+		item.setItemMeta(meta);
 		if (map.containsKey(ATTRIBUTES_TAG))
 			deserializeAttributeModifiers(item, map);
 	}

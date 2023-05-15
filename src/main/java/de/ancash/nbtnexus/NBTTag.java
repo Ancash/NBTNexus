@@ -11,7 +11,7 @@ public enum NBTTag {
 	FLOAT(NBTType.NBTTagFloat), INT(NBTType.NBTTagInt), STRING(NBTType.NBTTagString), SHORT(NBTType.NBTTagShort),
 	LONG(NBTType.NBTTagLong), BYTE_ARRAY(NBTType.NBTTagByteArray), INT_ARRAY(NBTType.NBTTagIntArray),
 	LIST(NBTType.NBTTagList), ITEM_STACK(null), ITEM_STACK_ARRAY(null), ITEM_STACK_LIST(null), UUID(null),
-	END(NBTType.NBTTagEnd);
+	BOOLEAN(null), END(NBTType.NBTTagEnd), DYNAMIC(null);
 
 	private static final Map<NBTType, NBTTag> byType = new HashMap<>();
 
@@ -33,5 +33,9 @@ public enum NBTTag {
 
 	public de.ancash.minecraft.nbt.NBTType getType() {
 		return type;
+	}
+
+	public enum Special {
+
 	}
 }

@@ -11,6 +11,8 @@ import org.bukkit.inventory.ItemStack;
 import de.ancash.minecraft.inventory.editor.yml.YamlEditor;
 import de.ancash.nbtnexus.NBTNexus;
 import de.ancash.nbtnexus.editor.validator.AmountValidator;
+import de.ancash.nbtnexus.editor.validator.KeyValidator;
+import de.ancash.nbtnexus.editor.validator.ListTypeValidator;
 import de.ancash.nbtnexus.editor.validator.MaterialValidator;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
@@ -51,6 +53,8 @@ public class EditCommand extends NBTNexusSubCommand {
 		}
 		editor.addValidator(new MaterialValidator());
 		editor.addValidator(new AmountValidator());
+		editor.setKeyValidator(new KeyValidator());
+		editor.setListTypeValidator(new ListTypeValidator());
 		editor.open();
 		return true;
 	}

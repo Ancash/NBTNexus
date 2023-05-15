@@ -374,6 +374,9 @@ public class ItemDeserializer {
 		if (type == NBTTag.END)
 			return;
 		switch (type) {
+		case BOOLEAN:
+			compound.setBoolean(key, (boolean) value);
+			break;
 		case BYTE:
 			compound.setByte(key, (byte) ((int) value));
 			break;

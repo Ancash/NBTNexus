@@ -25,6 +25,7 @@ public class MetaTag {
 	public static final String CUSTOM_MODEL_DATA = "CustomModelData";
 	public static final String DAMAGE_TAG = "Damage";
 	public static final String REPAIR_COST_TAG = "RepairCost";
+	public static final String ITEM_FLAGS_TAG = "ItemFlags";
 
 	public static final String BOOK_PAGES_TAG = "Pages";
 	public static final String BOOK_AUTHOR_TAG = "Author";
