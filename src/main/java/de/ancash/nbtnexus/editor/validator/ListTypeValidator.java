@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
 import de.ancash.minecraft.inventory.editor.yml.ListEditor;
 import de.ancash.minecraft.inventory.editor.yml.ValueEditor;
 import de.ancash.minecraft.inventory.editor.yml.handler.IValueHandler;
-import de.ancash.minecraft.inventory.editor.yml.listener.IListTypeValidator;
+import de.ancash.minecraft.inventory.editor.yml.listener.IListEditorListener;
 
-public class ListTypeValidator implements IListTypeValidator {
+public class ListTypeValidator implements IListEditorListener {
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "nls" })
 	@Override
 	public void onInit(ListEditor arg0) {
 		if (arg0.getList().isEmpty())
@@ -46,5 +46,11 @@ public class ListTypeValidator implements IListTypeValidator {
 		if (!ValidatorUtil.isItemRoot(ve))
 			return;
 		cur.setHandler(Arrays.asList(arg1));
+	}
+
+	@Override
+	public void onDelete(ListEditor arg0, IValueHandler<?> arg1, Object arg2) {
+		if (arg0.getList().isEmpty())
+			arg0.setHandler(arg0.getYamlEditor().getValHandler());
 	}
 }

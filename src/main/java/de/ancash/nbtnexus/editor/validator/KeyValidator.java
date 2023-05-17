@@ -43,7 +43,7 @@ public class KeyValidator implements IKeyValidator {
 		} else if (type instanceof BooleanHandler) {
 			ending = NBTNexus.SPLITTER + NBTTag.BOOLEAN.name();
 		} else if (type instanceof ListHandler) {
-			ending = NBTNexus.SPLITTER + NBTTag.LIST.name() + NBTNexus.SPLITTER + NBTTag.DYNAMIC;
+			ending = NBTNexus.SPLITTER + NBTTag.LIST.name() + NBTNexus.SPLITTER + NBTTag.OBJECT;
 		}
 
 		if (!key.endsWith(ending))

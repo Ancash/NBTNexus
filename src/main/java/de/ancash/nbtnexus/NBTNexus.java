@@ -85,18 +85,15 @@ public class NBTNexus extends JavaPlugin {
 		slist.add("1");
 		slist.add("2");
 		slist.add("3");
-		for (int i = 0; i < 5; i++) {
-			comp = comp.addCompound(i + "");
-			comp.setInteger("iterr", i);
-			comp.getStringList(i + "-list").addAll(Arrays.asList("lol"));
-		}
 		for (int a = 0; a < 10; a++) {
 			comp.addCompound(String.valueOf(a)).setInteger(String.valueOf(a), a);
 		}
-		comp.setString("trolll", "muahahah");
 		nbt.setItemStackArray("itemarr",
 				new ItemStack[] { XMaterial.DIAMOND.parseItem(), XMaterial.OAK_LOG.parseItem() });
 		item = nbt.getItem();
+
+		for (Player p : Bukkit.getOnlinePlayers())
+			p.getInventory().addItem(item);
 
 		SerializedItem serialized = SerializedItem.of(item);
 		try {

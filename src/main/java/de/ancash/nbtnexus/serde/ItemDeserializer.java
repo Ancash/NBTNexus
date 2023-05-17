@@ -31,6 +31,7 @@ import static de.ancash.nbtnexus.MetaTag.XMATERIAL_TAG;
 import static de.ancash.nbtnexus.NBTNexus.SPLITTER_REGEX;
 
 import java.io.StringReader;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -66,12 +67,14 @@ import org.bukkit.potion.PotionEffectType;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 
+import de.ancash.ILibrary;
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
 import de.ancash.minecraft.nbt.NBTCompound;
 import de.ancash.minecraft.nbt.NBTCompoundList;
 import de.ancash.minecraft.nbt.NBTContainer;
 import de.ancash.minecraft.nbt.NBTItem;
 import de.ancash.minecraft.nbt.NBTList;
+import de.ancash.nbtnexus.NBTNexus;
 import de.ancash.nbtnexus.NBTNexusItem.Type;
 import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.handler.AxolotlBucketMetaSerDe;
@@ -207,9 +210,9 @@ public class ItemDeserializer {
 			e = iter.next();
 			for (IItemDeserializer itd : itemDeserializer)
 				if (itd.getKey().equals(e.getKey())) {
-					if (itd.hasKeysToReverseRelocate()) {
-						// relocate(map, itd.getKeysToReverseRelocate());
-					}
+//					if (itd.hasKeysToReverseRelocate()) {
+//						 relocate(map, itd.getKeysToReverseRelocate());
+//					}
 					itd.deserialize(item, (Map<String, Object>) map.get(e.getKey()));
 					remove.add(e.getKey());
 				}
@@ -266,8 +269,18 @@ public class ItemDeserializer {
 			deserialize(compound, map, key);
 	}
 
-	@SuppressWarnings({ "unchecked", "nls" })
 	private void deserialize(NBTCompound compound, Map<String, Object> map, String fullKey) {
+		try {
+			deserialize0(compound, map, fullKey);
+		} catch (Exception ex) {
+			ILibrary.getInstance().getLogger()
+					.severe("Could not deserialize key " + fullKey + ", value: " + map.get(fullKey));
+			ex.printStackTrace();
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "nls" })
+	private void deserialize0(NBTCompound compound, Map<String, Object> map, String fullKey) {
 		String[] keys = fullKey.split(SPLITTER_REGEX);
 		String field = keys[0];
 
@@ -316,15 +329,62 @@ public class ItemDeserializer {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "nls" })
+	@SuppressWarnings({ "nls" })
 	private void deserializeList(NBTCompound compound, Map<String, Object> src, String fullKey) {
 		String[] keys = fullKey.split(SPLITTER_REGEX);
-		String field = keys[0];
 		NBTTag listType = NBTTag.valueOf(keys[2]);
 		switch (listType) {
 		case COMPOUND:
+			deserializeList0(compound, src, fullKey, src.get(fullKey));
+			break;
+		case STRING:
+			deserializeList0(compound, src, fullKey, src.get(fullKey));
+			break;
+		case DOUBLE:
+			deserializeList0(compound, src, fullKey, src.get(fullKey));
+			break;
+		case INT:
+			deserializeList0(compound, src, fullKey, src.get(fullKey));
+			break;
+		case FLOAT:
+			deserializeList0(compound, src, fullKey, src.get(fullKey));
+			break;
+		case LONG:
+			deserializeList0(compound, src, fullKey, src.get(fullKey));
+			break;
+		case INT_ARRAY:
+			deserializeList0(compound, src, fullKey, src.get(fullKey));
+			break;
+		case OBJECT:
+			deserializeList0(compound, src, fullKey, src.get(fullKey));
+			break;
+		default:
+			throw new UnsupportedOperationException(listType + " list not supported");
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private Set<NBTTag> getListTypes(List list) {
+		return (Set<NBTTag>) list.stream().map(Object::getClass).map(c -> NBTTag.getByClazz((Class<?>) c))
+				.filter(i -> i != null).collect(Collectors.toSet());
+	}
+
+	@SuppressWarnings({ "unchecked", "nls", "rawtypes" })
+	private void deserializeList0(NBTCompound compound, Map<String, Object> src, String fullKey, Object val) {
+		String[] keys = fullKey.split(SPLITTER_REGEX);
+		String field = keys[0];
+		List list = (List) val;
+		Set<NBTTag> types = getListTypes(list);
+		if (types.isEmpty())
+			return;
+		if (types.size() != 1)
+			throw new IllegalStateException("nbt list tags must be of same type, not: " + types);
+		NBTTag listType = NBTTag.valueOf(keys[2]);
+		NBTTag actual = types.stream().findAny().get();
+		switch (listType) {
+		case COMPOUND:
 			NBTCompoundList compoundList = compound.getCompoundList(field);
-			List<Map<?, ?>> mapList = (List<Map<?, ?>>) src.get(fullKey);
+			List<Map<?, ?>> mapList = (List<Map<?, ?>>) val;
 			for (Map<?, ?> temp : mapList) {
 				Map<String, Object> map = (Map<String, Object>) temp;
 				writeToCompound(compoundList.addCompound(), map);
@@ -332,31 +392,37 @@ public class ItemDeserializer {
 			break;
 		case STRING:
 			NBTList<String> stringList = compound.getStringList(field);
-			stringList.addAll((Collection<String>) src.get(fullKey));
+			stringList.addAll((Collection<String>) val);
 			break;
 		case DOUBLE:
 			NBTList<Double> dList = compound.getDoubleList(field);
-			dList.addAll((Collection<Double>) src.get(fullKey));
+			dList.addAll((Collection<Double>) val);
 			break;
 		case INT:
 			NBTList<Integer> iList = compound.getIntegerList(field);
-			iList.addAll((Collection<Integer>) src.get(fullKey));
+			iList.addAll((Collection<Integer>) val);
 			break;
 		case FLOAT:
 			NBTList<Float> fList = compound.getFloatList(field);
-			((Collection<Number>) src.get(fullKey)).stream().map(Number::floatValue).forEach(f -> fList.add(f));
+			((Collection<Number>) val).stream().map(Number::floatValue).forEach(f -> fList.add(f));
 			break;
 		case LONG:
 			NBTList<Long> lList = compound.getLongList(field);
-			((Collection<Number>) src.get(fullKey)).stream().map(Number::longValue).forEach(l -> lList.add(l));
+			((Collection<Number>) val).stream().map(Number::longValue).forEach(l -> lList.add(l));
 			break;
 		case INT_ARRAY:
 			NBTList<int[]> iaList = compound.getIntArrayList(field);
-			for (List<Integer> arr : (List<List<Integer>>) src.get(fullKey))
+			for (List<Integer> arr : (List<List<Integer>>) val)
 				iaList.add(arr.stream().mapToInt(Integer::valueOf).toArray());
 			break;
+		case OBJECT:
+			deserializeList0(compound, src, String.join(NBTNexus.SPLITTER,
+					String.join(NBTNexus.SPLITTER, Arrays.copyOfRange(keys, 0, 2)), actual.name()), val);
+			break;
+		case LIST:
+			throw new UnsupportedOperationException("nested lists not supported");
 		default:
-			throw new UnsupportedOperationException(listType + " list not sup");
+			throw new UnsupportedOperationException(listType + " list not supported");
 		}
 	}
 

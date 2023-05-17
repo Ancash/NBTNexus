@@ -338,6 +338,7 @@ public class ItemSerializer {
 				continue;
 			if (trySerializeUUID(nbt, key, map))
 				continue;
+
 			NBTTag ntype = NBTTag.getByNBTType(nbt.getType(key));
 			switch (ntype) {
 			case BYTE:
