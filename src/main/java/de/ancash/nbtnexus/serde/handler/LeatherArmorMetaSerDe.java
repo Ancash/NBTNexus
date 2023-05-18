@@ -1,6 +1,6 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.LEATHER_ARMOR_TAG;
+import static de.ancash.nbtnexus.MetaTag.*;
 
 import java.util.Map;
 
@@ -8,14 +8,26 @@ import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-import de.ancash.nbtnexus.serde.IItemDeserializer;
-import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.NBTTag;
+import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
+import de.ancash.nbtnexus.serde.SerDeStructure;
 
-public class LeatherArmorMetaSerDe implements IItemSerializer, IItemDeserializer {
+public class LeatherArmorMetaSerDe implements IItemSerDe {
 
 	public static final LeatherArmorMetaSerDe INSTANCE = new LeatherArmorMetaSerDe();
+	private static final SerDeStructure structure = new SerDeStructure();
+
+	static {
+		structure.put(RED_TAG, NBTTag.INT);
+		structure.put(GREEN_TAG, NBTTag.INT);
+		structure.put(BLUE_TAG, NBTTag.INT);
+	}
+
+	public SerDeStructure getStructure() {
+		return structure.clone();
+	}
 
 	LeatherArmorMetaSerDe() {
 	}

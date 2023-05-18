@@ -1,11 +1,6 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.GAME_PROFILE_ID_TAG;
-import static de.ancash.nbtnexus.MetaTag.GAME_PROFILE_NAME_TAG;
-import static de.ancash.nbtnexus.MetaTag.GAME_PROFILE_PROPERTIES_TAG;
-import static de.ancash.nbtnexus.MetaTag.GAME_PROFILE_TAG;
-import static de.ancash.nbtnexus.MetaTag.SKULL_NOTE_BLOCK_SOUND_TAG;
-import static de.ancash.nbtnexus.MetaTag.SKULL_TAG;
+import static de.ancash.nbtnexus.MetaTag.*;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -26,16 +21,26 @@ import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
 import de.ancash.minecraft.nbt.utils.MinecraftVersion;
 import de.ancash.nbtnexus.NBTNexus;
 import de.ancash.nbtnexus.NBTTag;
-import de.ancash.nbtnexus.serde.IItemDeserializer;
-import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
+import de.ancash.nbtnexus.serde.SerDeStructure;
 
 @SuppressWarnings("nls")
-public class SkullMetaMetaSerDe implements IItemSerializer, IItemDeserializer {
+public class SkullMetaMetaSerDe implements IItemSerDe {
 
 	public static final SkullMetaMetaSerDe INSTANCE = new SkullMetaMetaSerDe();
 	private static Field gameProfileField;
+	private static final SerDeStructure structure = new SerDeStructure();
+
+	static {
+		structure.put(SKULL_NOTE_BLOCK_SOUND_TAG, NBTTag.STRING);
+		structure.put(GAME_PROFILE_TAG, NBTTag.COMPOUND);
+	}
+
+	public SerDeStructure getStructure() {
+		return structure.clone();
+	}
 
 	private static final Set<String> bl = Collections
 			.unmodifiableSet(new HashSet<>(Arrays.asList("SkullOwner" + NBTNexus.SPLITTER + NBTTag.COMPOUND)));

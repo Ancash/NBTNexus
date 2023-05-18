@@ -1,25 +1,6 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.ALTERNATE_COLOR_CODE;
-import static de.ancash.nbtnexus.MetaTag.ATTRIBUTES_TAG;
-import static de.ancash.nbtnexus.MetaTag.ATTRIBUTE_AMOUNT_TAG;
-import static de.ancash.nbtnexus.MetaTag.ATTRIBUTE_NAME_TAG;
-import static de.ancash.nbtnexus.MetaTag.ATTRIBUTE_OPERATION_TAG;
-import static de.ancash.nbtnexus.MetaTag.ATTRIBUTE_SLOT_TAG;
-import static de.ancash.nbtnexus.MetaTag.ATTRIBUTE_TYPE_TAG;
-import static de.ancash.nbtnexus.MetaTag.ATTRIBUTE_UUID_TAG;
-import static de.ancash.nbtnexus.MetaTag.CUSTOM_MODEL_DATA;
-import static de.ancash.nbtnexus.MetaTag.DAMAGE_TAG;
-import static de.ancash.nbtnexus.MetaTag.DISPLAYNAME_TAG;
-import static de.ancash.nbtnexus.MetaTag.DISPLAY_TAG;
-import static de.ancash.nbtnexus.MetaTag.ENCHANTMENTS_TAG;
-import static de.ancash.nbtnexus.MetaTag.ENCHANTMENT_LEVEL_TAG;
-import static de.ancash.nbtnexus.MetaTag.ENCHANTMENT_TYPE_TAG;
-import static de.ancash.nbtnexus.MetaTag.ITEM_FLAGS_TAG;
-import static de.ancash.nbtnexus.MetaTag.LOCALIZED_NAME_TAG;
-import static de.ancash.nbtnexus.MetaTag.LORE_TAG;
-import static de.ancash.nbtnexus.MetaTag.REPAIR_COST_TAG;
-import static de.ancash.nbtnexus.MetaTag.UNSPECIFIC_META_TAG;
+import static de.ancash.nbtnexus.MetaTag.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,20 +18,34 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.Repairable;
 
 import de.ancash.minecraft.cryptomorin.xseries.XEnchantment;
-import de.ancash.nbtnexus.serde.IItemDeserializer;
-import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.NBTTag;
+import de.ancash.nbtnexus.serde.IItemSerDe;
+import de.ancash.nbtnexus.serde.SerDeStructure;
 import net.md_5.bungee.api.ChatColor;
 
-public class SimpleMetaSerDe implements IItemSerializer, IItemDeserializer {
+public class UnspecificMetaSerDe implements IItemSerDe {
 
-	public static final SimpleMetaSerDe INSTANCE = new SimpleMetaSerDe();
+	public static final UnspecificMetaSerDe INSTANCE = new UnspecificMetaSerDe();
+	private static final SerDeStructure structure = new SerDeStructure();
 
-	SimpleMetaSerDe() {
+	static {
+		structure.put(DISPLAYNAME_TAG, NBTTag.STRING);
+		structure.put(LORE_TAG, NBTTag.LIST);
+		structure.put(LOCALIZED_NAME_TAG, NBTTag.STRING);
+		structure.put(CUSTOM_MODEL_DATA, NBTTag.INT);
+		structure.put(ENCHANTMENTS_TAG, NBTTag.LIST);
+		structure.put(ATTRIBUTES_TAG, NBTTag.LIST);
+	}
+
+	public SerDeStructure getStructure() {
+		return (SerDeStructure) structure.clone();
+	}
+
+	UnspecificMetaSerDe() {
+
 	}
 
 	public String translateChatColor(String textToTranslate) {
@@ -65,39 +60,23 @@ public class SimpleMetaSerDe implements IItemSerializer, IItemDeserializer {
 	public Map<String, Object> serialize(ItemStack item) {
 		ItemMeta meta = item.getItemMeta();
 		Map<String, Object> map = new HashMap<>();
-		Map<String, Object> serMeta = new HashMap<>();
 		if (meta.hasLore()) {
-			serMeta.put(LORE_TAG, meta.getLore().stream().map(this::translateChatColor).collect(Collectors.toList()));
+			map.put(LORE_TAG, meta.getLore().stream().map(this::translateChatColor).collect(Collectors.toList()));
 			meta.setLore(null);
 		}
 		if (meta.hasDisplayName()) {
-			serMeta.put(DISPLAYNAME_TAG, translateChatColor(meta.getDisplayName()));
+			map.put(DISPLAYNAME_TAG, translateChatColor(meta.getDisplayName()));
 			meta.setDisplayName(null);
 		}
 		if (meta.hasLocalizedName()) {
-			serMeta.put(LOCALIZED_NAME_TAG, translateChatColor(meta.getLocalizedName()));
+			map.put(LOCALIZED_NAME_TAG, translateChatColor(meta.getLocalizedName()));
 			meta.setLocalizedName(null);
 		}
 		if (meta.hasCustomModelData()) {
-			serMeta.put(CUSTOM_MODEL_DATA, meta.getCustomModelData());
+			map.put(CUSTOM_MODEL_DATA, meta.getCustomModelData());
 			meta.setCustomModelData(null);
 		}
 
-		if (meta instanceof Damageable) {
-			Damageable damageable = (Damageable) meta;
-			if (damageable.hasDamage())
-				serMeta.put(DAMAGE_TAG, damageable.getDamage());
-			damageable.setDamage(0);
-		}
-
-		if (meta instanceof Repairable) {
-			Repairable repairable = (Repairable) meta;
-			if (repairable.hasRepairCost())
-				serMeta.put(REPAIR_COST_TAG, repairable.getRepairCost());
-			repairable.setRepairCost(0);
-		}
-		if (!serMeta.isEmpty())
-			map.put(DISPLAY_TAG, serMeta);
 		item.setItemMeta(meta);
 		if (!item.getEnchantments().isEmpty()) {
 			map.put(ENCHANTMENTS_TAG, serializeEnchantments(item));
@@ -161,20 +140,17 @@ public class SimpleMetaSerDe implements IItemSerializer, IItemDeserializer {
 		}
 
 		ItemMeta meta = item.getItemMeta();
-		if (map.containsKey(DISPLAY_TAG)) {
-			Map<String, Object> serMeta = (Map<String, Object>) map.get(DISPLAY_TAG);
-			if (serMeta.containsKey(LORE_TAG))
-				meta.setLore(((List<String>) serMeta.get(LORE_TAG)).stream()
-						.map(s -> ChatColor.translateAlternateColorCodes(ALTERNATE_COLOR_CODE, s))
-						.collect(Collectors.toList()));
-			if (serMeta.containsKey(DISPLAYNAME_TAG))
-				meta.setDisplayName(ChatColor.translateAlternateColorCodes(ALTERNATE_COLOR_CODE,
-						(String) serMeta.get(DISPLAYNAME_TAG)));
-			if (serMeta.containsKey(LOCALIZED_NAME_TAG))
-				meta.setLocalizedName(ChatColor.translateAlternateColorCodes(ALTERNATE_COLOR_CODE,
-						(String) serMeta.get(LOCALIZED_NAME_TAG)));
-			meta.setCustomModelData((Integer) serMeta.get(CUSTOM_MODEL_DATA));
-		}
+		if (map.containsKey(LORE_TAG))
+			meta.setLore(((List<String>) map.get(LORE_TAG)).stream()
+					.map(s -> ChatColor.translateAlternateColorCodes(ALTERNATE_COLOR_CODE, s))
+					.collect(Collectors.toList()));
+		if (map.containsKey(DISPLAYNAME_TAG))
+			meta.setDisplayName(
+					ChatColor.translateAlternateColorCodes(ALTERNATE_COLOR_CODE, (String) map.get(DISPLAYNAME_TAG)));
+		if (map.containsKey(LOCALIZED_NAME_TAG))
+			meta.setLocalizedName(
+					ChatColor.translateAlternateColorCodes(ALTERNATE_COLOR_CODE, (String) map.get(LOCALIZED_NAME_TAG)));
+		meta.setCustomModelData((Integer) map.get(CUSTOM_MODEL_DATA));
 
 		if (map.containsKey(ITEM_FLAGS_TAG))
 			((List<String>) map.get(ITEM_FLAGS_TAG)).stream().map(ItemFlag::valueOf).forEach(meta::addItemFlags);

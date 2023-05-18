@@ -3,8 +3,8 @@ package de.ancash.nbtnexus.editor.validator;
 import java.util.Optional;
 
 import de.ancash.minecraft.inventory.editor.yml.AbstractInputValidator;
-import de.ancash.minecraft.inventory.editor.yml.LongEditor;
-import de.ancash.minecraft.inventory.editor.yml.ValueEditor;
+import de.ancash.minecraft.inventory.editor.yml.gui.LongEditor;
+import de.ancash.minecraft.inventory.editor.yml.gui.ValueEditor;
 import de.ancash.nbtnexus.MetaTag;
 
 public class AmountValidator extends AbstractInputValidator<Long> {

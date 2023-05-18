@@ -1,9 +1,6 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.BOOK_AUTHOR_TAG;
-import static de.ancash.nbtnexus.MetaTag.BOOK_PAGES_TAG;
-import static de.ancash.nbtnexus.MetaTag.BOOK_TAG;
-import static de.ancash.nbtnexus.MetaTag.BOOK_TITLE_TAG;
+import static de.ancash.nbtnexus.MetaTag.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,12 +10,24 @@ import java.util.Map;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
-import de.ancash.nbtnexus.serde.IItemDeserializer;
-import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.NBTTag;
+import de.ancash.nbtnexus.serde.IItemSerDe;
+import de.ancash.nbtnexus.serde.SerDeStructure;
 
-public class BookMetaSerDe implements IItemSerializer, IItemDeserializer {
+public class BookMetaSerDe implements IItemSerDe {
 
 	public static final BookMetaSerDe INSTANCE = new BookMetaSerDe();
+	private static final SerDeStructure structure = new SerDeStructure();
+
+	static {
+		structure.put(BOOK_AUTHOR_TAG, NBTTag.STRING);
+		structure.put(BOOK_PAGES_TAG, NBTTag.LIST);
+		structure.put(BOOK_TITLE_TAG, NBTTag.STRING);
+	}
+
+	public SerDeStructure getStructure() {
+		return (SerDeStructure) structure.clone();
+	}
 
 	BookMetaSerDe() {
 	}

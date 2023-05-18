@@ -1,9 +1,6 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.TROPICAL_FISH_BUCKET_BODY_COLOR_TAG;
-import static de.ancash.nbtnexus.MetaTag.TROPICAL_FISH_BUCKET_PATTERN_COLOR_TAG;
-import static de.ancash.nbtnexus.MetaTag.TROPICAL_FISH_BUCKET_PATTERN_TAG;
-import static de.ancash.nbtnexus.MetaTag.TROPICAL_FISH_BUCKET_TAG;
+import static de.ancash.nbtnexus.MetaTag.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,12 +11,24 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.TropicalFishBucketMeta;
 
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
-import de.ancash.nbtnexus.serde.IItemDeserializer;
-import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.NBTTag;
+import de.ancash.nbtnexus.serde.IItemSerDe;
+import de.ancash.nbtnexus.serde.SerDeStructure;
 
-public class TropicalFishBucketMetaSerDe implements IItemSerializer, IItemDeserializer {
+public class TropicalFishBucketMetaSerDe implements IItemSerDe {
 
 	public static final TropicalFishBucketMetaSerDe INSTANCE = new TropicalFishBucketMetaSerDe();
+	private static final SerDeStructure structure = new SerDeStructure();
+
+	static {
+		structure.put(TROPICAL_FISH_BUCKET_BODY_COLOR_TAG, NBTTag.STRING);
+		structure.put(TROPICAL_FISH_BUCKET_PATTERN_COLOR_TAG, NBTTag.STRING);
+		structure.put(TROPICAL_FISH_BUCKET_PATTERN_TAG, NBTTag.STRING);
+	}
+
+	public SerDeStructure getStructure() {
+		return structure.clone();
+	}
 
 	TropicalFishBucketMetaSerDe() {
 	}

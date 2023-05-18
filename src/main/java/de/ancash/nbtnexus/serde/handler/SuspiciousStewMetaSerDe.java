@@ -1,7 +1,6 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.SUSPICIOUS_STEW_EFFECTS_TAG;
-import static de.ancash.nbtnexus.MetaTag.SUSPICIOUS_STEW_TAG;
+import static de.ancash.nbtnexus.MetaTag.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,14 +17,23 @@ import org.bukkit.inventory.meta.SuspiciousStewMeta;
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
 import de.ancash.nbtnexus.NBTNexus;
 import de.ancash.nbtnexus.NBTTag;
-import de.ancash.nbtnexus.serde.IItemDeserializer;
-import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
+import de.ancash.nbtnexus.serde.SerDeStructure;
 
-public class SuspiciousStewMetaSerDe implements IItemSerializer, IItemDeserializer {
+public class SuspiciousStewMetaSerDe implements IItemSerDe {
 
 	public static final SuspiciousStewMetaSerDe INSTANCE = new SuspiciousStewMetaSerDe();
+	private static final SerDeStructure structure = new SerDeStructure();
+
+	static {
+		structure.put(SUSPICIOUS_STEW_EFFECTS_TAG, NBTTag.LIST);
+	}
+
+	public SerDeStructure getStructure() {
+		return structure.clone();
+	}
 
 	@SuppressWarnings("nls")
 	private static final Set<String> bl = Collections.unmodifiableSet(new HashSet<>(

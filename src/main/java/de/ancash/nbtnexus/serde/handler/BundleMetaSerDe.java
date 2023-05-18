@@ -1,7 +1,6 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.BUNDLE_ITEMS_TAG;
-import static de.ancash.nbtnexus.MetaTag.BUNDLE_TAG;
+import static de.ancash.nbtnexus.MetaTag.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,14 +11,24 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BundleMeta;
 
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
-import de.ancash.nbtnexus.serde.IItemDeserializer;
-import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.NBTTag;
+import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
+import de.ancash.nbtnexus.serde.SerDeStructure;
 
-public class BundleMetaSerDe implements IItemSerializer, IItemDeserializer {
+public class BundleMetaSerDe implements IItemSerDe {
 
 	public static final BundleMetaSerDe INSTANCE = new BundleMetaSerDe();
+	private static final SerDeStructure structure = new SerDeStructure();
+
+	static {
+		structure.put(BUNDLE_ITEMS_TAG, NBTTag.LIST);
+	}
+
+	public SerDeStructure getStructure() {
+		return (SerDeStructure) structure.clone();
+	}
 
 	BundleMetaSerDe() {
 	}

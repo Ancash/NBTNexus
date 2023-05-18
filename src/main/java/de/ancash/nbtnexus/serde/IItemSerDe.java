@@ -5,11 +5,13 @@ import java.util.Set;
 
 import org.bukkit.inventory.ItemStack;
 
-public interface IItemSerializer {
+public interface IItemSerDe {
 
 	public Map<String, Object> serialize(ItemStack item);
 
 	public boolean isValid(ItemStack item);
+
+	public SerDeStructure getStructure();
 
 	public String getKey();
 
@@ -26,6 +28,16 @@ public interface IItemSerializer {
 	}
 
 	public default Map<String, String> getKeysToRelocate() {
+		return null;
+	}
+
+	public void deserialize(ItemStack item, Map<String, Object> map);
+
+	public default boolean hasKeysToReverseRelocate() {
+		return getKeysToReverseRelocate() != null && !getKeysToReverseRelocate().isEmpty();
+	}
+
+	public default Map<String, String> getKeysToReverseRelocate() {
 		return null;
 	}
 }

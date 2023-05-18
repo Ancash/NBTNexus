@@ -4,8 +4,8 @@ import java.util.Optional;
 
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
 import de.ancash.minecraft.inventory.editor.yml.AbstractInputValidator;
-import de.ancash.minecraft.inventory.editor.yml.StringEditor;
-import de.ancash.minecraft.inventory.editor.yml.ValueEditor;
+import de.ancash.minecraft.inventory.editor.yml.gui.StringEditor;
+import de.ancash.minecraft.inventory.editor.yml.gui.ValueEditor;
 import de.ancash.nbtnexus.MetaTag;
 
 public class MaterialValidator extends AbstractInputValidator<String> {

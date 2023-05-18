@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.ancash.libs.org.simpleyaml.configuration.ConfigurationSection;
-import de.ancash.minecraft.inventory.editor.yml.ConfigurationSectionEditor;
-import de.ancash.minecraft.inventory.editor.yml.ValueEditor;
+import de.ancash.minecraft.inventory.editor.yml.gui.ConfigurationSectionEditor;
+import de.ancash.minecraft.inventory.editor.yml.gui.ValueEditor;
 import de.ancash.nbtnexus.MetaTag;
 import de.ancash.nbtnexus.serde.handler.AxolotlBucketMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BannerMetaSerDe;
@@ -21,11 +21,11 @@ import de.ancash.nbtnexus.serde.handler.LeatherArmorMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.MapMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.MusicInstrumentMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.PotionMetaSerDe;
-import de.ancash.nbtnexus.serde.handler.SimpleMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SkullMetaMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SpawnEggMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SuspiciousStewMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.TropicalFishBucketMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.UnspecificMetaSerDe;
 
 @SuppressWarnings("deprecation")
 public class ValidatorUtil {
@@ -37,7 +37,7 @@ public class ValidatorUtil {
 					FireworkEffectMetaSerDe.INSTANCE.getKey(), FireworkMetaSerDe.INSTANCE.getKey(),
 					KnowledgeBookMetaSerDe.INSTANCE.getKey(), LeatherArmorMetaSerDe.INSTANCE.getKey(),
 					MapMetaSerDe.INSTANCE.getKey(), MusicInstrumentMetaSerDe.INSTANCE.getKey(),
-					PotionMetaSerDe.INSTANCE.getKey(), SimpleMetaSerDe.INSTANCE.getKey(),
+					PotionMetaSerDe.INSTANCE.getKey(), UnspecificMetaSerDe.INSTANCE.getKey(),
 					SkullMetaMetaSerDe.INSTANCE.getKey(), SpawnEggMetaSerDe.INSTANCE.getKey(),
 					SuspiciousStewMetaSerDe.INSTANCE.getKey(), TropicalFishBucketMetaSerDe.INSTANCE.getKey())));
 

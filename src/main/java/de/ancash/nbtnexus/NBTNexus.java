@@ -1,5 +1,7 @@
 package de.ancash.nbtnexus;
 
+import static de.ancash.nbtnexus.MetaTag.*;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.UUID;
@@ -24,10 +26,32 @@ import de.ancash.minecraft.nbt.NBTItem;
 import de.ancash.minecraft.nbt.NBTList;
 import de.ancash.nbtnexus.command.EditCommand;
 import de.ancash.nbtnexus.command.NBTNexusCommand;
+import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
+import de.ancash.nbtnexus.serde.SerDeStructure;
 import de.ancash.nbtnexus.serde.SerializedItem;
+import de.ancash.nbtnexus.serde.handler.AxolotlBucketMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.BannerMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.BookMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.BundleMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.CompassMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.DamageableMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.FireworkEffectMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.FireworkMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.KnowledgeBookMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.LeatherArmorMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.MapMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.MusicInstrumentMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.PotionMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.RepairableMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.SkullMetaMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.SpawnEggMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.SuspiciousStewMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.TropicalFishBucketMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.UnspecificMetaSerDe;
 
+@SuppressWarnings("deprecation")
 public class NBTNexus extends JavaPlugin {
 
 	@SuppressWarnings("nls")
@@ -38,10 +62,43 @@ public class NBTNexus extends JavaPlugin {
 //	private ProtocolManager protocolManager;
 	private static NBTNexus singleton;
 	private NBTNexusCommand cmd;
+	private final SerDeStructure structure = new SerDeStructure();
+
+	public SerDeStructure getStructure() {
+		return structure.clone();
+	}
+
+	public void registerSerDeStructure(IItemSerDe iisd) {
+		if (iisd.getStructure() == null)
+			return;
+		structure.put(iisd.getKey(), iisd.getStructure());
+	}
 
 	@Override
 	public void onEnable() {
 		singleton = this;
+		structure.put(AMOUNT_TAG, NBTTag.BYTE);
+		structure.put(XMATERIAL_TAG, NBTTag.STRING);
+		registerSerDeStructure(AxolotlBucketMetaSerDe.INSTANCE);
+		registerSerDeStructure(BannerMetaSerDe.INSTANCE);
+		registerSerDeStructure(BookMetaSerDe.INSTANCE);
+		registerSerDeStructure(BundleMetaSerDe.INSTANCE);
+		registerSerDeStructure(CompassMetaSerDe.INSTANCE);
+		registerSerDeStructure(DamageableMetaSerDe.INSTANCE);
+		registerSerDeStructure(FireworkEffectMetaSerDe.INSTANCE);
+		registerSerDeStructure(FireworkMetaSerDe.INSTANCE);
+		registerSerDeStructure(KnowledgeBookMetaSerDe.INSTANCE);
+		registerSerDeStructure(LeatherArmorMetaSerDe.INSTANCE);
+		registerSerDeStructure(MapMetaSerDe.INSTANCE);
+		registerSerDeStructure(MusicInstrumentMetaSerDe.INSTANCE);
+		registerSerDeStructure(PotionMetaSerDe.INSTANCE);
+		registerSerDeStructure(RepairableMetaSerDe.INSTANCE);
+		registerSerDeStructure(SkullMetaMetaSerDe.INSTANCE);
+		registerSerDeStructure(SpawnEggMetaSerDe.INSTANCE);
+		registerSerDeStructure(SuspiciousStewMetaSerDe.INSTANCE);
+		registerSerDeStructure(TropicalFishBucketMetaSerDe.INSTANCE);
+		registerSerDeStructure(UnspecificMetaSerDe.INSTANCE);
+		System.out.println(structure.getKeys(true));
 		cmd = new NBTNexusCommand(this);
 		cmd.addSubCommand(new EditCommand(this));
 		getCommand("nbtn").setExecutor(cmd);

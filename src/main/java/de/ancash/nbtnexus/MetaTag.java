@@ -3,7 +3,7 @@ package de.ancash.nbtnexus;
 @SuppressWarnings("nls")
 public class MetaTag {
 
-	public static final char ALTERNATE_COLOR_CODE = '§';
+	public static final char ALTERNATE_COLOR_CODE = '&';
 
 	public static final String NBT_NEXUS_ITEM_PROPERTIES_TAG = "NBTNexusItem";
 	public static final String NBT_NEXUS_ITEM_TYPE_TAG = "type";
@@ -18,14 +18,17 @@ public class MetaTag {
 	public static final String ENCHANTMENT_LEVEL_TAG = "Lvl";
 	public static final String ENCHANTMENT_TYPE_TAG = "Ench";
 
-	public static final String DISPLAY_TAG = "Display";
 	public static final String LORE_TAG = "Lore";
 	public static final String DISPLAYNAME_TAG = "DisplayName";
 	public static final String LOCALIZED_NAME_TAG = "LocalizedName";
 	public static final String CUSTOM_MODEL_DATA = "CustomModelData";
-	public static final String DAMAGE_TAG = "Damage";
-	public static final String REPAIR_COST_TAG = "RepairCost";
 	public static final String ITEM_FLAGS_TAG = "ItemFlags";
+
+	public static final String REPAIRABLE_TAG = "Repairable";
+	public static final String REPAIRABLE_REPAIR_COST_TAG = "RepairCost";
+
+	public static final String DAMAGEABLE_TAG = "Damageable";
+	public static final String DAMAGEABLE_DAMAGE_TAG = "Damage";
 
 	public static final String BOOK_PAGES_TAG = "Pages";
 	public static final String BOOK_AUTHOR_TAG = "Author";

@@ -1,10 +1,7 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.AXOLOTL_BUCKET_AGE_TAG;
-import static de.ancash.nbtnexus.MetaTag.AXOLOTL_BUCKET_HEALTH_TAG;
-import static de.ancash.nbtnexus.MetaTag.AXOLOTL_BUCKET_TAG;
-import static de.ancash.nbtnexus.MetaTag.AXOLOTL_BUCKET_VARIANT_TAG;
-import static de.ancash.nbtnexus.NBTNexus.SPLITTER;
+import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.NBTNexus.*;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,12 +15,21 @@ import org.bukkit.inventory.meta.AxolotlBucketMeta;
 
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
 import de.ancash.nbtnexus.NBTTag;
-import de.ancash.nbtnexus.serde.IItemDeserializer;
-import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.serde.IItemSerDe;
+import de.ancash.nbtnexus.serde.SerDeStructure;
 
-public class AxolotlBucketMetaSerDe implements IItemSerializer, IItemDeserializer {
+public class AxolotlBucketMetaSerDe implements IItemSerDe {
 
 	public static final AxolotlBucketMetaSerDe INSTANCE = new AxolotlBucketMetaSerDe();
+	private static final SerDeStructure structure = new SerDeStructure();
+
+	static {
+		structure.put(AXOLOTL_BUCKET_VARIANT_TAG, NBTTag.STRING);
+	}
+
+	public SerDeStructure getStructure() {
+		return (SerDeStructure) structure.clone();
+	}
 
 	private final Set<String> bl = new HashSet<>();
 	private final Map<String, String> relocate = new HashMap<>();

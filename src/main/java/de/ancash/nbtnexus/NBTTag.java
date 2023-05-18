@@ -9,22 +9,39 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import de.ancash.minecraft.inventory.editor.yml.handler.BooleanHandler;
+import de.ancash.minecraft.inventory.editor.yml.handler.ByteHandler;
+import de.ancash.minecraft.inventory.editor.yml.handler.ConfigurationSectionHandler;
+import de.ancash.minecraft.inventory.editor.yml.handler.DoubleHandler;
+import de.ancash.minecraft.inventory.editor.yml.handler.FloatHandler;
+import de.ancash.minecraft.inventory.editor.yml.handler.IValueHandler;
+import de.ancash.minecraft.inventory.editor.yml.handler.IntegerHandler;
+import de.ancash.minecraft.inventory.editor.yml.handler.ListHandler;
+import de.ancash.minecraft.inventory.editor.yml.handler.LongHandler;
+import de.ancash.minecraft.inventory.editor.yml.handler.ShortHandler;
+import de.ancash.minecraft.inventory.editor.yml.handler.StringHandler;
 import de.ancash.minecraft.nbt.NBTType;
 
 public enum NBTTag {
 
-	BYTE(NBTType.NBTTagByte, Byte.class),
-	COMPOUND(NBTType.NBTTagCompound, Map.class, HashMap.class, LinkedHashMap.class),
-	DOUBLE(NBTType.NBTTagDouble, Double.class), FLOAT(NBTType.NBTTagFloat, Float.class),
-	INT(NBTType.NBTTagInt, Integer.class), STRING(NBTType.NBTTagString, String.class),
-	SHORT(NBTType.NBTTagShort, Short.class), LONG(NBTType.NBTTagLong, Long.class),
-	BYTE_ARRAY(NBTType.NBTTagByteArray, Byte[].class, byte[].class),
-	INT_ARRAY(NBTType.NBTTagIntArray, Integer[].class, int[].class),
-	LIST(NBTType.NBTTagList, List.class, ArrayList.class, LinkedList.class), ITEM_STACK(null), ITEM_STACK_ARRAY(null),
-	ITEM_STACK_LIST(null), UUID(null), BOOLEAN(null, Boolean.class), END(NBTType.NBTTagEnd), OBJECT(null);
+	BYTE(ByteHandler.INSTANCE, NBTType.NBTTagByte, Byte.class),
+	COMPOUND(ConfigurationSectionHandler.INSTANCE, NBTType.NBTTagCompound, Map.class, HashMap.class,
+			LinkedHashMap.class),
+	DOUBLE(DoubleHandler.INSTANCE, NBTType.NBTTagDouble, Double.class),
+	FLOAT(FloatHandler.INSTANCE, NBTType.NBTTagFloat, Float.class),
+	INT(IntegerHandler.INSTANCE, NBTType.NBTTagInt, Integer.class),
+	STRING(StringHandler.INSTANCE, NBTType.NBTTagString, String.class),
+	SHORT(ShortHandler.INSTANCE, NBTType.NBTTagShort, Short.class),
+	LONG(LongHandler.INSTANCE, NBTType.NBTTagLong, Long.class),
+	BYTE_ARRAY(null, NBTType.NBTTagByteArray, Byte[].class, byte[].class),
+	INT_ARRAY(null, NBTType.NBTTagIntArray, Integer[].class, int[].class),
+	LIST(ListHandler.INSTANCE, NBTType.NBTTagList, List.class, ArrayList.class, LinkedList.class),
+	ITEM_STACK(null, null), ITEM_STACK_ARRAY(null, null), ITEM_STACK_LIST(null, null), UUID(null, null),
+	BOOLEAN(BooleanHandler.INSTANCE, null, Boolean.class), END(null, NBTType.NBTTagEnd), OBJECT(null, null);
 
 	private static final Map<NBTType, NBTTag> byType = new HashMap<>();
 	private static final Map<Class<?>, NBTTag> byClazz = new HashMap<>();
+	private static final Map<IValueHandler<?>, NBTTag> byHandler = new HashMap<>();
 
 	static {
 		for (NBTTag val : values()) {
@@ -32,6 +49,8 @@ public enum NBTTag {
 				byType.put(val.type, val);
 			if (val.clazz != null && !val.clazz.isEmpty())
 				val.clazz.forEach(c -> byClazz.put(c, val));
+			if (val.handler != null)
+				byHandler.put(val.handler, val);
 		}
 	}
 
@@ -43,23 +62,29 @@ public enum NBTTag {
 		return byClazz.get(c);
 	}
 
-	private final de.ancash.minecraft.nbt.NBTType type;
-	private final List<Class<?>> clazz;
+	public static NBTTag getByHandler(IValueHandler<?> handler) {
+		return byHandler.get(handler);
+	}
 
-	private NBTTag(de.ancash.minecraft.nbt.NBTType type, Class<?>... clazz) {
+	private final NBTType type;
+	private final List<Class<?>> clazz;
+	private final IValueHandler<?> handler;
+
+	private NBTTag(IValueHandler<?> handler, NBTType type, Class<?>... clazz) {
 		this.type = type;
+		this.handler = handler;
 		this.clazz = Collections.unmodifiableList(Arrays.asList(clazz));
+	}
+
+	public IValueHandler<?> getHandler() {
+		return handler;
 	}
 
 	public List<Class<?>> getClazz() {
 		return clazz;
 	}
 
-	public de.ancash.minecraft.nbt.NBTType getType() {
+	public NBTType getType() {
 		return type;
-	}
-
-	public enum Special {
-
 	}
 }

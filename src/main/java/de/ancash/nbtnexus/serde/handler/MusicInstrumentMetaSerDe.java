@@ -1,7 +1,6 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.MUSIC_INSTRUMENT_TAG;
-import static de.ancash.nbtnexus.MetaTag.MUSIC_INSTRUMENT_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,14 +10,24 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MusicInstrumentMeta;
 
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
-import de.ancash.nbtnexus.serde.IItemDeserializer;
-import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.NBTTag;
+import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
+import de.ancash.nbtnexus.serde.SerDeStructure;
 
-public class MusicInstrumentMetaSerDe implements IItemSerializer, IItemDeserializer {
+public class MusicInstrumentMetaSerDe implements IItemSerDe {
 
 	public static final MusicInstrumentMetaSerDe INSTANCE = new MusicInstrumentMetaSerDe();
+	private static final SerDeStructure structure = new SerDeStructure();
+
+	static {
+		structure.put(MUSIC_INSTRUMENT_TYPE_TAG, NBTTag.STRING);
+	}
+
+	public SerDeStructure getStructure() {
+		return structure.clone();
+	}
 
 	MusicInstrumentMetaSerDe() {
 	}

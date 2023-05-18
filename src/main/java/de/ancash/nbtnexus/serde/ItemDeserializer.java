@@ -1,34 +1,7 @@
 package de.ancash.nbtnexus.serde;
 
-import static de.ancash.nbtnexus.MetaTag.AMOUNT_TAG;
-import static de.ancash.nbtnexus.MetaTag.BLUE_TAG;
-import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_COLORS_TAG;
-import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_FADE_COLORS_TAG;
-import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_FLICKER_TAG;
-import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_TRAIL_TAG;
-import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_TYPE_TAG;
-import static de.ancash.nbtnexus.MetaTag.GREEN_TAG;
-import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_CENTER_X_TAG;
-import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_CENTER_Z_TAG;
-import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_LOCKED_TAG;
-import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_SCALE_TAG;
-import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_TRACKING_POSITION_TAG;
-import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_UNLIMITED_TRACKING_TAG;
-import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_WORLD_TAG;
-import static de.ancash.nbtnexus.MetaTag.NBT_NEXUS_ITEM_PROPERTIES_TAG;
-import static de.ancash.nbtnexus.MetaTag.NBT_NEXUS_ITEM_TYPE_TAG;
-import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_AMBIENT_TAG;
-import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_AMPLIFIER_TAG;
-import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_DURATION_TAG;
-import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_SHOW_ICON_TAG;
-import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_SHOW_PARTICLES_TAG;
-import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_TYPE_TAG;
-import static de.ancash.nbtnexus.MetaTag.PROPERTY_NAME_TAG;
-import static de.ancash.nbtnexus.MetaTag.PROPERTY_SIGNATURE_TAG;
-import static de.ancash.nbtnexus.MetaTag.PROPERTY_VALUE_TAG;
-import static de.ancash.nbtnexus.MetaTag.RED_TAG;
-import static de.ancash.nbtnexus.MetaTag.XMATERIAL_TAG;
-import static de.ancash.nbtnexus.NBTNexus.SPLITTER_REGEX;
+import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.NBTNexus.*;
 
 import java.io.StringReader;
 import java.util.Arrays;
@@ -67,7 +40,6 @@ import org.bukkit.potion.PotionEffectType;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 
-import de.ancash.ILibrary;
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
 import de.ancash.minecraft.nbt.NBTCompound;
 import de.ancash.minecraft.nbt.NBTCompoundList;
@@ -82,6 +54,7 @@ import de.ancash.nbtnexus.serde.handler.BannerMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BookMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BundleMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.CompassMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.DamageableMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.FireworkEffectMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.FireworkMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.KnowledgeBookMetaSerDe;
@@ -89,18 +62,19 @@ import de.ancash.nbtnexus.serde.handler.LeatherArmorMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.MapMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.MusicInstrumentMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.PotionMetaSerDe;
-import de.ancash.nbtnexus.serde.handler.SimpleMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.RepairableMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SkullMetaMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SpawnEggMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SuspiciousStewMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.TropicalFishBucketMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.UnspecificMetaSerDe;
 
 @SuppressWarnings("deprecation")
 public class ItemDeserializer {
 
 	public static final ItemDeserializer INSTANCE = new ItemDeserializer();
 
-	private final Set<IItemDeserializer> itemDeserializer = new HashSet<>();
+	private final Set<IItemSerDe> itemDeserializer = new HashSet<>();
 
 	ItemDeserializer() {
 		itemDeserializer.add(AxolotlBucketMetaSerDe.INSTANCE);
@@ -115,14 +89,16 @@ public class ItemDeserializer {
 		itemDeserializer.add(MapMetaSerDe.INSTANCE);
 		itemDeserializer.add(MusicInstrumentMetaSerDe.INSTANCE);
 		itemDeserializer.add(PotionMetaSerDe.INSTANCE);
-		itemDeserializer.add(SimpleMetaSerDe.INSTANCE);
+		itemDeserializer.add(UnspecificMetaSerDe.INSTANCE);
 		itemDeserializer.add(SkullMetaMetaSerDe.INSTANCE);
 		itemDeserializer.add(SpawnEggMetaSerDe.INSTANCE);
 		itemDeserializer.add(SuspiciousStewMetaSerDe.INSTANCE);
 		itemDeserializer.add(TropicalFishBucketMetaSerDe.INSTANCE);
+		itemDeserializer.add(DamageableMetaSerDe.INSTANCE);
+		itemDeserializer.add(RepairableMetaSerDe.INSTANCE);
 	}
 
-	public void registerDeserializer(IItemDeserializer des) {
+	public void registerDeserializer(IItemSerDe des) {
 		itemDeserializer.add(des);
 	}
 
@@ -208,7 +184,7 @@ public class ItemDeserializer {
 		Set<String> remove = new HashSet<>();
 		while (iter.hasNext()) {
 			e = iter.next();
-			for (IItemDeserializer itd : itemDeserializer)
+			for (IItemSerDe itd : itemDeserializer)
 				if (itd.getKey().equals(e.getKey())) {
 //					if (itd.hasKeysToReverseRelocate()) {
 //						 relocate(map, itd.getKeysToReverseRelocate());
@@ -269,13 +245,13 @@ public class ItemDeserializer {
 			deserialize(compound, map, key);
 	}
 
+	@SuppressWarnings("nls")
 	private void deserialize(NBTCompound compound, Map<String, Object> map, String fullKey) {
 		try {
 			deserialize0(compound, map, fullKey);
 		} catch (Exception ex) {
-			ILibrary.getInstance().getLogger()
-					.severe("Could not deserialize key " + fullKey + ", value: " + map.get(fullKey));
-			ex.printStackTrace();
+			throw new IllegalStateException("Could not deserialize key " + fullKey + ", value: " + map.get(fullKey),
+					ex);
 		}
 	}
 
@@ -283,7 +259,6 @@ public class ItemDeserializer {
 	private void deserialize0(NBTCompound compound, Map<String, Object> map, String fullKey) {
 		String[] keys = fullKey.split(SPLITTER_REGEX);
 		String field = keys[0];
-
 		if (keys.length < 2)
 			throw new IllegalArgumentException("invalid key " + fullKey);
 
@@ -444,36 +419,36 @@ public class ItemDeserializer {
 			compound.setBoolean(key, (boolean) value);
 			break;
 		case BYTE:
-			compound.setByte(key, (byte) ((int) value));
+			compound.setByte(key, ((Number) value).byteValue());
 			break;
 		case BYTE_ARRAY:
-			byte[] arr = new byte[((List<Integer>) value).size()];
+			byte[] arr = new byte[((List<Number>) value).size()];
 			for (int i = 0; i < arr.length; i++)
-				arr[i] = (byte) ((int) ((List<Integer>) value).get(i));
+				arr[i] = ((List<Number>) value).get(i).byteValue();
 			compound.setByteArray(key, arr);
 			break;
 		case DOUBLE:
-			compound.setDouble(key, (double) value);
+			compound.setDouble(key, ((Number) value).doubleValue());
 			break;
 		case FLOAT:
-			compound.setFloat(key, (float) ((double) value));
+			compound.setFloat(key, ((Number) value).floatValue());
 			break;
 		case INT:
-			compound.setInteger(key, (int) value);
+			compound.setInteger(key, ((Number) value).intValue());
 			break;
 		case LONG:
-			compound.setLong(key, (long) value);
+			compound.setLong(key, ((Number) value).longValue());
 			break;
 		case SHORT:
-			compound.setShort(key, (short) (int) value);
+			compound.setShort(key, ((Number) value).shortValue());
 			break;
 		case STRING:
 			compound.setString(key, (String) value);
 			break;
 		case INT_ARRAY:
-			int[] intArr = new int[((List<Integer>) value).size()];
+			int[] intArr = new int[((List<Number>) value).size()];
 			for (int i = 0; i < intArr.length; i++)
-				intArr[i] = ((List<Integer>) value).get(i);
+				intArr[i] = ((List<Number>) value).get(i).intValue();
 			compound.setIntArray(key, intArr);
 			break;
 		case COMPOUND:

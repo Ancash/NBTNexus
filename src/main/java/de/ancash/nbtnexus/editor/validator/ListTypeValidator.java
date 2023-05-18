@@ -6,10 +6,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import de.ancash.minecraft.inventory.editor.yml.ListEditor;
-import de.ancash.minecraft.inventory.editor.yml.ValueEditor;
+import de.ancash.minecraft.inventory.editor.yml.IListEditorListener;
+import de.ancash.minecraft.inventory.editor.yml.gui.ListEditor;
+import de.ancash.minecraft.inventory.editor.yml.gui.ValueEditor;
 import de.ancash.minecraft.inventory.editor.yml.handler.IValueHandler;
-import de.ancash.minecraft.inventory.editor.yml.listener.IListEditorListener;
 
 public class ListTypeValidator implements IListEditorListener {
 

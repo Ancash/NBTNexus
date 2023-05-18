@@ -1,6 +1,6 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.SPAWN_EGG_TAG;
+import static de.ancash.nbtnexus.MetaTag.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,10 +8,10 @@ import java.util.Map;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 
-import de.ancash.nbtnexus.serde.IItemDeserializer;
-import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.serde.IItemSerDe;
+import de.ancash.nbtnexus.serde.SerDeStructure;
 
-public class SpawnEggMetaSerDe implements IItemSerializer, IItemDeserializer {
+public class SpawnEggMetaSerDe implements IItemSerDe {
 
 	public static final SpawnEggMetaSerDe INSTANCE = new SpawnEggMetaSerDe();
 
@@ -43,5 +43,10 @@ public class SpawnEggMetaSerDe implements IItemSerializer, IItemDeserializer {
 //		item.setType(XMaterial.matchXMaterial((String) map.get(SPAWN_EGG_TYPE_TAG)).get().parseMaterial());
 //		SpawnEggMeta meta = (SpawnEggMeta) item.getItemMeta();
 //		item.setItemMeta(meta);
+	}
+
+	@Override
+	public SerDeStructure getStructure() {
+		return null;
 	}
 }

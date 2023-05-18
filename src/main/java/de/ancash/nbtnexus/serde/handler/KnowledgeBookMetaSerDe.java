@@ -1,7 +1,6 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.KNOWLEDGE_BOOK_RECIPES_TAG;
-import static de.ancash.nbtnexus.MetaTag.KNOWLEDGE_BOOK_TAG;
+import static de.ancash.nbtnexus.MetaTag.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,14 +11,24 @@ import java.util.stream.Collectors;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.KnowledgeBookMeta;
 
-import de.ancash.nbtnexus.serde.IItemDeserializer;
-import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.NBTTag;
+import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
+import de.ancash.nbtnexus.serde.SerDeStructure;
 
-public class KnowledgeBookMetaSerDe implements IItemSerializer, IItemDeserializer {
+public class KnowledgeBookMetaSerDe implements IItemSerDe {
 
 	public static final KnowledgeBookMetaSerDe INSTANCE = new KnowledgeBookMetaSerDe();
+	private static final SerDeStructure structure = new SerDeStructure();
+
+	static {
+		structure.put(KNOWLEDGE_BOOK_RECIPES_TAG, NBTTag.LIST);
+	}
+
+	public SerDeStructure getStructure() {
+		return structure.clone();
+	}
 
 	KnowledgeBookMetaSerDe() {
 	}

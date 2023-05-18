@@ -1,9 +1,6 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.BANNER_PATTERNS_TAG;
-import static de.ancash.nbtnexus.MetaTag.BANNER_PATTERN_COLOR_TAG;
-import static de.ancash.nbtnexus.MetaTag.BANNER_PATTERN_TYPE_TAG;
-import static de.ancash.nbtnexus.MetaTag.BANNER_TAG;
+import static de.ancash.nbtnexus.MetaTag.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,12 +13,22 @@ import org.bukkit.block.banner.PatternType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 
-import de.ancash.nbtnexus.serde.IItemDeserializer;
-import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.NBTTag;
+import de.ancash.nbtnexus.serde.IItemSerDe;
+import de.ancash.nbtnexus.serde.SerDeStructure;
 
-public class BannerMetaSerDe implements IItemSerializer, IItemDeserializer {
+public class BannerMetaSerDe implements IItemSerDe {
 
 	public static final BannerMetaSerDe INSTANCE = new BannerMetaSerDe();
+	private static final SerDeStructure structure = new SerDeStructure();
+
+	static {
+		structure.put(BANNER_PATTERNS_TAG, NBTTag.LIST);
+	}
+
+	public SerDeStructure getStructure() {
+		return (SerDeStructure) structure.clone();
+	}
 
 	BannerMetaSerDe() {
 	}

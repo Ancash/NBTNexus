@@ -1,10 +1,6 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.MAP_COLOR_TAG;
-import static de.ancash.nbtnexus.MetaTag.MAP_ID_TAG;
-import static de.ancash.nbtnexus.MetaTag.MAP_SCALING_TAG;
-import static de.ancash.nbtnexus.MetaTag.MAP_TAG;
-import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_TAG;
+import static de.ancash.nbtnexus.MetaTag.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,13 +14,13 @@ import org.bukkit.inventory.meta.MapMeta;
 
 import de.ancash.nbtnexus.NBTNexus;
 import de.ancash.nbtnexus.NBTTag;
-import de.ancash.nbtnexus.serde.IItemDeserializer;
-import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
+import de.ancash.nbtnexus.serde.SerDeStructure;
 
 @Deprecated
-public class MapMetaSerDe implements IItemSerializer, IItemDeserializer {
+public class MapMetaSerDe implements IItemSerDe {
 
 	public static final MapMetaSerDe INSTANCE = new MapMetaSerDe();
 
@@ -81,5 +77,10 @@ public class MapMetaSerDe implements IItemSerializer, IItemDeserializer {
 		if (map.containsKey(MAP_SCALING_TAG))
 			meta.setScaling((boolean) map.get(MAP_SCALING_TAG));
 		item.setItemMeta(meta);
+	}
+
+	@Override
+	public SerDeStructure getStructure() {
+		return null;
 	}
 }

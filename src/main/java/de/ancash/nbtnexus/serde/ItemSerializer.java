@@ -1,35 +1,7 @@
 package de.ancash.nbtnexus.serde;
 
-import static de.ancash.nbtnexus.MetaTag.AMOUNT_TAG;
-import static de.ancash.nbtnexus.MetaTag.BLUE_TAG;
-import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_COLORS_TAG;
-import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_FADE_COLORS_TAG;
-import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_FLICKER_TAG;
-import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_TRAIL_TAG;
-import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_TYPE_TAG;
-import static de.ancash.nbtnexus.MetaTag.GREEN_TAG;
-import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_CENTER_X_TAG;
-import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_CENTER_Z_TAG;
-import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_LOCKED_TAG;
-import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_SCALE_TAG;
-import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_TRACKING_POSITION_TAG;
-import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_UNLIMITED_TRACKING_TAG;
-import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_WORLD_TAG;
-import static de.ancash.nbtnexus.MetaTag.NBT_NEXUS_ITEM_PROPERTIES_TAG;
-import static de.ancash.nbtnexus.MetaTag.NBT_NEXUS_ITEM_TYPE_TAG;
-import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_AMBIENT_TAG;
-import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_AMPLIFIER_TAG;
-import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_DURATION_TAG;
-import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_SHOW_ICON_TAG;
-import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_SHOW_PARTICLES_TAG;
-import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_TYPE_TAG;
-import static de.ancash.nbtnexus.MetaTag.PROPERTY_NAME_TAG;
-import static de.ancash.nbtnexus.MetaTag.PROPERTY_SIGNATURE_TAG;
-import static de.ancash.nbtnexus.MetaTag.PROPERTY_VALUE_TAG;
-import static de.ancash.nbtnexus.MetaTag.RED_TAG;
-import static de.ancash.nbtnexus.MetaTag.XMATERIAL_TAG;
-import static de.ancash.nbtnexus.NBTNexus.SPLITTER;
-import static de.ancash.nbtnexus.NBTNexus.SPLITTER_REGEX;
+import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.NBTNexus.*;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -73,6 +45,7 @@ import de.ancash.nbtnexus.serde.handler.BannerMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BookMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BundleMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.CompassMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.DamageableMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.FireworkEffectMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.FireworkMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.KnowledgeBookMetaSerDe;
@@ -80,11 +53,12 @@ import de.ancash.nbtnexus.serde.handler.LeatherArmorMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.MapMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.MusicInstrumentMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.PotionMetaSerDe;
-import de.ancash.nbtnexus.serde.handler.SimpleMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.RepairableMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SkullMetaMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SpawnEggMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SuspiciousStewMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.TropicalFishBucketMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.UnspecificMetaSerDe;
 
 @SuppressWarnings("deprecation")
 public class ItemSerializer {
@@ -93,32 +67,34 @@ public class ItemSerializer {
 
 //	private final ForkJoinPool pool = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
 
-	private final Set<IItemSerializer> itemSerializer = new HashSet<>();
+	private final Set<IItemSerDe> itemSerDe = new HashSet<>();
 
 	// private final Set<IItemSerializer> defaultSerializer = new HashSet<>();
 
 	ItemSerializer() {
-		itemSerializer.add(AxolotlBucketMetaSerDe.INSTANCE);
-		itemSerializer.add(BannerMetaSerDe.INSTANCE);
-		itemSerializer.add(BookMetaSerDe.INSTANCE);
-		itemSerializer.add(BundleMetaSerDe.INSTANCE);
-		itemSerializer.add(CompassMetaSerDe.INSTANCE);
-		itemSerializer.add(FireworkEffectMetaSerDe.INSTANCE);
-		itemSerializer.add(FireworkMetaSerDe.INSTANCE);
-		itemSerializer.add(KnowledgeBookMetaSerDe.INSTANCE);
-		itemSerializer.add(LeatherArmorMetaSerDe.INSTANCE);
-		itemSerializer.add(MapMetaSerDe.INSTANCE);
-		itemSerializer.add(MusicInstrumentMetaSerDe.INSTANCE);
-		itemSerializer.add(PotionMetaSerDe.INSTANCE);
-		itemSerializer.add(SimpleMetaSerDe.INSTANCE);
-		itemSerializer.add(SkullMetaMetaSerDe.INSTANCE);
-		itemSerializer.add(SpawnEggMetaSerDe.INSTANCE);
-		itemSerializer.add(SuspiciousStewMetaSerDe.INSTANCE);
-		itemSerializer.add(TropicalFishBucketMetaSerDe.INSTANCE);
+		itemSerDe.add(AxolotlBucketMetaSerDe.INSTANCE);
+		itemSerDe.add(BannerMetaSerDe.INSTANCE);
+		itemSerDe.add(BookMetaSerDe.INSTANCE);
+		itemSerDe.add(BundleMetaSerDe.INSTANCE);
+		itemSerDe.add(CompassMetaSerDe.INSTANCE);
+		itemSerDe.add(FireworkEffectMetaSerDe.INSTANCE);
+		itemSerDe.add(FireworkMetaSerDe.INSTANCE);
+		itemSerDe.add(KnowledgeBookMetaSerDe.INSTANCE);
+		itemSerDe.add(LeatherArmorMetaSerDe.INSTANCE);
+		itemSerDe.add(MapMetaSerDe.INSTANCE);
+		itemSerDe.add(MusicInstrumentMetaSerDe.INSTANCE);
+		itemSerDe.add(PotionMetaSerDe.INSTANCE);
+		itemSerDe.add(UnspecificMetaSerDe.INSTANCE);
+		itemSerDe.add(SkullMetaMetaSerDe.INSTANCE);
+		itemSerDe.add(SpawnEggMetaSerDe.INSTANCE);
+		itemSerDe.add(SuspiciousStewMetaSerDe.INSTANCE);
+		itemSerDe.add(TropicalFishBucketMetaSerDe.INSTANCE);
+		itemSerDe.add(DamageableMetaSerDe.INSTANCE);
+		itemSerDe.add(RepairableMetaSerDe.INSTANCE);
 	}
 
-	public void registerSerializer(IItemSerializer ims) {
-		itemSerializer.add(ims);
+	public void registerSerializer(IItemSerDe ims) {
+		itemSerDe.add(ims);
 	}
 
 	public Map<String, Object> serializeColor(Color c) {
@@ -211,7 +187,7 @@ public class ItemSerializer {
 		map.put(XMATERIAL_TAG, XMaterial.matchXMaterial(is).name());
 		map.put(AMOUNT_TAG, is.getAmount());
 		Map<String, String> relocate = new HashMap<>();
-		for (IItemSerializer ims : itemSerializer) {
+		for (IItemSerDe ims : itemSerDe) {
 			if (ims.isValid(is)) {
 				Map<String, Object> m = ims.serialize(is);
 				if (!m.isEmpty())

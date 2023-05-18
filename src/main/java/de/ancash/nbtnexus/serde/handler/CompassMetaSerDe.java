@@ -1,8 +1,6 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.COMPASS_TAG;
-import static de.ancash.nbtnexus.MetaTag.LODESTONE_LOCATION_TAG;
-import static de.ancash.nbtnexus.MetaTag.LODESTONE_TRACKED_TAG;
+import static de.ancash.nbtnexus.MetaTag.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,12 +10,23 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
 
 import de.ancash.minecraft.nbt.utils.MinecraftVersion;
-import de.ancash.nbtnexus.serde.IItemDeserializer;
-import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.NBTTag;
+import de.ancash.nbtnexus.serde.IItemSerDe;
+import de.ancash.nbtnexus.serde.SerDeStructure;
 
-public class CompassMetaSerDe implements IItemSerializer, IItemDeserializer {
+public class CompassMetaSerDe implements IItemSerDe {
 
 	public static final CompassMetaSerDe INSTANCE = new CompassMetaSerDe();
+	private static final SerDeStructure structure = new SerDeStructure();
+
+	static {
+		structure.put(LODESTONE_TRACKED_TAG, NBTTag.BOOLEAN);
+		structure.put(LODESTONE_LOCATION_TAG, NBTTag.COMPOUND);
+	}
+
+	public SerDeStructure getStructure() {
+		return (SerDeStructure) structure.clone();
+	}
 
 	CompassMetaSerDe() {
 	}

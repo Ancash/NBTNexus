@@ -1,8 +1,6 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECTS_TAG;
-import static de.ancash.nbtnexus.MetaTag.FIREWORK_POWER_TAG;
-import static de.ancash.nbtnexus.MetaTag.FIREWORK_TAG;
+import static de.ancash.nbtnexus.MetaTag.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,14 +10,25 @@ import java.util.stream.Collectors;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 
-import de.ancash.nbtnexus.serde.IItemDeserializer;
-import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.NBTTag;
+import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
+import de.ancash.nbtnexus.serde.SerDeStructure;
 
-public class FireworkMetaSerDe implements IItemSerializer, IItemDeserializer {
+public class FireworkMetaSerDe implements IItemSerDe {
 
 	public static final FireworkMetaSerDe INSTANCE = new FireworkMetaSerDe();
+	private static final SerDeStructure structure = new SerDeStructure();
+
+	static {
+		structure.put(FIREWORK_POWER_TAG, NBTTag.INT);
+		structure.put(FIREWORK_EFFECTS_TAG, NBTTag.LIST);
+	}
+
+	public SerDeStructure getStructure() {
+		return structure.clone();
+	}
 
 	FireworkMetaSerDe() {
 	}

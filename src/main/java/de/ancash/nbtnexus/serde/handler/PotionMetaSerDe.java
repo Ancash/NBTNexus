@@ -1,12 +1,6 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.BASE_POTION_EXTENDED_TAG;
-import static de.ancash.nbtnexus.MetaTag.BASE_POTION_TAG;
-import static de.ancash.nbtnexus.MetaTag.BASE_POTION_TYPE_TAG;
-import static de.ancash.nbtnexus.MetaTag.BASE_POTION_UPGRADED_TAG;
-import static de.ancash.nbtnexus.MetaTag.POTION_COLOR_TAG;
-import static de.ancash.nbtnexus.MetaTag.POTION_EFFECTS_TAG;
-import static de.ancash.nbtnexus.MetaTag.POTION_TAG;
+import static de.ancash.nbtnexus.MetaTag.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,14 +13,26 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
-import de.ancash.nbtnexus.serde.IItemDeserializer;
-import de.ancash.nbtnexus.serde.IItemSerializer;
+import de.ancash.nbtnexus.NBTTag;
+import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
+import de.ancash.nbtnexus.serde.SerDeStructure;
 
-public class PotionMetaSerDe implements IItemSerializer, IItemDeserializer {
+public class PotionMetaSerDe implements IItemSerDe {
 
 	public static final PotionMetaSerDe INSTANCE = new PotionMetaSerDe();
+	private static final SerDeStructure structure = new SerDeStructure();
+
+	static {
+		structure.put(BASE_POTION_TAG, NBTTag.COMPOUND);
+		structure.put(POTION_EFFECTS_TAG, NBTTag.LIST);
+		structure.put(POTION_COLOR_TAG, NBTTag.COMPOUND);
+	}
+
+	public SerDeStructure getStructure() {
+		return structure.clone();
+	}
 
 	PotionMetaSerDe() {
 	}
