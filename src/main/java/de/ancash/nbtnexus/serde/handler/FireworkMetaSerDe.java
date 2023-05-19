@@ -14,7 +14,8 @@ import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
-import de.ancash.nbtnexus.serde.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
 
 public class FireworkMetaSerDe implements IItemSerDe {
 
@@ -22,8 +23,22 @@ public class FireworkMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(FIREWORK_POWER_TAG, NBTTag.INT);
-		structure.put(FIREWORK_EFFECTS_TAG, NBTTag.LIST);
+		structure.put(FIREWORK_POWER_TAG, SerDeStructureEntry.INT);
+		structure.putList(FIREWORK_EFFECTS_TAG, NBTTag.COMPOUND);
+		SerDeStructure effects = structure.getList(FIREWORK_EFFECTS_TAG);
+		effects.put(FIREWORK_EFFECT_TRAIL_TAG, SerDeStructureEntry.BOOLEAN);
+		effects.put(FIREWORK_EFFECT_FLICKER_TAG, SerDeStructureEntry.BOOLEAN);
+		effects.put(FIREWORK_EFFECT_TYPE_TAG, SerDeStructureEntry.STRING);
+		effects.putList(FIREWORK_EFFECT_COLORS_TAG, NBTTag.COMPOUND);
+		SerDeStructure color = effects.getList(FIREWORK_EFFECT_COLORS_TAG);
+		color.put(RED_TAG, SerDeStructureEntry.INT);
+		color.put(GREEN_TAG, SerDeStructureEntry.INT);
+		color.put(BLUE_TAG, SerDeStructureEntry.INT);
+		effects.putList(FIREWORK_EFFECT_FADE_COLORS_TAG, NBTTag.COMPOUND);
+		SerDeStructure fcolor = effects.getList(FIREWORK_EFFECT_COLORS_TAG);
+		fcolor.put(RED_TAG, SerDeStructureEntry.INT);
+		fcolor.put(GREEN_TAG, SerDeStructureEntry.INT);
+		fcolor.put(BLUE_TAG, SerDeStructureEntry.INT);
 	}
 
 	public SerDeStructure getStructure() {

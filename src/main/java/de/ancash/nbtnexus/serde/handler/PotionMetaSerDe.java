@@ -11,13 +11,15 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
-import de.ancash.nbtnexus.serde.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
 
 public class PotionMetaSerDe implements IItemSerDe {
 
@@ -25,9 +27,25 @@ public class PotionMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(BASE_POTION_TAG, NBTTag.COMPOUND);
-		structure.put(POTION_EFFECTS_TAG, NBTTag.LIST);
-		structure.put(POTION_COLOR_TAG, NBTTag.COMPOUND);
+		structure.putMap(BASE_POTION_TAG);
+		SerDeStructure bp = structure.getMap(BASE_POTION_TAG);
+		bp.put(BASE_POTION_TYPE_TAG, SerDeStructureEntry.STRING);
+		bp.put(BASE_POTION_EXTENDED_TAG, SerDeStructureEntry.BOOLEAN);
+		bp.put(BASE_POTION_UPGRADED_TAG, SerDeStructureEntry.BOOLEAN);
+		structure.putList(POTION_EFFECTS_TAG, NBTTag.COMPOUND);
+		SerDeStructure effects = structure.getList(POTION_EFFECTS_TAG);
+		effects.put(POTION_EFFECT_AMPLIFIER_TAG, SerDeStructureEntry.INT);
+		effects.put(POTION_EFFECT_DURATION_TAG, SerDeStructureEntry.INT);
+		effects.put(POTION_EFFECT_TYPE_TAG, new SerDeStructureEntry<String>(NBTTag.STRING,
+				s -> PotionEffectType.getByName(s) != null, SerDeStructureEntry.splitArray(PotionEffectType.values())));
+		effects.put(POTION_EFFECT_SHOW_ICON_TAG, SerDeStructureEntry.BOOLEAN);
+		effects.put(POTION_EFFECT_SHOW_PARTICLES_TAG, SerDeStructureEntry.BOOLEAN);
+		effects.put(POTION_EFFECT_AMBIENT_TAG, SerDeStructureEntry.BOOLEAN);
+		structure.putMap(POTION_COLOR_TAG);
+		SerDeStructure color = structure.getMap(POTION_COLOR_TAG);
+		color.put(RED_TAG, SerDeStructureEntry.INT);
+		color.put(GREEN_TAG, SerDeStructureEntry.INT);
+		color.put(BLUE_TAG, SerDeStructureEntry.INT);
 	}
 
 	public SerDeStructure getStructure() {

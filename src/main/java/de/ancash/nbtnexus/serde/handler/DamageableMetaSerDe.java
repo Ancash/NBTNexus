@@ -15,7 +15,8 @@ import org.bukkit.inventory.meta.Damageable;
 import de.ancash.nbtnexus.NBTNexus;
 import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
-import de.ancash.nbtnexus.serde.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
 
 public class DamageableMetaSerDe implements IItemSerDe {
 
@@ -23,7 +24,7 @@ public class DamageableMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(DAMAGEABLE_DAMAGE_TAG, NBTTag.INT);
+		structure.put(DAMAGEABLE_DAMAGE_TAG, SerDeStructureEntry.INT);
 	}
 
 	public SerDeStructure getStructure() {

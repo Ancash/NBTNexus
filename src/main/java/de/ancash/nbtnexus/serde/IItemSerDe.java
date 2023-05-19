@@ -5,6 +5,8 @@ import java.util.Set;
 
 import org.bukkit.inventory.ItemStack;
 
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
+
 public interface IItemSerDe {
 
 	public Map<String, Object> serialize(ItemStack item);

@@ -11,9 +11,9 @@ import java.util.Set;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Repairable;
 
-import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
-import de.ancash.nbtnexus.serde.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
 
 public class RepairableMetaSerDe implements IItemSerDe {
 
@@ -24,7 +24,7 @@ public class RepairableMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(REPAIRABLE_REPAIR_COST_TAG, NBTTag.INT);
+		structure.put(REPAIRABLE_REPAIR_COST_TAG, SerDeStructureEntry.INT);
 	}
 
 	public SerDeStructure getStructure() {

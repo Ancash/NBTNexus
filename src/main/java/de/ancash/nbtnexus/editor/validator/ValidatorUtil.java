@@ -3,10 +3,12 @@ package de.ancash.nbtnexus.editor.validator;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import de.ancash.libs.org.simpleyaml.configuration.ConfigurationSection;
 import de.ancash.minecraft.inventory.editor.yml.gui.ConfigurationSectionEditor;
+import de.ancash.minecraft.inventory.editor.yml.gui.ListEditor;
 import de.ancash.minecraft.inventory.editor.yml.gui.ValueEditor;
 import de.ancash.nbtnexus.MetaTag;
 import de.ancash.nbtnexus.serde.handler.AxolotlBucketMetaSerDe;
@@ -51,6 +53,37 @@ public class ValidatorUtil {
 		return isItemRoot(cur);
 	}
 
+	public static String getPath(ConfigurationSectionEditor root, ValueEditor<?> cur) {
+		LinkedList<String> fp = new LinkedList<>();
+		while (cur != null) {
+			if (cur.hasKey())
+				fp.addFirst(cur.getKey());
+			cur = cur.getParent();
+			while (cur instanceof ListEditor)
+				cur = cur.getParent();
+		}
+		cur = root;
+		while (cur != null) {
+			if (cur.hasKey())
+				fp.removeFirst();
+			cur = cur.getParent();
+			while (cur instanceof ListEditor)
+				cur = cur.getParent();
+		}
+		return String.join(".", fp).replaceFirst(root.getCurrent().getCurrentPath(), "");
+	}
+
+	public static String getPath(ConfigurationSectionEditor root, ValueEditor<?> cur, String key) {
+		String path = ValidatorUtil.getPath(root, cur);
+		if (!path.isEmpty())
+			path = String.join(".", path, key);
+		else
+			path = key;
+		if (path.startsWith("\\."))
+			path.replaceFirst("\\.", "");
+		return path;
+	}
+
 	public static boolean isItemProperty(ConfigurationSection cur, int depth) {
 		if (depth > 0) {
 			if (cur.getParent() == null)
@@ -81,15 +114,14 @@ public class ValidatorUtil {
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static ValueEditor<ConfigurationSection> getItemRoot(ValueEditor<?> cur) {
+	public static ConfigurationSectionEditor getItemRoot(ValueEditor<?> cur) {
 		if (!isItemRoot(cur)) {
 			if (!cur.hasParent())
 				return null;
 			else
 				return getItemRoot(cur.getParent());
 		}
-		return (ValueEditor<ConfigurationSection>) cur;
+		return (ConfigurationSectionEditor) cur;
 	}
 
 	public static ConfigurationSection getItemRoot(ConfigurationSection cur) {

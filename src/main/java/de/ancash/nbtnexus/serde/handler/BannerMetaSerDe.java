@@ -15,7 +15,8 @@ import org.bukkit.inventory.meta.BannerMeta;
 
 import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
-import de.ancash.nbtnexus.serde.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
 
 public class BannerMetaSerDe implements IItemSerDe {
 
@@ -23,7 +24,10 @@ public class BannerMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(BANNER_PATTERNS_TAG, NBTTag.LIST);
+		structure.putList(BANNER_PATTERNS_TAG, NBTTag.COMPOUND);
+		SerDeStructure pattern = structure.getList(BANNER_PATTERNS_TAG);
+		pattern.put(BANNER_PATTERN_TYPE_TAG, SerDeStructureEntry.forEnum(PatternType.class));
+		pattern.put(BANNER_PATTERN_COLOR_TAG, SerDeStructureEntry.forEnum(DyeColor.class));
 	}
 
 	public SerDeStructure getStructure() {

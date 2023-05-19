@@ -17,7 +17,7 @@ import de.ancash.minecraft.inventory.editor.yml.handler.ShortHandler;
 import de.ancash.minecraft.inventory.editor.yml.handler.StringHandler;
 import de.ancash.nbtnexus.NBTNexus;
 import de.ancash.nbtnexus.NBTTag;
-import de.ancash.nbtnexus.serde.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
 
 public class KeyValidator implements IKeyValidator {
 

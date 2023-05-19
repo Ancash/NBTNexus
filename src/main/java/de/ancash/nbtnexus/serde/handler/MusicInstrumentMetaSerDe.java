@@ -10,11 +10,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MusicInstrumentMeta;
 
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
-import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
-import de.ancash.nbtnexus.serde.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
 
 public class MusicInstrumentMetaSerDe implements IItemSerDe {
 
@@ -22,7 +22,7 @@ public class MusicInstrumentMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(MUSIC_INSTRUMENT_TYPE_TAG, NBTTag.STRING);
+		structure.put(MUSIC_INSTRUMENT_TYPE_TAG, SerDeStructureEntry.STRING);
 	}
 
 	public SerDeStructure getStructure() {

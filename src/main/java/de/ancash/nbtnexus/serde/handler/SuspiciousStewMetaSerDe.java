@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SuspiciousStewMeta;
+import org.bukkit.potion.PotionEffectType;
 
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
 import de.ancash.nbtnexus.NBTNexus;
@@ -20,7 +21,8 @@ import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
-import de.ancash.nbtnexus.serde.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
 
 public class SuspiciousStewMetaSerDe implements IItemSerDe {
 
@@ -28,7 +30,15 @@ public class SuspiciousStewMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(SUSPICIOUS_STEW_EFFECTS_TAG, NBTTag.LIST);
+		structure.putList(SUSPICIOUS_STEW_EFFECTS_TAG, NBTTag.COMPOUND);
+		SerDeStructure effects = structure.getList(SUSPICIOUS_STEW_EFFECTS_TAG);
+		effects.put(POTION_EFFECT_AMPLIFIER_TAG, SerDeStructureEntry.INT);
+		effects.put(POTION_EFFECT_DURATION_TAG, SerDeStructureEntry.INT);
+		effects.put(POTION_EFFECT_TYPE_TAG, new SerDeStructureEntry<String>(NBTTag.STRING,
+				s -> PotionEffectType.getByName(s) != null, SerDeStructureEntry.splitArray(PotionEffectType.values())));
+		effects.put(POTION_EFFECT_SHOW_ICON_TAG, SerDeStructureEntry.BOOLEAN);
+		effects.put(POTION_EFFECT_SHOW_PARTICLES_TAG, SerDeStructureEntry.BOOLEAN);
+		effects.put(POTION_EFFECT_AMBIENT_TAG, SerDeStructureEntry.BOOLEAN);
 	}
 
 	public SerDeStructure getStructure() {

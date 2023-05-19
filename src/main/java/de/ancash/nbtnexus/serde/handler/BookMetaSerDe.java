@@ -12,7 +12,8 @@ import org.bukkit.inventory.meta.BookMeta;
 
 import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
-import de.ancash.nbtnexus.serde.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
 
 public class BookMetaSerDe implements IItemSerDe {
 
@@ -20,9 +21,9 @@ public class BookMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(BOOK_AUTHOR_TAG, NBTTag.STRING);
-		structure.put(BOOK_PAGES_TAG, NBTTag.LIST);
-		structure.put(BOOK_TITLE_TAG, NBTTag.STRING);
+		structure.put(BOOK_AUTHOR_TAG, SerDeStructureEntry.STRING);
+		structure.putList(BOOK_PAGES_TAG, NBTTag.STRING);
+		structure.put(BOOK_TITLE_TAG, SerDeStructureEntry.STRING);
 	}
 
 	public SerDeStructure getStructure() {

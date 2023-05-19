@@ -10,9 +10,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
 
 import de.ancash.minecraft.nbt.utils.MinecraftVersion;
-import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
-import de.ancash.nbtnexus.serde.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
 
 public class CompassMetaSerDe implements IItemSerDe {
 
@@ -20,8 +20,13 @@ public class CompassMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(LODESTONE_TRACKED_TAG, NBTTag.BOOLEAN);
-		structure.put(LODESTONE_LOCATION_TAG, NBTTag.COMPOUND);
+		structure.put(LODESTONE_TRACKED_TAG, SerDeStructureEntry.BOOLEAN);
+		structure.putMap(LODESTONE_LOCATION_TAG);
+		SerDeStructure loc = structure.getMap(LODESTONE_LOCATION_TAG);
+		loc.put("world", SerDeStructureEntry.STRING);
+		loc.put("x", SerDeStructureEntry.DOUBLE);
+		loc.put("y", SerDeStructureEntry.DOUBLE);
+		loc.put("z", SerDeStructureEntry.DOUBLE);
 	}
 
 	public SerDeStructure getStructure() {

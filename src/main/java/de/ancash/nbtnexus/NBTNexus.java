@@ -5,6 +5,7 @@ import static de.ancash.nbtnexus.MetaTag.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -29,7 +30,6 @@ import de.ancash.nbtnexus.command.NBTNexusCommand;
 import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
-import de.ancash.nbtnexus.serde.SerDeStructure;
 import de.ancash.nbtnexus.serde.SerializedItem;
 import de.ancash.nbtnexus.serde.handler.AxolotlBucketMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BannerMetaSerDe;
@@ -50,6 +50,8 @@ import de.ancash.nbtnexus.serde.handler.SpawnEggMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SuspiciousStewMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.TropicalFishBucketMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.UnspecificMetaSerDe;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
 
 @SuppressWarnings("deprecation")
 public class NBTNexus extends JavaPlugin {
@@ -74,11 +76,17 @@ public class NBTNexus extends JavaPlugin {
 		structure.put(iisd.getKey(), iisd.getStructure());
 	}
 
+	@SuppressWarnings("nls")
 	@Override
 	public void onEnable() {
 		singleton = this;
-		structure.put(AMOUNT_TAG, NBTTag.BYTE);
-		structure.put(XMATERIAL_TAG, NBTTag.STRING);
+		structure.put(AMOUNT_TAG, new SerDeStructureEntry<Byte>(NBTTag.BYTE, a -> a > 0 && a <= 64));
+		structure.put(XMATERIAL_TAG,
+				new SerDeStructureEntry<String>(NBTTag.STRING, xm -> XMaterial.matchXMaterial(xm).isPresent(),
+						Arrays.asList(XMaterial.values()).stream().filter(x -> x != null && x.isSupported())
+								.map(XMaterial::name).collect(Collectors.toList()).toString()
+								.replaceAll("(.{1,150})\\s+", "$1\n").split("\n")));
+
 		registerSerDeStructure(AxolotlBucketMetaSerDe.INSTANCE);
 		registerSerDeStructure(BannerMetaSerDe.INSTANCE);
 		registerSerDeStructure(BookMetaSerDe.INSTANCE);

@@ -24,7 +24,8 @@ import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
-import de.ancash.nbtnexus.serde.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
 
 @SuppressWarnings("nls")
 public class SkullMetaMetaSerDe implements IItemSerDe {
@@ -34,8 +35,12 @@ public class SkullMetaMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(SKULL_NOTE_BLOCK_SOUND_TAG, NBTTag.STRING);
-		structure.put(GAME_PROFILE_TAG, NBTTag.COMPOUND);
+		structure.put(SKULL_NOTE_BLOCK_SOUND_TAG, SerDeStructureEntry.STRING);
+		structure.putMap(GAME_PROFILE_TAG);
+		SerDeStructure gp = structure.getMap(GAME_PROFILE_TAG);
+		gp.put(GAME_PROFILE_ID_TAG, SerDeStructureEntry.STRING);
+		gp.put(GAME_PROFILE_NAME_TAG, SerDeStructureEntry.STRING);
+		gp.putMap(GAME_PROFILE_PROPERTIES_TAG);
 	}
 
 	public SerDeStructure getStructure() {

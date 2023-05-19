@@ -17,12 +17,33 @@ import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
-import de.ancash.nbtnexus.serde.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
 
 @Deprecated
 public class MapMetaSerDe implements IItemSerDe {
 
 	public static final MapMetaSerDe INSTANCE = new MapMetaSerDe();
+	private static final SerDeStructure structure = new SerDeStructure();
+
+	static {
+		structure.putMap(MAP_COLOR_TAG);
+		SerDeStructure color = structure.getMap(MAP_COLOR_TAG);
+		color.put(RED_TAG, SerDeStructureEntry.INT);
+		color.put(GREEN_TAG, SerDeStructureEntry.INT);
+		color.put(BLUE_TAG, SerDeStructureEntry.INT);
+		structure.put(MAP_ID_TAG, SerDeStructureEntry.INT);
+		structure.put(MAP_SCALING_TAG, SerDeStructureEntry.BOOLEAN);
+		structure.putMap(MAP_VIEW_TAG);
+		SerDeStructure mv = structure.getMap(MAP_VIEW_TAG);
+		mv.put(MAP_VIEW_CENTER_X_TAG, SerDeStructureEntry.INT);
+		mv.put(MAP_VIEW_CENTER_Z_TAG, SerDeStructureEntry.INT);
+		mv.put(MAP_VIEW_SCALE_TAG, SerDeStructureEntry.STRING);
+		mv.put(MAP_VIEW_WORLD_TAG, SerDeStructureEntry.STRING);
+		mv.put(MAP_VIEW_LOCKED_TAG, SerDeStructureEntry.BOOLEAN);
+		mv.put(MAP_VIEW_TRACKING_POSITION_TAG, SerDeStructureEntry.BOOLEAN);
+		mv.put(MAP_VIEW_UNLIMITED_TRACKING_TAG, SerDeStructureEntry.BOOLEAN);
+	}
 
 	@SuppressWarnings("nls")
 	private static final Set<String> bl = Collections

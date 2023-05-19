@@ -23,7 +23,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import de.ancash.minecraft.cryptomorin.xseries.XEnchantment;
 import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
-import de.ancash.nbtnexus.serde.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
 import net.md_5.bungee.api.ChatColor;
 
 public class UnspecificMetaSerDe implements IItemSerDe {
@@ -32,12 +33,21 @@ public class UnspecificMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(DISPLAYNAME_TAG, NBTTag.STRING);
-		structure.put(LORE_TAG, NBTTag.LIST);
-		structure.put(LOCALIZED_NAME_TAG, NBTTag.STRING);
-		structure.put(CUSTOM_MODEL_DATA, NBTTag.INT);
-		structure.put(ENCHANTMENTS_TAG, NBTTag.LIST);
-		structure.put(ATTRIBUTES_TAG, NBTTag.LIST);
+		structure.put(DISPLAYNAME_TAG, new SerDeStructureEntry<String>(NBTTag.STRING));
+		structure.putList(LORE_TAG, NBTTag.STRING);
+		structure.put(LOCALIZED_NAME_TAG, new SerDeStructureEntry<String>(NBTTag.STRING));
+		structure.put(CUSTOM_MODEL_DATA, new SerDeStructureEntry<Integer>(NBTTag.INT));
+		structure.putList(ENCHANTMENTS_TAG, NBTTag.COMPOUND);
+		SerDeStructure enchs = structure.getList(ENCHANTMENTS_TAG);
+		enchs.put(ENCHANTMENT_LEVEL_TAG, new SerDeStructureEntry<Integer>(NBTTag.INT));
+		enchs.put(ENCHANTMENT_TYPE_TAG, SerDeStructureEntry.forEnum(XEnchantment.class));
+		structure.putList(ATTRIBUTES_TAG, NBTTag.COMPOUND);
+		SerDeStructure attr = structure.getList(ATTRIBUTES_TAG);
+		attr.put(ATTRIBUTE_TYPE_TAG, SerDeStructureEntry.forEnum(Attribute.class));
+		attr.put(ATTRIBUTE_NAME_TAG, new SerDeStructureEntry<String>(NBTTag.STRING));
+		attr.put(ATTRIBUTE_AMOUNT_TAG, new SerDeStructureEntry<Double>(NBTTag.DOUBLE));
+		attr.put(ATTRIBUTE_OPERATION_TAG, SerDeStructureEntry.forEnum(Operation.class));
+		attr.put(ATTRIBUTE_UUID_TAG, SerDeStructureEntry.forUUID());
 	}
 
 	public SerDeStructure getStructure() {
@@ -141,16 +151,17 @@ public class UnspecificMetaSerDe implements IItemSerDe {
 
 		ItemMeta meta = item.getItemMeta();
 		if (map.containsKey(LORE_TAG))
-			meta.setLore(((List<String>) map.get(LORE_TAG)).stream()
+			meta.setLore(((List<?>) map.get(LORE_TAG)).stream().map(String::valueOf)
 					.map(s -> ChatColor.translateAlternateColorCodes(ALTERNATE_COLOR_CODE, s))
 					.collect(Collectors.toList()));
 		if (map.containsKey(DISPLAYNAME_TAG))
-			meta.setDisplayName(
-					ChatColor.translateAlternateColorCodes(ALTERNATE_COLOR_CODE, (String) map.get(DISPLAYNAME_TAG)));
+			meta.setDisplayName(ChatColor.translateAlternateColorCodes(ALTERNATE_COLOR_CODE,
+					String.valueOf(map.get(DISPLAYNAME_TAG))));
 		if (map.containsKey(LOCALIZED_NAME_TAG))
-			meta.setLocalizedName(
-					ChatColor.translateAlternateColorCodes(ALTERNATE_COLOR_CODE, (String) map.get(LOCALIZED_NAME_TAG)));
-		meta.setCustomModelData((Integer) map.get(CUSTOM_MODEL_DATA));
+			meta.setLocalizedName(ChatColor.translateAlternateColorCodes(ALTERNATE_COLOR_CODE,
+					String.valueOf(map.get(LOCALIZED_NAME_TAG))));
+		if (map.containsKey(CUSTOM_MODEL_DATA))
+			meta.setCustomModelData(Integer.valueOf(String.valueOf(map.get(CUSTOM_MODEL_DATA))));
 
 		if (map.containsKey(ITEM_FLAGS_TAG))
 			((List<String>) map.get(ITEM_FLAGS_TAG)).stream().map(ItemFlag::valueOf).forEach(meta::addItemFlags);

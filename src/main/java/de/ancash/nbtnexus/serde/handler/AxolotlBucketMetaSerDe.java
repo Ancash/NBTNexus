@@ -16,15 +16,17 @@ import org.bukkit.inventory.meta.AxolotlBucketMeta;
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
 import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
-import de.ancash.nbtnexus.serde.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
 
+@SuppressWarnings("nls")
 public class AxolotlBucketMetaSerDe implements IItemSerDe {
 
 	public static final AxolotlBucketMetaSerDe INSTANCE = new AxolotlBucketMetaSerDe();
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(AXOLOTL_BUCKET_VARIANT_TAG, NBTTag.STRING);
+		structure.put(AXOLOTL_BUCKET_VARIANT_TAG, SerDeStructureEntry.forEnum(Variant.class));
 	}
 
 	public SerDeStructure getStructure() {
@@ -35,7 +37,6 @@ public class AxolotlBucketMetaSerDe implements IItemSerDe {
 	private final Map<String, String> relocate = new HashMap<>();
 	private final Map<String, String> reverseRelocate = new HashMap<>();
 
-	@SuppressWarnings("nls")
 	AxolotlBucketMetaSerDe() {
 		bl.add("Variant" + SPLITTER + NBTTag.INT);
 		relocate.put("Age" + SPLITTER + NBTTag.INT, getKey() + "." + AXOLOTL_BUCKET_AGE_TAG);

@@ -11,9 +11,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.TropicalFishBucketMeta;
 
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
-import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
-import de.ancash.nbtnexus.serde.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
 
 public class TropicalFishBucketMetaSerDe implements IItemSerDe {
 
@@ -21,9 +21,9 @@ public class TropicalFishBucketMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(TROPICAL_FISH_BUCKET_BODY_COLOR_TAG, NBTTag.STRING);
-		structure.put(TROPICAL_FISH_BUCKET_PATTERN_COLOR_TAG, NBTTag.STRING);
-		structure.put(TROPICAL_FISH_BUCKET_PATTERN_TAG, NBTTag.STRING);
+		structure.put(TROPICAL_FISH_BUCKET_BODY_COLOR_TAG, SerDeStructureEntry.STRING);
+		structure.put(TROPICAL_FISH_BUCKET_PATTERN_COLOR_TAG, SerDeStructureEntry.STRING);
+		structure.put(TROPICAL_FISH_BUCKET_PATTERN_TAG, SerDeStructureEntry.STRING);
 	}
 
 	public SerDeStructure getStructure() {

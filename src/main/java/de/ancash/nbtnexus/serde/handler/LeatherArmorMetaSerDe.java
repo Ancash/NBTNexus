@@ -8,11 +8,11 @@ import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
-import de.ancash.nbtnexus.serde.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
 
 public class LeatherArmorMetaSerDe implements IItemSerDe {
 
@@ -20,9 +20,9 @@ public class LeatherArmorMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(RED_TAG, NBTTag.INT);
-		structure.put(GREEN_TAG, NBTTag.INT);
-		structure.put(BLUE_TAG, NBTTag.INT);
+		structure.put(RED_TAG, SerDeStructureEntry.INT);
+		structure.put(GREEN_TAG, SerDeStructureEntry.INT);
+		structure.put(BLUE_TAG, SerDeStructureEntry.INT);
 	}
 
 	public SerDeStructure getStructure() {

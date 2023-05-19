@@ -15,7 +15,7 @@ import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
-import de.ancash.nbtnexus.serde.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
 
 public class KnowledgeBookMetaSerDe implements IItemSerDe {
 
@@ -23,7 +23,7 @@ public class KnowledgeBookMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(KNOWLEDGE_BOOK_RECIPES_TAG, NBTTag.LIST);
+		structure.putList(KNOWLEDGE_BOOK_RECIPES_TAG, NBTTag.STRING);
 	}
 
 	public SerDeStructure getStructure() {

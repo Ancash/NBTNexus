@@ -2,44 +2,32 @@ package de.ancash.nbtnexus.editor.validator;
 
 import de.ancash.minecraft.inventory.editor.yml.IHandlerMapper;
 import de.ancash.minecraft.inventory.editor.yml.gui.ConfigurationSectionEditor;
-import de.ancash.minecraft.inventory.editor.yml.handler.ByteHandler;
-import de.ancash.minecraft.inventory.editor.yml.handler.DoubleHandler;
-import de.ancash.minecraft.inventory.editor.yml.handler.FloatHandler;
+import de.ancash.minecraft.inventory.editor.yml.handler.ConfigurationSectionHandler;
 import de.ancash.minecraft.inventory.editor.yml.handler.IValueHandler;
-import de.ancash.minecraft.inventory.editor.yml.handler.IntegerHandler;
 import de.ancash.minecraft.inventory.editor.yml.handler.ListHandler;
-import de.ancash.minecraft.inventory.editor.yml.handler.LongHandler;
-import de.ancash.minecraft.inventory.editor.yml.handler.ShortHandler;
-import de.ancash.nbtnexus.MetaTag;
 import de.ancash.nbtnexus.NBTNexus;
-import de.ancash.nbtnexus.NBTTag;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
 
 public class HandlerMapper implements IHandlerMapper {
 
-	public IValueHandler<?> getHandler(ConfigurationSectionEditor cur, String key) {
-		if (ValidatorUtil.isItemRoot(cur) && MetaTag.AMOUNT_TAG.equals(key))
-			return ByteHandler.INSTANCE;
+	private final SerDeStructure structure = NBTNexus.getInstance().getStructure();
 
-		IValueHandler<?> temp = IHandlerMapper.super.getHandler(cur, key);
-		String[] split = key.split(NBTNexus.SPLITTER_REGEX);
-		if (split.length == 1 || temp instanceof ListHandler)
-			return temp;
-		NBTTag type = NBTTag.valueOf(split[split.length - 1]);
-		switch (type) {
-		case BYTE:
-			return ByteHandler.INSTANCE;
-		case SHORT:
-			return ShortHandler.INSTANCE;
-		case INT:
-			return IntegerHandler.INSTANCE;
-		case LONG:
-			return LongHandler.INSTANCE;
-		case FLOAT:
-			return FloatHandler.INSTANCE;
-		case DOUBLE:
-			return DoubleHandler.INSTANCE;
-		default:
-			return temp;
-		}
+	@Override
+	public IValueHandler<?> getHandler(ConfigurationSectionEditor cur, String key) {
+		ConfigurationSectionEditor root = ValidatorUtil.getItemRoot(cur);
+		if (root == null || !ValidatorUtil.isItemRoot(root))
+			return IHandlerMapper.super.getHandler(cur, key);
+
+		String path = ValidatorUtil.getPath(root, cur, key);
+
+		if (!structure.containsKey(path))
+			return IHandlerMapper.super.getHandler(cur, key);
+
+		if (structure.isMap(path))
+			return ConfigurationSectionHandler.INSTANCE;
+		else if (structure.isList(path))
+			return ListHandler.INSTANCE;
+		else
+			return structure.getEntry(path).getType().getHandler();
 	}
 }

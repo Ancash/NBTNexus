@@ -15,7 +15,7 @@ import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
-import de.ancash.nbtnexus.serde.SerDeStructure;
+import de.ancash.nbtnexus.serde.structure.SerDeStructure;
 
 public class BundleMetaSerDe implements IItemSerDe {
 
@@ -23,7 +23,7 @@ public class BundleMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(BUNDLE_ITEMS_TAG, NBTTag.LIST);
+		structure.putList(BUNDLE_ITEMS_TAG, NBTTag.ITEM_STACK);
 	}
 
 	public SerDeStructure getStructure() {
