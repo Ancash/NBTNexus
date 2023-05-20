@@ -15,32 +15,44 @@ public class SerDeStructure implements Cloneable {
 	protected final HashMap<String, Object> map = new HashMap<>();
 	protected final boolean isList;
 	protected final NBTTag listType;
+	protected final SerDeStructureEntry entry;
 
 	public SerDeStructure() {
 		this(false, null);
 	}
 
 	public SerDeStructure(boolean list, NBTTag listType) {
+		this(list, listType, null);
+	}
+
+	public SerDeStructure(boolean list, NBTTag listType, SerDeStructureEntry entry) {
 		this.isList = list;
 		this.listType = listType;
-		if (isList && (listType == null || listType.getHandler() == null))
-			throw new IllegalArgumentException("list type null or no handler");
+		this.entry = entry;
 	}
 
 	public void putMap(String key) {
 		map.put(key, new SerDeStructure());
 	}
 
+	public void putMap(String key, SerDeStructure m) {
+		map.put(key, m);
+	}
+
 	public void putList(String key, NBTTag type) {
 		map.put(key, new SerDeStructure(true, type));
 	}
 
-	public void put(String key, SerDeStructure s) {
-		map.put(key, s);
+	public void putList(String key, NBTTag type, SerDeStructureEntry entry) {
+		map.put(key, new SerDeStructure(true, type, entry));
 	}
 
-	public void put(String key, SerDeStructureEntry<?> entry) {
+	public void putEntry(String key, SerDeStructureEntry entry) {
 		map.put(key, entry);
+	}
+
+	public SerDeStructureEntry getEntry() {
+		return entry;
 	}
 
 	public NBTTag getListType() {
@@ -104,8 +116,8 @@ public class SerDeStructure implements Cloneable {
 		return isMap(key) ? (SerDeStructure) get(key) : null;
 	}
 
-	public SerDeStructureEntry<?> getEntry(String key) {
-		return isEntry(key) ? (SerDeStructureEntry<?>) get(key) : null;
+	public SerDeStructureEntry getEntry(String key) {
+		return isEntry(key) ? (SerDeStructureEntry) get(key) : null;
 	}
 
 	@SuppressWarnings("nls")

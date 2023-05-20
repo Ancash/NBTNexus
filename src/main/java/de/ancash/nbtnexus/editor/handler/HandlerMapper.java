@@ -1,4 +1,4 @@
-package de.ancash.nbtnexus.editor.validator;
+package de.ancash.nbtnexus.editor.handler;
 
 import de.ancash.minecraft.inventory.editor.yml.IHandlerMapper;
 import de.ancash.minecraft.inventory.editor.yml.gui.ConfigurationSectionEditor;
@@ -28,6 +28,6 @@ public class HandlerMapper implements IHandlerMapper {
 		else if (structure.isList(path))
 			return ListHandler.INSTANCE;
 		else
-			return structure.getEntry(path).getType().getHandler();
+			return structure.getEntry(path).getKey().getType().getHandler();
 	}
 }

@@ -22,7 +22,7 @@ public class MusicInstrumentMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(MUSIC_INSTRUMENT_TYPE_TAG, SerDeStructureEntry.STRING);
+		structure.putEntry(MUSIC_INSTRUMENT_TYPE_TAG, SerDeStructureEntry.STRING);
 	}
 
 	public SerDeStructure getStructure() {

@@ -3,13 +3,16 @@ package de.ancash.nbtnexus.serde.handler;
 import static de.ancash.nbtnexus.MetaTag.*;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 
+import de.ancash.nbtnexus.NBTNexus;
 import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
@@ -23,29 +26,38 @@ public class FireworkMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(FIREWORK_POWER_TAG, SerDeStructureEntry.INT);
+		structure.putEntry(FIREWORK_POWER_TAG, SerDeStructureEntry.INT);
 		structure.putList(FIREWORK_EFFECTS_TAG, NBTTag.COMPOUND);
 		SerDeStructure effects = structure.getList(FIREWORK_EFFECTS_TAG);
-		effects.put(FIREWORK_EFFECT_TRAIL_TAG, SerDeStructureEntry.BOOLEAN);
-		effects.put(FIREWORK_EFFECT_FLICKER_TAG, SerDeStructureEntry.BOOLEAN);
-		effects.put(FIREWORK_EFFECT_TYPE_TAG, SerDeStructureEntry.STRING);
+		effects.putEntry(FIREWORK_EFFECT_TRAIL_TAG, SerDeStructureEntry.BOOLEAN);
+		effects.putEntry(FIREWORK_EFFECT_FLICKER_TAG, SerDeStructureEntry.BOOLEAN);
+		effects.putEntry(FIREWORK_EFFECT_TYPE_TAG, SerDeStructureEntry.STRING);
 		effects.putList(FIREWORK_EFFECT_COLORS_TAG, NBTTag.COMPOUND);
 		SerDeStructure color = effects.getList(FIREWORK_EFFECT_COLORS_TAG);
-		color.put(RED_TAG, SerDeStructureEntry.INT);
-		color.put(GREEN_TAG, SerDeStructureEntry.INT);
-		color.put(BLUE_TAG, SerDeStructureEntry.INT);
+		color.putEntry(RED_TAG, SerDeStructureEntry.INT);
+		color.putEntry(GREEN_TAG, SerDeStructureEntry.INT);
+		color.putEntry(BLUE_TAG, SerDeStructureEntry.INT);
 		effects.putList(FIREWORK_EFFECT_FADE_COLORS_TAG, NBTTag.COMPOUND);
-		SerDeStructure fcolor = effects.getList(FIREWORK_EFFECT_COLORS_TAG);
-		fcolor.put(RED_TAG, SerDeStructureEntry.INT);
-		fcolor.put(GREEN_TAG, SerDeStructureEntry.INT);
-		fcolor.put(BLUE_TAG, SerDeStructureEntry.INT);
+		SerDeStructure fcolor = effects.getList(FIREWORK_EFFECT_FADE_COLORS_TAG);
+		fcolor.putEntry(RED_TAG, SerDeStructureEntry.INT);
+		fcolor.putEntry(GREEN_TAG, SerDeStructureEntry.INT);
+		fcolor.putEntry(BLUE_TAG, SerDeStructureEntry.INT);
 	}
+
+	private final Set<String> bl = new HashSet<>();
 
 	public SerDeStructure getStructure() {
 		return structure.clone();
 	}
 
+	@SuppressWarnings("nls")
 	FireworkMetaSerDe() {
+		bl.add("Fireworks" + NBTNexus.SPLITTER + NBTTag.COMPOUND.name());
+	}
+
+	@Override
+	public Set<String> getBlacklistedKeys() {
+		return bl;
 	}
 
 	@Override

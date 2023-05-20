@@ -24,7 +24,7 @@ public class RepairableMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(REPAIRABLE_REPAIR_COST_TAG, SerDeStructureEntry.INT);
+		structure.putEntry(REPAIRABLE_REPAIR_COST_TAG, SerDeStructureEntry.INT);
 	}
 
 	public SerDeStructure getStructure() {

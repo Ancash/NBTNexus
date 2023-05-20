@@ -23,7 +23,7 @@ public class BundleMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.putList(BUNDLE_ITEMS_TAG, NBTTag.ITEM_STACK);
+		structure.putList(BUNDLE_ITEMS_TAG, NBTTag.COMPOUND);
 	}
 
 	public SerDeStructure getStructure() {

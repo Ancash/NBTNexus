@@ -20,9 +20,9 @@ public class LeatherArmorMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(RED_TAG, SerDeStructureEntry.INT);
-		structure.put(GREEN_TAG, SerDeStructureEntry.INT);
-		structure.put(BLUE_TAG, SerDeStructureEntry.INT);
+		structure.putEntry(RED_TAG, SerDeStructureEntry.INT);
+		structure.putEntry(GREEN_TAG, SerDeStructureEntry.INT);
+		structure.putEntry(BLUE_TAG, SerDeStructureEntry.INT);
 	}
 
 	public SerDeStructure getStructure() {

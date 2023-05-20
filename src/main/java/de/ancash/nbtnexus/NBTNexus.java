@@ -5,7 +5,6 @@ import static de.ancash.nbtnexus.MetaTag.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,13 +19,13 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import de.ancash.minecraft.IItemStack;
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
 import de.ancash.minecraft.nbt.NBTCompound;
 import de.ancash.minecraft.nbt.NBTItem;
 import de.ancash.minecraft.nbt.NBTList;
 import de.ancash.nbtnexus.command.EditCommand;
 import de.ancash.nbtnexus.command.NBTNexusCommand;
+import de.ancash.nbtnexus.command.TestSerDeComparisonCommand;
 import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
@@ -34,7 +33,6 @@ import de.ancash.nbtnexus.serde.SerializedItem;
 import de.ancash.nbtnexus.serde.handler.AxolotlBucketMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BannerMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BookMetaSerDe;
-import de.ancash.nbtnexus.serde.handler.BundleMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.CompassMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.DamageableMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.FireworkEffectMetaSerDe;
@@ -52,6 +50,8 @@ import de.ancash.nbtnexus.serde.handler.TropicalFishBucketMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.UnspecificMetaSerDe;
 import de.ancash.nbtnexus.serde.structure.SerDeStructure;
 import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureKeySuggestion;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureValueSuggestion;
 
 @SuppressWarnings("deprecation")
 public class NBTNexus extends JavaPlugin {
@@ -73,24 +73,24 @@ public class NBTNexus extends JavaPlugin {
 	public void registerSerDeStructure(IItemSerDe iisd) {
 		if (iisd.getStructure() == null)
 			return;
-		structure.put(iisd.getKey(), iisd.getStructure());
+		structure.putMap(iisd.getKey(), iisd.getStructure());
 	}
 
 	@SuppressWarnings("nls")
 	@Override
 	public void onEnable() {
 		singleton = this;
-		structure.put(AMOUNT_TAG, new SerDeStructureEntry<Byte>(NBTTag.BYTE, a -> a > 0 && a <= 64));
-		structure.put(XMATERIAL_TAG,
-				new SerDeStructureEntry<String>(NBTTag.STRING, xm -> XMaterial.matchXMaterial(xm).isPresent(),
-						Arrays.asList(XMaterial.values()).stream().filter(x -> x != null && x.isSupported())
-								.map(XMaterial::name).collect(Collectors.toList()).toString()
-								.replaceAll("(.{1,150})\\s+", "$1\n").split("\n")));
+		structure.putEntry(AMOUNT_TAG, new SerDeStructureEntry(
+				new SerDeStructureKeySuggestion<Byte>(NBTTag.BYTE, a -> a > 0 && a <= 64), null));
+		structure.putEntry(XMATERIAL_TAG,
+				new SerDeStructureEntry(SerDeStructureKeySuggestion.forEnum(XMaterial.class),
+						SerDeStructureValueSuggestion.forEnum(Arrays.asList(XMaterial.VALUES).stream()
+								.filter(x -> x.isSupported() && x.parseItem() != null).toArray(XMaterial[]::new))));
 
 		registerSerDeStructure(AxolotlBucketMetaSerDe.INSTANCE);
 		registerSerDeStructure(BannerMetaSerDe.INSTANCE);
 		registerSerDeStructure(BookMetaSerDe.INSTANCE);
-		registerSerDeStructure(BundleMetaSerDe.INSTANCE);
+//		registerSerDeStructure(BundleMetaSerDe.INSTANCE);
 		registerSerDeStructure(CompassMetaSerDe.INSTANCE);
 		registerSerDeStructure(DamageableMetaSerDe.INSTANCE);
 		registerSerDeStructure(FireworkEffectMetaSerDe.INSTANCE);
@@ -106,9 +106,9 @@ public class NBTNexus extends JavaPlugin {
 		registerSerDeStructure(SuspiciousStewMetaSerDe.INSTANCE);
 		registerSerDeStructure(TropicalFishBucketMetaSerDe.INSTANCE);
 		registerSerDeStructure(UnspecificMetaSerDe.INSTANCE);
-		System.out.println(structure.getKeys(true));
 		cmd = new NBTNexusCommand(this);
 		cmd.addSubCommand(new EditCommand(this));
+		cmd.addSubCommand(new TestSerDeComparisonCommand(this));
 		getCommand("nbtn").setExecutor(cmd);
 //		protocolManager = ProtocolLibrary.getProtocolManager();
 //		protocolManager.addPacketListener(new SetSlotAdapter(this));
@@ -159,27 +159,18 @@ public class NBTNexus extends JavaPlugin {
 
 		for (Player p : Bukkit.getOnlinePlayers())
 			p.getInventory().addItem(item);
-
-		SerializedItem serialized = SerializedItem.of(item);
 		try {
+			SerializedItem serialized = SerializedItem.of(item);
+			System.out.println(ItemSerializer.INSTANCE.serializeItemStackToYaml(item));
 			System.out.println("orig: " + item);
-			System.out.println("1. yaml: " + ItemSerializer.INSTANCE.serializeItemStackToYaml(item));
-			System.out.println("2. yaml: " + ItemSerializer.INSTANCE.serializeItemStackToYaml(ItemDeserializer.INSTANCE
-					.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item))));
-			System.out.println("1. json: " + ItemSerializer.INSTANCE.serializeItemStackToJson(item));
-			System.out.println("2. json: " + ItemSerializer.INSTANCE.serializeItemStackToJson(ItemDeserializer.INSTANCE
-					.deserializeJsonToItemStack(ItemSerializer.INSTANCE.serializeItemStackToJson(item))));
-			System.out.println("alroundd: " + ItemDeserializer.INSTANCE.deserializeJsonToItemStack(
-					ItemSerializer.INSTANCE.serializeItemStackToJson(ItemDeserializer.INSTANCE
-							.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item)))));
-			System.out.println("yaml eq: " + ItemSerializer.INSTANCE.serializeItemStackToYaml(item)
-					.equals(ItemSerializer.INSTANCE.serializeItemStackToYaml(ItemDeserializer.INSTANCE
-							.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item)))));
-			System.out.println("json eq: " + ItemSerializer.INSTANCE.serializeItemStackToJson(item)
-					.equals(ItemSerializer.INSTANCE.serializeItemStackToJson(ItemDeserializer.INSTANCE
-							.deserializeJsonToItemStack(ItemSerializer.INSTANCE.serializeItemStackToJson(item)))));
-			System.out.println("IItemStack eq: " + new IItemStack(item).isSimilar(ItemDeserializer.INSTANCE
-					.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item))));
+			System.out.println("item comparison: " + serialized.isSimilar(SerializedItem.of(ItemDeserializer.INSTANCE
+					.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item)))));
+			nbt.setBoolean("bool", false);
+			item = nbt.getItem();
+			System.out.println(ItemSerializer.INSTANCE.serializeItemStackToYaml(item));
+			System.out.println("test comparison: " + serialized.isSimilar(SerializedItem.of(ItemDeserializer.INSTANCE
+					.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item)))));
+
 			checkEnchantedBook();
 			checkBook();
 
@@ -196,12 +187,9 @@ public class NBTNexus extends JavaPlugin {
 		meta.addPage("line 21", "line 22");
 		meta.setTitle("titlaaa");
 		item.setItemMeta(meta);
-		System.out.println(item);
-		System.out.println(ItemSerializer.INSTANCE.serializeItemStackToYaml(item));
-		System.out.println(ItemDeserializer.INSTANCE
-				.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item)));
-		System.out.println(ItemSerializer.INSTANCE.serializeItemStackToYaml(ItemDeserializer.INSTANCE
-				.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item))));
+		System.out.println(
+				"book comparison: " + SerializedItem.of(item).isSimilar(SerializedItem.of(ItemDeserializer.INSTANCE
+						.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item)))));
 	}
 
 	private void checkEnchantedBook() throws IOException {
@@ -210,12 +198,9 @@ public class NBTNexus extends JavaPlugin {
 		meta.addEnchant(Enchantment.ARROW_DAMAGE, 2, true);
 		item.setItemMeta(meta);
 		item.addUnsafeEnchantment(Enchantment.ARROW_FIRE, 3);
-		System.out.println(item);
-		System.out.println(ItemSerializer.INSTANCE.serializeItemStackToYaml(item));
-		System.out.println(ItemDeserializer.INSTANCE
-				.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item)));
-		System.out.println(ItemSerializer.INSTANCE.serializeItemStackToYaml(ItemDeserializer.INSTANCE
-				.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item))));
+		System.out.println("enchanted book comparison: "
+				+ SerializedItem.of(item).isSimilar(SerializedItem.of(ItemDeserializer.INSTANCE
+						.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item)))));
 	}
 
 	@SuppressWarnings("deprecation")

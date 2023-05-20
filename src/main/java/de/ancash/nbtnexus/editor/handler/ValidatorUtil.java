@@ -1,4 +1,4 @@
-package de.ancash.nbtnexus.editor.validator;
+package de.ancash.nbtnexus.editor.handler;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -6,7 +6,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import de.ancash.libs.org.simpleyaml.configuration.ConfigurationSection;
+import org.simpleyaml.configuration.ConfigurationSection;
+
 import de.ancash.minecraft.inventory.editor.yml.gui.ConfigurationSectionEditor;
 import de.ancash.minecraft.inventory.editor.yml.gui.ListEditor;
 import de.ancash.minecraft.inventory.editor.yml.gui.ValueEditor;
@@ -157,8 +158,10 @@ public class ValidatorUtil {
 	public static boolean isItemRoot(ValueEditor<?> cur) {
 		if (!(cur instanceof ConfigurationSectionEditor))
 			return false;
-		return ((ConfigurationSectionEditor) cur).getCurrent()
-				.isConfigurationSection(MetaTag.NBT_NEXUS_ITEM_PROPERTIES_TAG);
+		ConfigurationSection cs = ((ConfigurationSectionEditor) cur).getCurrent();
+		if (cs == null)
+			cs = ((ConfigurationSectionEditor) cur).getRoot();
+		return cs.isConfigurationSection(MetaTag.NBT_NEXUS_ITEM_PROPERTIES_TAG);
 	}
 
 	public static boolean isItemRoot(ConfigurationSection cur) {

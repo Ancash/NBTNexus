@@ -21,9 +21,9 @@ public class TropicalFishBucketMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(TROPICAL_FISH_BUCKET_BODY_COLOR_TAG, SerDeStructureEntry.STRING);
-		structure.put(TROPICAL_FISH_BUCKET_PATTERN_COLOR_TAG, SerDeStructureEntry.STRING);
-		structure.put(TROPICAL_FISH_BUCKET_PATTERN_TAG, SerDeStructureEntry.STRING);
+		structure.putEntry(TROPICAL_FISH_BUCKET_BODY_COLOR_TAG, SerDeStructureEntry.forEnum(DyeColor.class));
+		structure.putEntry(TROPICAL_FISH_BUCKET_PATTERN_COLOR_TAG, SerDeStructureEntry.forEnum(DyeColor.class));
+		structure.putEntry(TROPICAL_FISH_BUCKET_PATTERN_TAG, SerDeStructureEntry.forEnum(Pattern.class));
 	}
 
 	public SerDeStructure getStructure() {

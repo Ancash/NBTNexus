@@ -1,4 +1,4 @@
-package de.ancash.nbtnexus.editor.validator;
+package de.ancash.nbtnexus.editor.handler;
 
 import de.ancash.datastructures.tuples.Duplet;
 import de.ancash.datastructures.tuples.Tuple;

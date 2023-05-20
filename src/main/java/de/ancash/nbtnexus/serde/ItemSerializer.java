@@ -27,11 +27,11 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.map.MapView;
 import org.bukkit.potion.PotionEffect;
+import org.simpleyaml.configuration.file.YamlFile;
 
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 
-import de.ancash.libs.org.simpleyaml.configuration.file.YamlFile;
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
 import de.ancash.minecraft.nbt.NBTCompound;
 import de.ancash.minecraft.nbt.NBTCompoundList;

@@ -10,12 +10,12 @@ import org.bukkit.inventory.ItemStack;
 
 import de.ancash.minecraft.inventory.editor.yml.YamlEditor;
 import de.ancash.nbtnexus.NBTNexus;
-import de.ancash.nbtnexus.editor.validator.AmountValidator;
-import de.ancash.nbtnexus.editor.validator.ConfigurationSectionKeyConstructorProvider;
-import de.ancash.nbtnexus.editor.validator.HandlerMapper;
-import de.ancash.nbtnexus.editor.validator.KeyValidator;
-import de.ancash.nbtnexus.editor.validator.ListTypeValidator;
-import de.ancash.nbtnexus.editor.validator.MaterialValidator;
+import de.ancash.nbtnexus.editor.handler.HandlerMapper;
+import de.ancash.nbtnexus.editor.handler.KeySuggester;
+import de.ancash.nbtnexus.editor.handler.KeyValidator;
+import de.ancash.nbtnexus.editor.handler.ListTypeValidator;
+import de.ancash.nbtnexus.editor.handler.ValueSuggester;
+import de.ancash.nbtnexus.editor.handler.ValueValidator;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
 
@@ -53,11 +53,11 @@ public class EditCommand extends NBTNexusSubCommand {
 			e.printStackTrace();
 			return true;
 		}
-		editor.addValidator(new MaterialValidator());
-		editor.addValidator(new AmountValidator());
+		editor.addValidator(new ValueValidator());
 		editor.setHandlerMapper(new HandlerMapper());
 		editor.setKeyValidator(new KeyValidator());
-		editor.addCSKeyConstructorProvider(new ConfigurationSectionKeyConstructorProvider());
+		editor.addValueSuggester(new ValueSuggester());
+		editor.addKeySuggester(new KeySuggester());
 		editor.setListTypeValidator(new ListTypeValidator());
 		editor.open();
 		return true;

@@ -26,7 +26,7 @@ public class AxolotlBucketMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(AXOLOTL_BUCKET_VARIANT_TAG, SerDeStructureEntry.forEnum(Variant.class));
+		structure.putEntry(AXOLOTL_BUCKET_VARIANT_TAG, SerDeStructureEntry.forEnum(Variant.class));
 	}
 
 	public SerDeStructure getStructure() {

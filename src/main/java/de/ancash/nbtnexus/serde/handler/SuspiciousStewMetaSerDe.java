@@ -16,6 +16,8 @@ import org.bukkit.inventory.meta.SuspiciousStewMeta;
 import org.bukkit.potion.PotionEffectType;
 
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
+import de.ancash.minecraft.inventory.editor.yml.handler.StringHandler;
+import de.ancash.minecraft.inventory.editor.yml.suggestion.ValueSuggestion;
 import de.ancash.nbtnexus.NBTNexus;
 import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
@@ -23,6 +25,8 @@ import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
 import de.ancash.nbtnexus.serde.structure.SerDeStructure;
 import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureKeySuggestion;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureValueSuggestion;
 
 public class SuspiciousStewMetaSerDe implements IItemSerDe {
 
@@ -32,13 +36,16 @@ public class SuspiciousStewMetaSerDe implements IItemSerDe {
 	static {
 		structure.putList(SUSPICIOUS_STEW_EFFECTS_TAG, NBTTag.COMPOUND);
 		SerDeStructure effects = structure.getList(SUSPICIOUS_STEW_EFFECTS_TAG);
-		effects.put(POTION_EFFECT_AMPLIFIER_TAG, SerDeStructureEntry.INT);
-		effects.put(POTION_EFFECT_DURATION_TAG, SerDeStructureEntry.INT);
-		effects.put(POTION_EFFECT_TYPE_TAG, new SerDeStructureEntry<String>(NBTTag.STRING,
-				s -> PotionEffectType.getByName(s) != null, SerDeStructureEntry.splitArray(PotionEffectType.values())));
-		effects.put(POTION_EFFECT_SHOW_ICON_TAG, SerDeStructureEntry.BOOLEAN);
-		effects.put(POTION_EFFECT_SHOW_PARTICLES_TAG, SerDeStructureEntry.BOOLEAN);
-		effects.put(POTION_EFFECT_AMBIENT_TAG, SerDeStructureEntry.BOOLEAN);
+		effects.putEntry(POTION_EFFECT_AMPLIFIER_TAG, SerDeStructureEntry.INT);
+		effects.putEntry(POTION_EFFECT_DURATION_TAG, SerDeStructureEntry.INT);
+		effects.putEntry(POTION_EFFECT_TYPE_TAG, new SerDeStructureEntry(
+				new SerDeStructureKeySuggestion<String>(NBTTag.STRING, s -> PotionEffectType.getByName(s) != null),
+				new SerDeStructureValueSuggestion<>(Arrays.asList(PotionEffectType.values()).stream()
+						.map(pet -> new ValueSuggestion<>(StringHandler.INSTANCE, pet.getName(), pet.getName()))
+						.collect(Collectors.toList()))));
+		effects.putEntry(POTION_EFFECT_SHOW_ICON_TAG, SerDeStructureEntry.BOOLEAN);
+		effects.putEntry(POTION_EFFECT_SHOW_PARTICLES_TAG, SerDeStructureEntry.BOOLEAN);
+		effects.putEntry(POTION_EFFECT_AMBIENT_TAG, SerDeStructureEntry.BOOLEAN);
 	}
 
 	public SerDeStructure getStructure() {

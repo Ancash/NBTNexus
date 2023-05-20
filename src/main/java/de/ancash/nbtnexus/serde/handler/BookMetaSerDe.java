@@ -21,9 +21,9 @@ public class BookMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(BOOK_AUTHOR_TAG, SerDeStructureEntry.STRING);
+		structure.putEntry(BOOK_AUTHOR_TAG, SerDeStructureEntry.STRING);
 		structure.putList(BOOK_PAGES_TAG, NBTTag.STRING);
-		structure.put(BOOK_TITLE_TAG, SerDeStructureEntry.STRING);
+		structure.putEntry(BOOK_TITLE_TAG, SerDeStructureEntry.STRING);
 	}
 
 	public SerDeStructure getStructure() {

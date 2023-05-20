@@ -29,20 +29,20 @@ public class MapMetaSerDe implements IItemSerDe {
 	static {
 		structure.putMap(MAP_COLOR_TAG);
 		SerDeStructure color = structure.getMap(MAP_COLOR_TAG);
-		color.put(RED_TAG, SerDeStructureEntry.INT);
-		color.put(GREEN_TAG, SerDeStructureEntry.INT);
-		color.put(BLUE_TAG, SerDeStructureEntry.INT);
-		structure.put(MAP_ID_TAG, SerDeStructureEntry.INT);
-		structure.put(MAP_SCALING_TAG, SerDeStructureEntry.BOOLEAN);
+		color.putEntry(RED_TAG, SerDeStructureEntry.INT);
+		color.putEntry(GREEN_TAG, SerDeStructureEntry.INT);
+		color.putEntry(BLUE_TAG, SerDeStructureEntry.INT);
+		structure.putEntry(MAP_ID_TAG, SerDeStructureEntry.INT);
+		structure.putEntry(MAP_SCALING_TAG, SerDeStructureEntry.BOOLEAN);
 		structure.putMap(MAP_VIEW_TAG);
 		SerDeStructure mv = structure.getMap(MAP_VIEW_TAG);
-		mv.put(MAP_VIEW_CENTER_X_TAG, SerDeStructureEntry.INT);
-		mv.put(MAP_VIEW_CENTER_Z_TAG, SerDeStructureEntry.INT);
-		mv.put(MAP_VIEW_SCALE_TAG, SerDeStructureEntry.STRING);
-		mv.put(MAP_VIEW_WORLD_TAG, SerDeStructureEntry.STRING);
-		mv.put(MAP_VIEW_LOCKED_TAG, SerDeStructureEntry.BOOLEAN);
-		mv.put(MAP_VIEW_TRACKING_POSITION_TAG, SerDeStructureEntry.BOOLEAN);
-		mv.put(MAP_VIEW_UNLIMITED_TRACKING_TAG, SerDeStructureEntry.BOOLEAN);
+		mv.putEntry(MAP_VIEW_CENTER_X_TAG, SerDeStructureEntry.INT);
+		mv.putEntry(MAP_VIEW_CENTER_Z_TAG, SerDeStructureEntry.INT);
+		mv.putEntry(MAP_VIEW_SCALE_TAG, SerDeStructureEntry.STRING);
+		mv.putEntry(MAP_VIEW_WORLD_TAG, SerDeStructureEntry.STRING);
+		mv.putEntry(MAP_VIEW_LOCKED_TAG, SerDeStructureEntry.BOOLEAN);
+		mv.putEntry(MAP_VIEW_TRACKING_POSITION_TAG, SerDeStructureEntry.BOOLEAN);
+		mv.putEntry(MAP_VIEW_UNLIMITED_TRACKING_TAG, SerDeStructureEntry.BOOLEAN);
 	}
 
 	@SuppressWarnings("nls")

@@ -20,13 +20,13 @@ public class CompassMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(LODESTONE_TRACKED_TAG, SerDeStructureEntry.BOOLEAN);
+		structure.putEntry(LODESTONE_TRACKED_TAG, SerDeStructureEntry.BOOLEAN);
 		structure.putMap(LODESTONE_LOCATION_TAG);
 		SerDeStructure loc = structure.getMap(LODESTONE_LOCATION_TAG);
-		loc.put("world", SerDeStructureEntry.STRING);
-		loc.put("x", SerDeStructureEntry.DOUBLE);
-		loc.put("y", SerDeStructureEntry.DOUBLE);
-		loc.put("z", SerDeStructureEntry.DOUBLE);
+		loc.putEntry("world", SerDeStructureEntry.STRING);
+		loc.putEntry("x", SerDeStructureEntry.DOUBLE);
+		loc.putEntry("y", SerDeStructureEntry.DOUBLE);
+		loc.putEntry("z", SerDeStructureEntry.DOUBLE);
 	}
 
 	public SerDeStructure getStructure() {

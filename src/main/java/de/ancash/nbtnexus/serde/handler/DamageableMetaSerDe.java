@@ -24,7 +24,7 @@ public class DamageableMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(DAMAGEABLE_DAMAGE_TAG, SerDeStructureEntry.INT);
+		structure.putEntry(DAMAGEABLE_DAMAGE_TAG, SerDeStructureEntry.INT);
 	}
 
 	public SerDeStructure getStructure() {

@@ -7,8 +7,8 @@ import java.util.Map;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
-import de.ancash.libs.org.simpleyaml.configuration.ConfigurationSection;
-import de.ancash.libs.org.simpleyaml.configuration.file.YamlFile;
+import org.simpleyaml.configuration.ConfigurationSection;
+import org.simpleyaml.configuration.file.YamlFile;
 
 public class Serializer {
 

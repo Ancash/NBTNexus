@@ -1,4 +1,4 @@
-package de.ancash.nbtnexus.editor.validator;
+package de.ancash.nbtnexus.editor.handler;
 
 import java.util.ArrayList;
 import java.util.Arrays;

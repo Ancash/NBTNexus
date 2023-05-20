@@ -18,6 +18,8 @@ import com.mojang.authlib.GameProfile;
 
 import de.ancash.minecraft.ItemStackUtils;
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
+import de.ancash.minecraft.inventory.editor.yml.handler.StringHandler;
+import de.ancash.minecraft.inventory.editor.yml.suggestion.ValueSuggestion;
 import de.ancash.minecraft.nbt.utils.MinecraftVersion;
 import de.ancash.nbtnexus.NBTNexus;
 import de.ancash.nbtnexus.NBTTag;
@@ -26,8 +28,10 @@ import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
 import de.ancash.nbtnexus.serde.structure.SerDeStructure;
 import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureKeySuggestion;
+import de.ancash.nbtnexus.serde.structure.SerDeStructureValueSuggestion;
 
-@SuppressWarnings("nls")
+@SuppressWarnings({ "nls", "unchecked" })
 public class SkullMetaMetaSerDe implements IItemSerDe {
 
 	public static final SkullMetaMetaSerDe INSTANCE = new SkullMetaMetaSerDe();
@@ -35,12 +39,19 @@ public class SkullMetaMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(SKULL_NOTE_BLOCK_SOUND_TAG, SerDeStructureEntry.STRING);
+		structure.putEntry(SKULL_NOTE_BLOCK_SOUND_TAG, SerDeStructureEntry.STRING);
 		structure.putMap(GAME_PROFILE_TAG);
 		SerDeStructure gp = structure.getMap(GAME_PROFILE_TAG);
-		gp.put(GAME_PROFILE_ID_TAG, SerDeStructureEntry.STRING);
-		gp.put(GAME_PROFILE_NAME_TAG, SerDeStructureEntry.STRING);
-		gp.putMap(GAME_PROFILE_PROPERTIES_TAG);
+		gp.putEntry(GAME_PROFILE_ID_TAG, SerDeStructureEntry.UUID);
+		gp.putEntry(GAME_PROFILE_NAME_TAG, SerDeStructureEntry.STRING);
+		structure.putMap(GAME_PROFILE_PROPERTIES_TAG);
+		SerDeStructure prop = structure.getMap(GAME_PROFILE_PROPERTIES_TAG);
+		prop.putList("textures", NBTTag.COMPOUND);
+		SerDeStructure texture = prop.getList("textures");
+		texture.putEntry("Value", SerDeStructureEntry.STRING);
+		texture.putEntry("Name",
+				new SerDeStructureEntry(SerDeStructureKeySuggestion.STRING, new SerDeStructureValueSuggestion<String>(
+						new ValueSuggestion<String>(StringHandler.INSTANCE, "textures", "textures"))));
 	}
 
 	public SerDeStructure getStructure() {
@@ -68,7 +79,6 @@ public class SkullMetaMetaSerDe implements IItemSerDe {
 		return bl;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> serialize(ItemStack item) {
 		Map<String, Object> map = new HashMap<>();
@@ -109,7 +119,6 @@ public class SkullMetaMetaSerDe implements IItemSerDe {
 		return SKULL_TAG;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void deserialize(ItemStack item, Map<String, Object> map) {
 		SkullMeta meta = (SkullMeta) item.getItemMeta();

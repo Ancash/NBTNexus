@@ -96,7 +96,7 @@ public class MetaTag {
 
 	public static final String FIREWORK_EFFECT_TAG = "FireworkEffect";
 	public static final String FIREWORK_EFFECT_COLORS_TAG = "Colors";
-	public static final String FIREWORK_EFFECT_FADE_COLORS_TAG = "FColors";
+	public static final String FIREWORK_EFFECT_FADE_COLORS_TAG = "FadeColors";
 	public static final String FIREWORK_EFFECT_TYPE_TAG = "Type";
 	public static final String FIREWORK_EFFECT_TRAIL_TAG = "Trail";
 	public static final String FIREWORK_EFFECT_FLICKER_TAG = "Flicker";

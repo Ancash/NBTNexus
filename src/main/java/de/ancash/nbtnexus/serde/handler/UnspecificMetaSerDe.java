@@ -33,21 +33,22 @@ public class UnspecificMetaSerDe implements IItemSerDe {
 	private static final SerDeStructure structure = new SerDeStructure();
 
 	static {
-		structure.put(DISPLAYNAME_TAG, new SerDeStructureEntry<String>(NBTTag.STRING));
+		structure.putEntry(DISPLAYNAME_TAG, SerDeStructureEntry.STRING);
 		structure.putList(LORE_TAG, NBTTag.STRING);
-		structure.put(LOCALIZED_NAME_TAG, new SerDeStructureEntry<String>(NBTTag.STRING));
-		structure.put(CUSTOM_MODEL_DATA, new SerDeStructureEntry<Integer>(NBTTag.INT));
+		structure.putEntry(LOCALIZED_NAME_TAG, SerDeStructureEntry.STRING);
+		structure.putEntry(CUSTOM_MODEL_DATA, SerDeStructureEntry.INT);
 		structure.putList(ENCHANTMENTS_TAG, NBTTag.COMPOUND);
+		structure.putList(ITEM_FLAGS_TAG, NBTTag.STRING, SerDeStructureEntry.forEnum(ItemFlag.class));
 		SerDeStructure enchs = structure.getList(ENCHANTMENTS_TAG);
-		enchs.put(ENCHANTMENT_LEVEL_TAG, new SerDeStructureEntry<Integer>(NBTTag.INT));
-		enchs.put(ENCHANTMENT_TYPE_TAG, SerDeStructureEntry.forEnum(XEnchantment.class));
+		enchs.putEntry(ENCHANTMENT_LEVEL_TAG, SerDeStructureEntry.INT);
+		enchs.putEntry(ENCHANTMENT_TYPE_TAG, SerDeStructureEntry.forEnum(XEnchantment.class));
 		structure.putList(ATTRIBUTES_TAG, NBTTag.COMPOUND);
 		SerDeStructure attr = structure.getList(ATTRIBUTES_TAG);
-		attr.put(ATTRIBUTE_TYPE_TAG, SerDeStructureEntry.forEnum(Attribute.class));
-		attr.put(ATTRIBUTE_NAME_TAG, new SerDeStructureEntry<String>(NBTTag.STRING));
-		attr.put(ATTRIBUTE_AMOUNT_TAG, new SerDeStructureEntry<Double>(NBTTag.DOUBLE));
-		attr.put(ATTRIBUTE_OPERATION_TAG, SerDeStructureEntry.forEnum(Operation.class));
-		attr.put(ATTRIBUTE_UUID_TAG, SerDeStructureEntry.forUUID());
+		attr.putEntry(ATTRIBUTE_TYPE_TAG, SerDeStructureEntry.forEnum(Attribute.class));
+		attr.putEntry(ATTRIBUTE_NAME_TAG, SerDeStructureEntry.STRING);
+		attr.putEntry(ATTRIBUTE_AMOUNT_TAG, SerDeStructureEntry.INT);
+		attr.putEntry(ATTRIBUTE_OPERATION_TAG, SerDeStructureEntry.forEnum(Operation.class));
+		attr.putEntry(ATTRIBUTE_UUID_TAG, SerDeStructureEntry.UUID);
 	}
 
 	public SerDeStructure getStructure() {

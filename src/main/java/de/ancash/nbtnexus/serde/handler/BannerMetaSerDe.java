@@ -26,8 +26,8 @@ public class BannerMetaSerDe implements IItemSerDe {
 	static {
 		structure.putList(BANNER_PATTERNS_TAG, NBTTag.COMPOUND);
 		SerDeStructure pattern = structure.getList(BANNER_PATTERNS_TAG);
-		pattern.put(BANNER_PATTERN_TYPE_TAG, SerDeStructureEntry.forEnum(PatternType.class));
-		pattern.put(BANNER_PATTERN_COLOR_TAG, SerDeStructureEntry.forEnum(DyeColor.class));
+		pattern.putEntry(BANNER_PATTERN_TYPE_TAG, SerDeStructureEntry.forEnum(PatternType.class));
+		pattern.putEntry(BANNER_PATTERN_COLOR_TAG, SerDeStructureEntry.forEnum(DyeColor.class));
 	}
 
 	public SerDeStructure getStructure() {
