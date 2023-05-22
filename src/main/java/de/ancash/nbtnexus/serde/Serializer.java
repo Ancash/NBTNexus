@@ -10,7 +10,7 @@ import javax.json.JsonObjectBuilder;
 import org.simpleyaml.configuration.ConfigurationSection;
 import org.simpleyaml.configuration.file.YamlFile;
 
-public class Serializer {
+public final class Serializer {
 
 	public static String toYaml(Map<String, Object> map) throws IOException {
 		YamlFile yaml = new YamlFile();

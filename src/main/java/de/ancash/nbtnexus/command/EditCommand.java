@@ -22,6 +22,9 @@ import de.ancash.nbtnexus.serde.ItemSerializer;
 public class EditCommand extends NBTNexusSubCommand {
 
 	@SuppressWarnings("nls")
+	public static final String PERMISSION = "nbtn.edit";
+
+	@SuppressWarnings("nls")
 	public EditCommand(NBTNexus pl) {
 		super(pl, "edit");
 	}
@@ -32,6 +35,8 @@ public class EditCommand extends NBTNexusSubCommand {
 		if (!isPlayer(arg0))
 			return false;
 		Player player = (Player) arg0;
+		if (!player.hasPermission(PERMISSION))
+			return false;
 		ItemStack item = player.getItemInHand();
 		if (item == null || item.getType() == Material.AIR) {
 			player.sendMessage("§cNo item in hand");

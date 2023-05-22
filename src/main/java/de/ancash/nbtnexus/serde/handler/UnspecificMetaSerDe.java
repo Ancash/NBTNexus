@@ -46,9 +46,10 @@ public class UnspecificMetaSerDe implements IItemSerDe {
 		SerDeStructure attr = structure.getList(ATTRIBUTES_TAG);
 		attr.putEntry(ATTRIBUTE_TYPE_TAG, SerDeStructureEntry.forEnum(Attribute.class));
 		attr.putEntry(ATTRIBUTE_NAME_TAG, SerDeStructureEntry.STRING);
-		attr.putEntry(ATTRIBUTE_AMOUNT_TAG, SerDeStructureEntry.INT);
+		attr.putEntry(ATTRIBUTE_AMOUNT_TAG, SerDeStructureEntry.DOUBLE);
 		attr.putEntry(ATTRIBUTE_OPERATION_TAG, SerDeStructureEntry.forEnum(Operation.class));
 		attr.putEntry(ATTRIBUTE_UUID_TAG, SerDeStructureEntry.UUID);
+		attr.putEntry(ATTRIBUTE_SLOT_TAG, SerDeStructureEntry.forEnum(EquipmentSlot.class));
 	}
 
 	public SerDeStructure getStructure() {
@@ -175,6 +176,7 @@ public class UnspecificMetaSerDe implements IItemSerDe {
 	@SuppressWarnings("unchecked")
 	private void deserializeAttributeModifiers(ItemStack item, Map<String, Object> map) {
 		ItemMeta meta = item.getItemMeta();
+
 		for (Map<String, Object> attribute : (List<Map<String, Object>>) map.get(ATTRIBUTES_TAG)) {
 			meta.addAttributeModifier(Attribute.valueOf((String) attribute.get(ATTRIBUTE_TYPE_TAG)),
 					new AttributeModifier(UUID.fromString((String) attribute.get(ATTRIBUTE_UUID_TAG)),

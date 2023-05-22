@@ -16,6 +16,9 @@ import de.ancash.nbtnexus.serde.SerializedItem;
 public class TestSerDeComparisonCommand extends NBTNexusSubCommand {
 
 	@SuppressWarnings("nls")
+	public static final String PERMISSION = "nbtn.tsdc";
+
+	@SuppressWarnings("nls")
 	public TestSerDeComparisonCommand(NBTNexus pl) {
 		super(pl, "tsdc");
 	}
@@ -26,6 +29,8 @@ public class TestSerDeComparisonCommand extends NBTNexusSubCommand {
 		if (!isPlayer(arg0))
 			return false;
 		Player player = (Player) arg0;
+		if (!player.hasPermission(PERMISSION))
+			return false;
 		ItemStack item = player.getItemInHand();
 		if (item == null || item.getType() == Material.AIR) {
 			player.sendMessage("§cNo item in hand");
@@ -44,9 +49,10 @@ public class TestSerDeComparisonCommand extends NBTNexusSubCommand {
 			return true;
 		}
 		player.sendMessage(
-				"§eSerialized item->yaml->item->json->item->json in " + (System.nanoTime() - l) / 1000000d + "ms");
+				"§eSerialized item->yaml->item->json->item->yaml in " + (System.nanoTime() - l) / 1000000d + "ms");
 		l = System.nanoTime();
-		if (SerializedItem.of(item).isSimilar(ItemDeserializer.INSTANCE.deserializeYamlToItemStack(yaml))) {
+		if (SerializedItem.of(item)
+				.areEqual(SerializedItem.of(ItemDeserializer.INSTANCE.deserializeYamlToItemStack(yaml)))) {
 			player.sendMessage("§aTest successful! Compared in " + (System.nanoTime() - l) / 1000000d + "ms!");
 		} else {
 			player.sendMessage("§cTest failed! See console for the data");

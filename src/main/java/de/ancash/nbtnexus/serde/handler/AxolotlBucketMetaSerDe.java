@@ -3,7 +3,6 @@ package de.ancash.nbtnexus.serde.handler;
 import static de.ancash.nbtnexus.MetaTag.*;
 import static de.ancash.nbtnexus.NBTNexus.*;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,26 +33,26 @@ public class AxolotlBucketMetaSerDe implements IItemSerDe {
 	}
 
 	private final Set<String> bl = new HashSet<>();
-	private final Map<String, String> relocate = new HashMap<>();
-	private final Map<String, String> reverseRelocate = new HashMap<>();
+//	private final Map<String, String> relocate = new HashMap<>();
+//	private final Map<String, String> reverseRelocate = new HashMap<>();
 
 	AxolotlBucketMetaSerDe() {
 		bl.add("Variant" + SPLITTER + NBTTag.INT);
-		relocate.put("Age" + SPLITTER + NBTTag.INT, getKey() + "." + AXOLOTL_BUCKET_AGE_TAG);
-		relocate.put("Health" + SPLITTER + NBTTag.FLOAT, getKey() + "." + AXOLOTL_BUCKET_HEALTH_TAG);
-		reverseRelocate.put(getKey() + "." + AXOLOTL_BUCKET_HEALTH_TAG, "Health" + SPLITTER + NBTTag.FLOAT.name());
-		reverseRelocate.put(getKey() + "." + AXOLOTL_BUCKET_AGE_TAG, "Age" + SPLITTER + NBTTag.INT);
+//		relocate.put("Age" + SPLITTER + NBTTag.INT, getKey() + "." + AXOLOTL_BUCKET_AGE_TAG);
+//		relocate.put("Health" + SPLITTER + NBTTag.FLOAT, getKey() + "." + AXOLOTL_BUCKET_HEALTH_TAG);
+//		reverseRelocate.put(getKey() + "." + AXOLOTL_BUCKET_HEALTH_TAG, "Health" + SPLITTER + NBTTag.FLOAT.name());
+//		reverseRelocate.put(getKey() + "." + AXOLOTL_BUCKET_AGE_TAG, "Age" + SPLITTER + NBTTag.INT);
 	}
 
-	@Override
-	public Map<String, String> getKeysToRelocate() {
-		return Collections.unmodifiableMap(relocate);
-	}
-
-	@Override
-	public Map<String, String> getKeysToReverseRelocate() {
-		return reverseRelocate;
-	}
+//	@Override
+//	public Map<String, String> getKeysToRelocate() {
+//		return Collections.unmodifiableMap(relocate);
+//	}
+//
+//	@Override
+//	public Map<String, String> getKeysToReverseRelocate() {
+//		return reverseRelocate;
+//	}
 
 	@Override
 	public Map<String, Object> serialize(ItemStack item) {

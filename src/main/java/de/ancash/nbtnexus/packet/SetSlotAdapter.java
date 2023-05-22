@@ -16,6 +16,7 @@ import de.ancash.nbtnexus.NBTNexus;
 
 public class SetSlotAdapter extends PacketAdapter {
 
+	@SuppressWarnings("unused")
 	private final NBTNexus pl;
 
 	public SetSlotAdapter(NBTNexus pl) {

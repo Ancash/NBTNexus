@@ -63,6 +63,7 @@ public class SerDeStructure implements Cloneable {
 		return isList;
 	}
 
+	@SuppressWarnings("nls")
 	@Override
 	public String toString() {
 		if (isList)

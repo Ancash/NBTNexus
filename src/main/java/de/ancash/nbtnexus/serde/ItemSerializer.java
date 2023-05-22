@@ -186,14 +186,14 @@ public class ItemSerializer {
 		Set<String> blacklisted = new HashSet<>();
 		map.put(XMATERIAL_TAG, XMaterial.matchXMaterial(is).name());
 		map.put(AMOUNT_TAG, is.getAmount());
-		Map<String, String> relocate = new HashMap<>();
+//		Map<String, String> relocate = new HashMap<>();
 		for (IItemSerDe ims : itemSerDe) {
 			if (ims.isValid(is)) {
 				Map<String, Object> m = ims.serialize(is);
 				if (!m.isEmpty())
 					map.put(ims.getKey(), m);
-				if (ims.hasKeysToRelocate())
-					relocate.putAll(ims.getKeysToRelocate());
+//				if (ims.hasKeysToRelocate())
+//					relocate.putAll(ims.getKeysToRelocate());
 				if (ims.hasBlacklistedKeys())
 					blacklisted.addAll(ims.getBlacklistedKeys());
 			}
