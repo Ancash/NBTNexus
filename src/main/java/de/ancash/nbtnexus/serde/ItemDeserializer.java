@@ -250,8 +250,8 @@ public class ItemDeserializer {
 		try {
 			deserialize0(compound, map, fullKey);
 		} catch (Exception ex) {
-			throw new IllegalStateException("Could not deserialize key " + fullKey + ", value: " + map.get(fullKey),
-					ex);
+			throw new IllegalStateException(
+					"Could not deserialize key " + fullKey + ", value: " + map.get(fullKey) + "; map:" + map, ex);
 		}
 	}
 
