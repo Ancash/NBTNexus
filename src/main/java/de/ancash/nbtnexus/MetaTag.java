@@ -5,10 +5,6 @@ public class MetaTag {
 
 	public static final char ALTERNATE_COLOR_CODE = '&';
 
-	public static final String NBT_NEXUS_ITEM_PROPERTIES_TAG = "NBTNexusItem";
-	public static final String NBT_NEXUS_ITEM_TYPE_TAG = "type";
-	public static final String NBT_NEXUS_ITEM_PROXY_TAG = "proxy";
-
 	public static final String XMATERIAL_TAG = "XMaterial";
 	public static final String AMOUNT_TAG = "Amount";
 

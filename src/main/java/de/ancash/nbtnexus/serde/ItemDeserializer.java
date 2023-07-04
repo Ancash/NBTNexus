@@ -47,6 +47,7 @@ import de.ancash.minecraft.nbt.NBTContainer;
 import de.ancash.minecraft.nbt.NBTItem;
 import de.ancash.minecraft.nbt.NBTList;
 import de.ancash.nbtnexus.NBTNexus;
+import de.ancash.nbtnexus.NBTNexusItem;
 import de.ancash.nbtnexus.NBTNexusItem.Type;
 import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.handler.AxolotlBucketMetaSerDe;
@@ -63,7 +64,7 @@ import de.ancash.nbtnexus.serde.handler.MapMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.MusicInstrumentMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.PotionMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.RepairableMetaSerDe;
-import de.ancash.nbtnexus.serde.handler.SkullMetaMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.SkullMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SpawnEggMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SuspiciousStewMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.TropicalFishBucketMetaSerDe;
@@ -90,7 +91,7 @@ public class ItemDeserializer {
 		itemDeserializer.add(MusicInstrumentMetaSerDe.INSTANCE);
 		itemDeserializer.add(PotionMetaSerDe.INSTANCE);
 		itemDeserializer.add(UnspecificMetaSerDe.INSTANCE);
-		itemDeserializer.add(SkullMetaMetaSerDe.INSTANCE);
+		itemDeserializer.add(SkullMetaSerDe.INSTANCE);
 		itemDeserializer.add(SpawnEggMetaSerDe.INSTANCE);
 		itemDeserializer.add(SuspiciousStewMetaSerDe.INSTANCE);
 		itemDeserializer.add(TropicalFishBucketMetaSerDe.INSTANCE);
@@ -171,9 +172,10 @@ public class ItemDeserializer {
 
 	@SuppressWarnings("unchecked")
 	public ItemStack deserializeItemStack(Map<String, Object> map) {
-		Map<String, Object> nexus = (Map<String, Object>) map.get(NBT_NEXUS_ITEM_PROPERTIES_TAG);
-		if (nexus.get(NBT_NEXUS_ITEM_TYPE_TAG).equals(Type.SERIALIZED.name()))
-			map.remove(NBT_NEXUS_ITEM_PROPERTIES_TAG);
+		map = (Map<String, Object>) new HashMap<>(map).clone();
+		Map<String, Object> nexus = (Map<String, Object>) map.get(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG);
+		if (nexus.get(NBTNexusItem.NBT_NEXUS_ITEM_TYPE_TAG).equals(Type.SERIALIZED.name()))
+			map.remove(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG);
 		Optional<XMaterial> opt = XMaterial.matchXMaterial((String) map.remove(XMATERIAL_TAG));
 		if (!opt.isPresent())
 			throw new IllegalArgumentException();

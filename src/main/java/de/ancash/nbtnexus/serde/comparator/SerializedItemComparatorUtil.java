@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.stream.IntStream;
 
 import de.ancash.libs.org.apache.commons.lang3.Validate;
-import de.ancash.nbtnexus.MetaTag;
+import de.ancash.nbtnexus.NBTNexusItem;
 
 public class SerializedItemComparatorUtil {
 
@@ -23,10 +23,10 @@ public class SerializedItemComparatorUtil {
 		Validate.notNull(ignoredKeys);
 		Validate.notNull(ignoredOrder);
 		Validate.notNull(relativePath);
-		Validate.isTrue(!ignoredKeys.contains(MetaTag.NBT_NEXUS_ITEM_PROPERTIES_TAG));
+		Validate.isTrue(!ignoredKeys.contains(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG));
 
-		if (a.containsKey(MetaTag.NBT_NEXUS_ITEM_PROPERTIES_TAG)
-				|| b.containsKey(MetaTag.NBT_NEXUS_ITEM_PROPERTIES_TAG))
+		if (a.containsKey(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG)
+				|| b.containsKey(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG))
 			relativePath = "";
 
 		Set<String> keys = new HashSet<>();

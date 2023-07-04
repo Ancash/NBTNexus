@@ -54,7 +54,7 @@ import de.ancash.nbtnexus.serde.handler.MapMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.MusicInstrumentMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.PotionMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.RepairableMetaSerDe;
-import de.ancash.nbtnexus.serde.handler.SkullMetaMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.SkullMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SpawnEggMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SuspiciousStewMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.TropicalFishBucketMetaSerDe;
@@ -85,7 +85,7 @@ public class ItemSerializer {
 		itemSerDe.add(MusicInstrumentMetaSerDe.INSTANCE);
 		itemSerDe.add(PotionMetaSerDe.INSTANCE);
 		itemSerDe.add(UnspecificMetaSerDe.INSTANCE);
-		itemSerDe.add(SkullMetaMetaSerDe.INSTANCE);
+		itemSerDe.add(SkullMetaSerDe.INSTANCE);
 		itemSerDe.add(SpawnEggMetaSerDe.INSTANCE);
 		itemSerDe.add(SuspiciousStewMetaSerDe.INSTANCE);
 		itemSerDe.add(TropicalFishBucketMetaSerDe.INSTANCE);
@@ -200,9 +200,9 @@ public class ItemSerializer {
 		}
 		serializeNBTCompound(new NBTItem(is)).forEach(map::put);
 		blacklisted.forEach(map::remove);
-		Map<String, Object> nexus = (Map<String, Object>) map.computeIfAbsent(NBT_NEXUS_ITEM_PROPERTIES_TAG,
-				k -> new HashMap<>());
-		nexus.computeIfAbsent(NBT_NEXUS_ITEM_TYPE_TAG, k -> NBTNexusItem.Type.SERIALIZED.name());
+		Map<String, Object> nexus = (Map<String, Object>) map
+				.computeIfAbsent(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG, k -> new HashMap<>());
+		nexus.computeIfAbsent(NBTNexusItem.NBT_NEXUS_ITEM_TYPE_TAG, k -> NBTNexusItem.Type.SERIALIZED.name());
 //		relocate(map, relocate);
 		return map;
 	}

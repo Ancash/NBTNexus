@@ -21,13 +21,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import de.ancash.minecraft.cryptomorin.xseries.XEnchantment;
+import de.ancash.nbtnexus.MetaTag;
 import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
+import de.ancash.nbtnexus.serde.access.SerializedMetaAccess;
 import de.ancash.nbtnexus.serde.structure.SerDeStructure;
 import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
 import net.md_5.bungee.api.ChatColor;
 
-public class UnspecificMetaSerDe implements IItemSerDe {
+public class UnspecificMetaSerDe extends SerializedMetaAccess implements IItemSerDe {
 
 	public static final UnspecificMetaSerDe INSTANCE = new UnspecificMetaSerDe();
 	private static final SerDeStructure structure = new SerDeStructure();
@@ -57,7 +59,7 @@ public class UnspecificMetaSerDe implements IItemSerDe {
 	}
 
 	UnspecificMetaSerDe() {
-
+		super(MetaTag.UNSPECIFIC_META_TAG);
 	}
 
 	public String translateChatColor(String textToTranslate) {

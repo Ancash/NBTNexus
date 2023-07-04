@@ -32,9 +32,9 @@ import de.ancash.nbtnexus.serde.structure.SerDeStructureKeySuggestion;
 import de.ancash.nbtnexus.serde.structure.SerDeStructureValueSuggestion;
 
 @SuppressWarnings({ "nls", "unchecked" })
-public class SkullMetaMetaSerDe implements IItemSerDe {
+public class SkullMetaSerDe implements IItemSerDe {
 
-	public static final SkullMetaMetaSerDe INSTANCE = new SkullMetaMetaSerDe();
+	public static final SkullMetaSerDe INSTANCE = new SkullMetaSerDe();
 	private static Field gameProfileField;
 	private static final SerDeStructure structure = new SerDeStructure();
 
@@ -71,7 +71,7 @@ public class SkullMetaMetaSerDe implements IItemSerDe {
 		}
 	}
 
-	SkullMetaMetaSerDe() {
+	SkullMetaSerDe() {
 	}
 
 	@Override
@@ -130,6 +130,7 @@ public class SkullMetaMetaSerDe implements IItemSerDe {
 						(String) gps.get(GAME_PROFILE_NAME_TAG));
 			else
 				gp = new GameProfile(null, (String) gps.get(GAME_PROFILE_NAME_TAG));
+
 			if (map.containsKey(GAME_PROFILE_PROPERTIES_TAG))
 				gp.getProperties().putAll(ItemDeserializer.INSTANCE
 						.deserializePropertyMap((Map<String, Object>) map.get(GAME_PROFILE_PROPERTIES_TAG)));

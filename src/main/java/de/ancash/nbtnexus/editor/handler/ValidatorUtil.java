@@ -11,7 +11,7 @@ import org.simpleyaml.configuration.ConfigurationSection;
 import de.ancash.minecraft.inventory.editor.yml.gui.ConfigurationSectionEditor;
 import de.ancash.minecraft.inventory.editor.yml.gui.ListEditor;
 import de.ancash.minecraft.inventory.editor.yml.gui.ValueEditor;
-import de.ancash.nbtnexus.MetaTag;
+import de.ancash.nbtnexus.NBTNexusItem;
 import de.ancash.nbtnexus.serde.handler.AxolotlBucketMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BannerMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BookMetaSerDe;
@@ -24,7 +24,7 @@ import de.ancash.nbtnexus.serde.handler.LeatherArmorMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.MapMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.MusicInstrumentMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.PotionMetaSerDe;
-import de.ancash.nbtnexus.serde.handler.SkullMetaMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.SkullMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SpawnEggMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.SuspiciousStewMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.TropicalFishBucketMetaSerDe;
@@ -33,15 +33,15 @@ import de.ancash.nbtnexus.serde.handler.UnspecificMetaSerDe;
 @SuppressWarnings("deprecation")
 public class ValidatorUtil {
 
-	private static final Set<String> metaTags = Collections.unmodifiableSet(
-			new HashSet<>(Arrays.asList(MetaTag.NBT_NEXUS_ITEM_PROPERTIES_TAG, AxolotlBucketMetaSerDe.INSTANCE.getKey(),
+	private static final Set<String> metaTags = Collections.unmodifiableSet(new HashSet<>(
+			Arrays.asList(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG, AxolotlBucketMetaSerDe.INSTANCE.getKey(),
 					BannerMetaSerDe.INSTANCE.getKey(), BookMetaSerDe.INSTANCE.getKey(),
 					BundleMetaSerDe.INSTANCE.getKey(), CompassMetaSerDe.INSTANCE.getKey(),
 					FireworkEffectMetaSerDe.INSTANCE.getKey(), FireworkMetaSerDe.INSTANCE.getKey(),
 					KnowledgeBookMetaSerDe.INSTANCE.getKey(), LeatherArmorMetaSerDe.INSTANCE.getKey(),
 					MapMetaSerDe.INSTANCE.getKey(), MusicInstrumentMetaSerDe.INSTANCE.getKey(),
 					PotionMetaSerDe.INSTANCE.getKey(), UnspecificMetaSerDe.INSTANCE.getKey(),
-					SkullMetaMetaSerDe.INSTANCE.getKey(), SpawnEggMetaSerDe.INSTANCE.getKey(),
+					SkullMetaSerDe.INSTANCE.getKey(), SpawnEggMetaSerDe.INSTANCE.getKey(),
 					SuspiciousStewMetaSerDe.INSTANCE.getKey(), TropicalFishBucketMetaSerDe.INSTANCE.getKey())));
 
 	public static boolean isItemProperty(ValueEditor<?> cur, int depth) {
@@ -161,11 +161,11 @@ public class ValidatorUtil {
 		ConfigurationSection cs = ((ConfigurationSectionEditor) cur).getCurrent();
 		if (cs == null)
 			cs = ((ConfigurationSectionEditor) cur).getRoot();
-		return cs.isConfigurationSection(MetaTag.NBT_NEXUS_ITEM_PROPERTIES_TAG);
+		return cs.isConfigurationSection(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG);
 	}
 
 	public static boolean isItemRoot(ConfigurationSection cur) {
-		return cur.isConfigurationSection(MetaTag.NBT_NEXUS_ITEM_PROPERTIES_TAG);
+		return cur.isConfigurationSection(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG);
 	}
 
 	public static boolean isMetaEditor(ValueEditor<?> c) {
