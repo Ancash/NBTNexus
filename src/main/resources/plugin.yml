@@ -1,8 +1,9 @@
 name: NBTNexus
 version: 1.0.0
 main: de.ancash.nbtnexus.NBTNexus
-depend: [ILibrary]
+depend: [ILibrary, ProtocolLib]
 api-version: 1.13
+author: Ancash
 
 commands:
    nbtn:
