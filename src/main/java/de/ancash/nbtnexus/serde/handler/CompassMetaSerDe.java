@@ -14,6 +14,7 @@ import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.structure.SerDeStructure;
 import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
 
+@SuppressWarnings("nls")
 public class CompassMetaSerDe implements IItemSerDe {
 
 	public static final CompassMetaSerDe INSTANCE = new CompassMetaSerDe();

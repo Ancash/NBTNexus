@@ -54,6 +54,7 @@ public class ValidatorUtil {
 		return isItemRoot(cur);
 	}
 
+	@SuppressWarnings("nls")
 	public static String getPath(ConfigurationSectionEditor root, ValueEditor<?> cur) {
 		LinkedList<String> fp = new LinkedList<>();
 		while (cur != null) {
@@ -74,6 +75,7 @@ public class ValidatorUtil {
 		return String.join(".", fp).replaceFirst(root.getCurrent().getCurrentPath(), "");
 	}
 
+	@SuppressWarnings("nls")
 	public static String getPath(ConfigurationSectionEditor root, ValueEditor<?> cur, String key) {
 		String path = ValidatorUtil.getPath(root, cur);
 		if (!path.isEmpty())

@@ -1,5 +1,6 @@
 package de.ancash.nbtnexus;
 
+@SuppressWarnings("nls")
 public class NBTNexusItem {
 
 	public static final String NBT_NEXUS_ITEM_PROPERTIES_TAG = "NBTNexusItem";

@@ -3,10 +3,11 @@ version: 1.0.0
 main: de.ancash.nbtnexus.NBTNexus
 depend: [ILibrary, ProtocolLib]
 api-version: 1.13
-author: Ancash
+author: [Ancash]
 
 commands:
    nbtn:
       usage:
       - "§7/nbtn edit (edit item in hand in gui)"
       - "§7/nbtn s/ser/serialize (serialize item in hand to json & yaml)"
+      - "§7/nbtn tsdc (measures ser/de time)"
