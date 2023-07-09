@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.ancash</groupId>
 	<artifactId>nbtnexus</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>NBTNexus</name>
 	<properties>
 		<maven.compiler.target>17</maven.compiler.target>

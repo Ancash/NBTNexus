@@ -81,8 +81,8 @@ public class InventoryUpdateAdapter extends PacketAdapter {
 				}
 			}
 		}
-
-		ProtocolLibrary.getProtocolManager().sendServerPacket(player, container, filtered);
+		if (player.getGameMode() != GameMode.CREATIVE && player.getGameMode() != GameMode.SPECTATOR)
+			ProtocolLibrary.getProtocolManager().sendServerPacket(player, container, filtered);
 	}
 
 	private void scheduleItemListComputation(StructureModifier<List<ItemStack>> itemStackStructureModifier,

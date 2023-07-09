@@ -40,7 +40,27 @@ public class ItemComputerRegistry {
 		default:
 			break;
 		}
-		logger.info(plugin.getName() + " registered a IItemComputer with " + policy + " policy");
+		logger.info(plugin.getName() + " registered an IItemComputer with " + policy + " policy");
+	}
+
+	@SuppressWarnings("nls")
+	public static boolean unregisterComputer(JavaPlugin pl, ListenerPolicy p) {
+		switch (p) {
+		case DEFAULT:
+			if (defaultComputer.remove(pl.getName()) != null) {
+				logger.info(pl.getName() + " unregistered an IItemComputer with " + p + " policy");
+				return true;
+			}
+			return false;
+		case PLACEHOLDER:
+			if (placeholderComputer.remove(pl.getName()) != null) {
+				logger.info(pl.getName() + " unregistered an IItemComputer with " + p + " policy");
+				return true;
+			}
+			return false;
+		default:
+			throw new IllegalArgumentException();
+		}
 	}
 
 	@SuppressWarnings("nls")
