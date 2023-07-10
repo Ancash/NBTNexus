@@ -258,7 +258,12 @@ public class ItemSerializer {
 	private boolean trySerializeItemStack(NBTCompound nbt, String key, Map<String, Object> map) {
 		if (nbt.getType(key) != NBTType.NBTTagCompound)
 			return false;
-		ItemStack item = nbt.getItemStack(key);
+		ItemStack item = null;
+		try {
+			item = nbt.getItemStack(key);
+		} catch (Throwable th) {
+			return false;
+		}
 		if (item != null && item.getType() != Material.AIR)
 			map.put(key + SPLITTER + NBTTag.ITEM_STACK, serializeItemStack(item));
 		return item != null && item.getType() != Material.AIR;
@@ -267,7 +272,12 @@ public class ItemSerializer {
 	private Map<String, Object> trySerializeItemStack(NBTCompound nbt, String key) {
 		if (nbt.getType(key) != NBTType.NBTTagCompound)
 			return null;
-		ItemStack item = nbt.getItemStack(key);
+		ItemStack item = null;
+		try {
+			item = nbt.getItemStack(key);
+		} catch (Throwable th) {
+			return null;
+		}
 		if (item == null || item.getType() == Material.AIR)
 			return null;
 		return serializeItemStack(item);
@@ -276,7 +286,12 @@ public class ItemSerializer {
 	private boolean trySerializeItemStackArray(NBTCompound nbt, String key, Map<String, Object> map) {
 		if (nbt.getType(key) != NBTType.NBTTagCompound)
 			return false;
-		ItemStack[] itemArr = nbt.getItemStackArray(key);
+		ItemStack[] itemArr = null;
+		try {
+			itemArr = nbt.getItemStackArray(key);
+		} catch (Throwable th) {
+			return false;
+		}
 		if (itemArr != null)
 			map.put(key + SPLITTER + NBTTag.ITEM_STACK_ARRAY,
 					Arrays.stream(itemArr).map(this::serializeItemStack).collect(Collectors.toList()));

@@ -4,6 +4,8 @@ import static de.ancash.nbtnexus.MetaTag.*;
 
 import java.util.Arrays;
 
+import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.comphenix.protocol.ProtocolLibrary;
@@ -53,7 +55,7 @@ public class NBTNexus extends JavaPlugin {
 	private static NBTNexus singleton;
 	private NBTNexusCommand cmd;
 	private final SerDeStructure structure = new SerDeStructure();
-	private InventoryUpdateAdapter ssa;
+	private InventoryUpdateAdapter iua;
 
 	public SerDeStructure getStructure() {
 		return structure.clone();
@@ -103,14 +105,16 @@ public class NBTNexus extends JavaPlugin {
 		cmd.addSubCommand(new SerializeCommand(this));
 		getCommand("nbtn").setExecutor(cmd);
 		protocolManager = ProtocolLibrary.getProtocolManager();
-		ssa = new InventoryUpdateAdapter(this);
-		protocolManager.addPacketListener(ssa);
+		iua = new InventoryUpdateAdapter(this);
+		protocolManager.addPacketListener(iua);
+		Bukkit.getPluginManager().registerEvents(iua, singleton);
 	}
 
 	@Override
 	public void onDisable() {
 		protocolManager.removePacketListeners(this);
-		ssa.stop();
+		iua.stop();
+		HandlerList.unregisterAll(singleton);
 	}
 
 	public static NBTNexus getInstance() {
