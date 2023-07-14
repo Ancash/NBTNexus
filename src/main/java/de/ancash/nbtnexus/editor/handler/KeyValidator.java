@@ -16,6 +16,7 @@ import de.ancash.minecraft.inventory.editor.yml.handler.LongHandler;
 import de.ancash.minecraft.inventory.editor.yml.handler.ShortHandler;
 import de.ancash.minecraft.inventory.editor.yml.handler.StringHandler;
 import de.ancash.nbtnexus.NBTNexus;
+import de.ancash.nbtnexus.NBTNexusItem;
 import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.structure.SerDeStructure;
 
@@ -45,7 +46,8 @@ public class KeyValidator implements IKeyValidator {
 		if (path.startsWith("."))
 			path = path.replaceFirst(".", "");
 		path = path.replaceFirst(root.getCurrent().getCurrentPath(), "");
-		if (structure.containsKey(path)) {
+		if (structure.containsKey(path)
+				|| (NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG.equals(key) && structure.containsKey(path = key))) {
 			NBTTag def = structure.isMap(path) ? NBTTag.COMPOUND : (NBTTag) structure.get(path);
 			NBTTag actual = NBTTag.getByHandler(type);
 			if (actual == null || (actual == def))

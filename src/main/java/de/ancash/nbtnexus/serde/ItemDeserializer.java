@@ -31,6 +31,7 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.map.MapView;
 import org.bukkit.map.MapView.Scale;
@@ -40,6 +41,9 @@ import org.bukkit.potion.PotionEffectType;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 
+import de.ancash.datastructures.tuples.Duplet;
+import de.ancash.datastructures.tuples.Tuple;
+import de.ancash.minecraft.cryptomorin.xseries.XEnchantment;
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
 import de.ancash.minecraft.nbt.NBTCompound;
 import de.ancash.minecraft.nbt.NBTCompoundList;
@@ -56,6 +60,7 @@ import de.ancash.nbtnexus.serde.handler.BookMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BundleMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.CompassMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.DamageableMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.EnchantmentStorageMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.FireworkEffectMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.FireworkMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.KnowledgeBookMetaSerDe;
@@ -97,6 +102,7 @@ public class ItemDeserializer {
 		itemDeserializer.add(TropicalFishBucketMetaSerDe.INSTANCE);
 		itemDeserializer.add(DamageableMetaSerDe.INSTANCE);
 		itemDeserializer.add(RepairableMetaSerDe.INSTANCE);
+		itemDeserializer.add(EnchantmentStorageMetaSerDe.INSTANCE);
 	}
 
 	public void registerDeserializer(IItemSerDe des) {
@@ -109,6 +115,20 @@ public class ItemDeserializer {
 
 	public Color deserializeColor(Map<String, Object> map) {
 		return Color.fromRGB((int) map.get(RED_TAG), (int) map.get(GREEN_TAG), (int) map.get(BLUE_TAG));
+	}
+
+	public Map<Enchantment, Integer> deserializeEnchantments(List<Map<String, Object>> enchs) {
+		return enchs.stream().map(this::deserializeEnchantment)
+				.collect(Collectors.toMap(d -> d.getFirst(), d -> d.getSecond()));
+	}
+
+	public Duplet<Enchantment, Integer> deserializeEnchantment(Map<String, Object> ench) {
+		Optional<XEnchantment> match = XEnchantment.matchXEnchantment((String) ench.get(ENCHANTMENT_TYPE_TAG));
+		if (!match.isPresent())
+			return Tuple.of(Enchantment.getByKey(deserializeNamespacedKey((String) ench.get(ENCHANTMENT_TYPE_TAG))),
+					(int) ench.get(ENCHANTMENT_LEVEL_TAG));
+
+		return Tuple.of(match.get().getEnchant(), (int) ench.get(ENCHANTMENT_LEVEL_TAG));
 	}
 
 	public MapView deserializeMapView(Map<String, Object> map) {
@@ -172,7 +192,7 @@ public class ItemDeserializer {
 
 	@SuppressWarnings("unchecked")
 	public ItemStack deserializeItemStack(Map<String, Object> map) {
-		map = (Map<String, Object>) new HashMap<>(map).clone();
+		map = (Map<String, Object>) new HashMap<>(map);
 		Map<String, Object> nexus = (Map<String, Object>) map.get(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG);
 		if (nexus.get(NBTNexusItem.NBT_NEXUS_ITEM_TYPE_TAG).equals(Type.SERIALIZED.name()))
 			map.remove(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG);
@@ -361,7 +381,16 @@ public class ItemDeserializer {
 		switch (listType) {
 		case COMPOUND:
 			NBTCompoundList compoundList = compound.getCompoundList(field);
-			List<Map<?, ?>> mapList = (List<Map<?, ?>>) val;
+			List<Map<String, Object>> mapList = (List<Map<String, Object>>) val;
+
+			for (Map<String, Object> temp : mapList) {
+				if (temp.containsKey(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG)) {
+					compound.setItemStackArray(field,
+							mapList.stream().map(this::deserializeItemStack).toArray(ItemStack[]::new));
+					return;
+				}
+			}
+
 			for (Map<?, ?> temp : mapList) {
 				Map<String, Object> map = (Map<String, Object>) temp;
 				writeToCompound(compoundList.addCompound(), map);
@@ -404,7 +433,10 @@ public class ItemDeserializer {
 	}
 
 	private void createNBTCompound(NBTCompound parent, Map<String, Object> map, String fullKey) {
-		writeToCompound(parent.addCompound(fullKey.split(SPLITTER_REGEX)[0]), map);
+		if (map.containsKey(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG))
+			parent.setItemStack(fullKey.split(SPLITTER_REGEX)[0], deserializeItemStack(map));
+		else
+			writeToCompound(parent.addCompound(fullKey.split(SPLITTER_REGEX)[0]), map);
 	}
 
 	private void writeToCompound(NBTCompound to, Map<String, Object> map) {

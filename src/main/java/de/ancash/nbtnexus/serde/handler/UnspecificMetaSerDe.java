@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -24,6 +23,8 @@ import de.ancash.minecraft.cryptomorin.xseries.XEnchantment;
 import de.ancash.nbtnexus.MetaTag;
 import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
+import de.ancash.nbtnexus.serde.ItemDeserializer;
+import de.ancash.nbtnexus.serde.ItemSerializer;
 import de.ancash.nbtnexus.serde.access.SerializedMetaAccess;
 import de.ancash.nbtnexus.serde.structure.SerDeStructure;
 import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
@@ -91,12 +92,10 @@ public class UnspecificMetaSerDe extends SerializedMetaAccess implements IItemSe
 			meta.setCustomModelData(null);
 		}
 
-		item.setItemMeta(meta);
 		if (!item.getEnchantments().isEmpty()) {
-			map.put(ENCHANTMENTS_TAG, serializeEnchantments(item));
-			item.getEnchantments().keySet().forEach(item::removeEnchantment);
+			map.put(ENCHANTMENTS_TAG, ItemSerializer.INSTANCE.serializeEnchantments(meta.getEnchants()));
+			meta.getEnchants().keySet().stream().forEach(meta::removeEnchant);
 		}
-		meta = item.getItemMeta();
 
 		if (!meta.getItemFlags().isEmpty()) {
 			map.put(ITEM_FLAGS_TAG, meta.getItemFlags().stream().map(ItemFlag::name).collect(Collectors.toList()));
@@ -123,19 +122,6 @@ public class UnspecificMetaSerDe extends SerializedMetaAccess implements IItemSe
 		return map;
 	}
 
-	protected List<Map<String, Object>> serializeEnchantments(ItemStack item) {
-		Map<Enchantment, Integer> enchs = new HashMap<>();
-		item.getEnchantments().forEach(enchs::put);
-		List<Map<String, Object>> serializedEnchs = new ArrayList<>();
-		for (Entry<Enchantment, Integer> entry : enchs.entrySet()) {
-			Map<String, Object> serializedEnch = new HashMap<>();
-			serializedEnch.put(ENCHANTMENT_LEVEL_TAG, entry.getValue());
-			serializedEnch.put(ENCHANTMENT_TYPE_TAG, XEnchantment.matchXEnchantment(entry.getKey()).name());
-			serializedEnchs.add(serializedEnch);
-		}
-		return serializedEnchs;
-	}
-
 	@Override
 	public boolean isValid(ItemStack item) {
 		return item.hasItemMeta();
@@ -145,12 +131,8 @@ public class UnspecificMetaSerDe extends SerializedMetaAccess implements IItemSe
 	@Override
 	public void deserialize(ItemStack item, Map<String, Object> map) {
 		if (map.containsKey(ENCHANTMENTS_TAG)) {
-			List<Map<String, Object>> enchs = (List<Map<String, Object>>) map.get(ENCHANTMENTS_TAG);
-			for (Map<String, Object> ench : enchs) {
-				item.addUnsafeEnchantment(
-						XEnchantment.matchXEnchantment((String) ench.get(ENCHANTMENT_TYPE_TAG)).get().getEnchant(),
-						(int) ench.get(ENCHANTMENT_LEVEL_TAG));
-			}
+			item.addUnsafeEnchantments(ItemDeserializer.INSTANCE
+					.deserializeEnchantments((List<Map<String, Object>>) map.get(ENCHANTMENTS_TAG)));
 		}
 
 		ItemMeta meta = item.getItemMeta();

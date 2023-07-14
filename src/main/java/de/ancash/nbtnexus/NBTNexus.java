@@ -2,11 +2,16 @@ package de.ancash.nbtnexus;
 
 import static de.ancash.nbtnexus.MetaTag.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.simpleyaml.configuration.file.YamlFile;
+import org.simpleyaml.exceptions.InvalidConfigurationException;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -25,6 +30,7 @@ import de.ancash.nbtnexus.serde.handler.BookMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BundleMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.CompassMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.DamageableMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.EnchantmentStorageMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.FireworkEffectMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.FireworkMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.KnowledgeBookMetaSerDe;
@@ -56,6 +62,10 @@ public class NBTNexus extends JavaPlugin {
 	private NBTNexusCommand cmd;
 	private final SerDeStructure structure = new SerDeStructure();
 	private InventoryUpdateAdapter iua;
+	@SuppressWarnings("nls")
+	private final YamlFile config = new YamlFile(new File("plugins/NBTNexus/config.yml"));
+	private boolean enableExperimentalPacketEditing = false;
+	private boolean packetEditingSync = false;
 
 	public SerDeStructure getStructure() {
 		return structure.clone();
@@ -71,6 +81,12 @@ public class NBTNexus extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		singleton = this;
+		try {
+			loadConfig();
+		} catch (IOException e) {
+			getLogger().severe("Could not load config");
+			e.printStackTrace();
+		}
 		structure.putEntry(AMOUNT_TAG, new SerDeStructureEntry(
 				new SerDeStructureKeySuggestion<Byte>(NBTTag.BYTE, a -> a > 0 && a <= 64), null));
 		structure.putEntry(XMATERIAL_TAG,
@@ -99,21 +115,63 @@ public class NBTNexus extends JavaPlugin {
 		registerSerDeStructure(SuspiciousStewMetaSerDe.INSTANCE);
 		registerSerDeStructure(TropicalFishBucketMetaSerDe.INSTANCE);
 		registerSerDeStructure(UnspecificMetaSerDe.INSTANCE);
+		registerSerDeStructure(EnchantmentStorageMetaSerDe.INSTANCE);
 		cmd = new NBTNexusCommand(this);
 		cmd.addSubCommand(new EditCommand(this));
 		cmd.addSubCommand(new TestSerDeComparisonCommand(this));
 		cmd.addSubCommand(new SerializeCommand(this));
 		getCommand("nbtn").setExecutor(cmd);
+		addPacketListener();
+	}
+
+	public boolean enableExperimentalPacketEditing() {
+		return enableExperimentalPacketEditing;
+	}
+
+	public boolean editPacketsSync() {
+		return packetEditingSync;
+	}
+
+	@SuppressWarnings("nls")
+	private void addPacketListener() {
 		protocolManager = ProtocolLibrary.getProtocolManager();
+		if (!enableExperimentalPacketEditing) {
+			getLogger().info("Experimental editing of items in packets is disabled");
+			return;
+		}
+		getLogger().warning("Experimental editing of items in packets is enabled");
+		getLogger().info("Editing packets " + (packetEditingSync ? "sync" : "async"));
 		iua = new InventoryUpdateAdapter(this);
 		protocolManager.addPacketListener(iua);
 		Bukkit.getPluginManager().registerEvents(iua, singleton);
 	}
 
+	@SuppressWarnings("nls")
+	private void loadConfig() throws InvalidConfigurationException, IOException {
+		config.createNewFile(false);
+		config.loadWithComments();
+		checkFile(config, "config.yml");
+		config.loadWithComments();
+		enableExperimentalPacketEditing = config.getBoolean("enable-experimental-packet-editing");
+		packetEditingSync = config.getBoolean("experimental-packet-editing-sync");
+	}
+
+	@SuppressWarnings("nls")
+	private void checkFile(YamlFile file, String src)
+			throws org.simpleyaml.exceptions.InvalidConfigurationException, IllegalArgumentException, IOException {
+		getLogger().info(
+				"Checking " + file.getConfigurationFile().getPath() + " for completeness (comparing to " + src + ")");
+		de.ancash.misc.io.FileUtils.setMissingConfigurationSections(file, getResource(src),
+				new HashSet<>(Arrays.asList("XMaterial")));
+	}
+
 	@Override
 	public void onDisable() {
-		protocolManager.removePacketListeners(this);
-		iua.stop();
+		if (iua != null) {
+			protocolManager.removePacketListeners(this);
+			iua.stop();
+			iua = null;
+		}
 		HandlerList.unregisterAll(singleton);
 	}
 

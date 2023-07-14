@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.json.Json;
@@ -24,6 +26,7 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.map.MapView;
 import org.bukkit.potion.PotionEffect;
@@ -32,12 +35,16 @@ import org.simpleyaml.configuration.file.YamlFile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 
+import de.ancash.minecraft.cryptomorin.xseries.XEnchantment;
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
 import de.ancash.minecraft.nbt.NBTCompound;
 import de.ancash.minecraft.nbt.NBTCompoundList;
 import de.ancash.minecraft.nbt.NBTContainer;
 import de.ancash.minecraft.nbt.NBTItem;
+import de.ancash.minecraft.nbt.NBTReflectionUtil;
 import de.ancash.minecraft.nbt.NBTType;
+import de.ancash.minecraft.nbt.utils.nmsmappings.ReflectionMethod;
+import de.ancash.nbtnexus.NBTNexus;
 import de.ancash.nbtnexus.NBTNexusItem;
 import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.handler.AxolotlBucketMetaSerDe;
@@ -46,6 +53,7 @@ import de.ancash.nbtnexus.serde.handler.BookMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BundleMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.CompassMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.DamageableMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.EnchantmentStorageMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.FireworkEffectMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.FireworkMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.KnowledgeBookMetaSerDe;
@@ -68,8 +76,8 @@ public class ItemSerializer {
 //	private final ForkJoinPool pool = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
 
 	private final Set<IItemSerDe> itemSerDe = new HashSet<>();
-
 	// private final Set<IItemSerializer> defaultSerializer = new HashSet<>();
+	private final Logger logger = NBTNexus.getInstance().getLogger();
 
 	ItemSerializer() {
 		itemSerDe.add(AxolotlBucketMetaSerDe.INSTANCE);
@@ -91,6 +99,7 @@ public class ItemSerializer {
 		itemSerDe.add(TropicalFishBucketMetaSerDe.INSTANCE);
 		itemSerDe.add(DamageableMetaSerDe.INSTANCE);
 		itemSerDe.add(RepairableMetaSerDe.INSTANCE);
+		itemSerDe.add(EnchantmentStorageMetaSerDe.INSTANCE);
 	}
 
 	public void registerSerializer(IItemSerDe ims) {
@@ -133,6 +142,23 @@ public class ItemSerializer {
 			}
 		}
 		return mprops;
+	}
+
+	public List<Map<String, Object>> serializeEnchantments(Map<Enchantment, Integer> enchs) {
+		return enchs.entrySet().stream()
+				.map(entry -> ItemSerializer.INSTANCE.serializeEnchantment(entry.getKey(), entry.getValue()))
+				.collect(Collectors.toList());
+	}
+
+	public Map<String, Object> serializeEnchantment(Enchantment ench, int lvl) {
+		Map<String, Object> serializedEnch = new HashMap<>();
+		serializedEnch.put(ENCHANTMENT_LEVEL_TAG, lvl);
+		try {
+			serializedEnch.put(ENCHANTMENT_TYPE_TAG, XEnchantment.matchXEnchantment(ench).name());
+		} catch (Throwable th) {
+			serializedEnch.put(ENCHANTMENT_TYPE_TAG, serializeNamespacedKey(ench.getKey()));
+		}
+		return serializedEnch;
 	}
 
 	public Map<String, Object> serializeProperty(Property p) {
@@ -292,7 +318,8 @@ public class ItemSerializer {
 		} catch (Throwable th) {
 			return false;
 		}
-		if (itemArr != null)
+		if (itemArr != null && itemArr.length > 0
+				&& Arrays.stream(itemArr).filter(i -> i != null && i.getType() != Material.AIR).findAny().isPresent())
 			map.put(key + SPLITTER + NBTTag.ITEM_STACK_ARRAY,
 					Arrays.stream(itemArr).map(this::serializeItemStack).collect(Collectors.toList()));
 		return itemArr != null;
@@ -318,6 +345,7 @@ public class ItemSerializer {
 		return true;
 	}
 
+	@SuppressWarnings("nls")
 	public Map<String, Object> serializeNBTCompound(NBTCompound nbt) {
 		Map<String, Object> map = new HashMap<>();
 		for (String key : nbt.getKeys()) {
@@ -329,7 +357,6 @@ public class ItemSerializer {
 				continue;
 			if (trySerializeUUID(nbt, key, map))
 				continue;
-
 			NBTTag ntype = NBTTag.getByNBTType(nbt.getType(key));
 			switch (ntype) {
 			case BYTE:
@@ -367,10 +394,17 @@ public class ItemSerializer {
 						Arrays.stream(nbt.getIntArray(key)).boxed().collect(Collectors.toList()));
 				break;
 			case LIST:
-				map.put(key + SPLITTER + ntype + SPLITTER + NBTTag.getByNBTType(nbt.getListType(key)),
-						serializeNBTList(nbt, key + SPLITTER + ntype));
+				List<?> list = serializeNBTList(nbt, key + SPLITTER + ntype);
+				if (list.isEmpty())
+					continue;
+				map.put(key + SPLITTER + ntype + SPLITTER + NBTTag.getByNBTType(nbt.getListType(key)), list);
 				break;
 			default:
+				logger.severe("Key: " + key);
+				logger.severe("Type: " + nbt.getType(key));
+				logger.info("Value: " + NBTReflectionUtil.getData(nbt, ReflectionMethod.COMPOUND_GET, key));
+				logger.info("Compound: \n" + nbt.getKeys().stream().collect(Collectors.toMap(Function.identity(),
+						k -> NBTReflectionUtil.getData(nbt, ReflectionMethod.COMPOUND_GET, k))));
 				throw new UnsupportedOperationException(ntype.name());
 			}
 		}
@@ -400,7 +434,17 @@ public class ItemSerializer {
 			return nbt.getLongList(name);
 		case INT_ARRAY:
 			return nbt.getIntArrayList(name);
+		case END:
+			// empty list
+			return new ArrayList<>();
 		default:
+			logger.severe("Full Key: " + fullKey);
+			logger.severe("Key: " + name);
+			logger.severe("Type: " + nbt.getType(name));
+			logger.severe("List Type: " + type);
+			logger.info("Value: " + NBTReflectionUtil.getData(nbt, ReflectionMethod.COMPOUND_GET, name));
+			logger.info("Compound: \n" + nbt.getKeys().stream().collect(Collectors.toMap(Function.identity(),
+					k -> NBTReflectionUtil.getData(nbt, ReflectionMethod.COMPOUND_GET, k))));
 			throw new UnsupportedOperationException(type + " list not supported");
 		}
 	}

@@ -60,19 +60,20 @@ public class InventoryUpdateAdapter extends PacketAdapter implements Listener {
 		this.pl = pl;
 	}
 
-	private void scheduleItemComputation(StructureModifier<ItemStack> itemStackStructureModifier, Player player,
-			PacketContainer container, boolean filtered) {
-		disruptor.publishEvent((e,
-				seq) -> e.r = () -> scheduleItemComputation0(itemStackStructureModifier, player, container, filtered));
-	}
-
 	public void stop() {
 		disruptor.stop();
 	}
 
-	@SuppressWarnings("nls")
-	private void scheduleItemComputation0(StructureModifier<ItemStack> itemStackStructureModifier, Player player,
+	private void computeItemAsync(StructureModifier<ItemStack> itemStackStructureModifier, Player player,
 			PacketContainer container, boolean filtered) {
+		disruptor.publishEvent((e, seq) -> e.r = () -> {
+			computeItem(itemStackStructureModifier, player);
+			ProtocolLibrary.getProtocolManager().sendServerPacket(player, container, filtered);
+		});
+	}
+
+	@SuppressWarnings("nls")
+	private void computeItem(StructureModifier<ItemStack> itemStackStructureModifier, Player player) {
 		ItemStack original = itemStackStructureModifier.read(0);
 		if (original != null && original.getType() != Material.AIR) {
 			try {
@@ -80,22 +81,53 @@ public class InventoryUpdateAdapter extends PacketAdapter implements Listener {
 			} catch (Throwable th) {
 				pl.getLogger().severe("Could not compute item, using already set item");
 				th.printStackTrace();
-				pl.getLogger().severe(ItemSerializer.INSTANCE.serializeItemStack(original).toString());
+				try {
+					pl.getLogger().severe(ItemSerializer.INSTANCE.serializeItemStack(original).toString());
+				} catch (Throwable th2) {
+					pl.getLogger().severe(original.toString());
+				}
 				itemStackStructureModifier.write(0, original);
 			}
 		}
-		if (player.getGameMode() != GameMode.CREATIVE && player.getGameMode() != GameMode.SPECTATOR)
-			ProtocolLibrary.getProtocolManager().sendServerPacket(player, container, filtered);
-		else {
+		if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR)
 			itemStackStructureModifier.write(0, original);
-			ProtocolLibrary.getProtocolManager().sendServerPacket(player, container, filtered);
-		}
 	}
 
-	private void scheduleItemListComputation(StructureModifier<List<ItemStack>> itemStackStructureModifier,
+	private void scheduleItemListComputationAsync(StructureModifier<List<ItemStack>> itemStackStructureModifier,
 			Player player, PacketContainer container, boolean filtered) {
-		disruptor.publishEvent((e, seq) -> e.r = () -> scheduleItemListComputation0(itemStackStructureModifier, player,
-				container, filtered));
+		disruptor.publishEvent((e, seq) -> e.r = () -> {
+			computeItemList(itemStackStructureModifier, player);
+			ProtocolLibrary.getProtocolManager().sendServerPacket(player, container, filtered);
+		});
+	}
+
+	@SuppressWarnings({ "nls" })
+	private void computeItemList(StructureModifier<List<ItemStack>> itemStackStructureModifier, Player player) {
+		List<List<ItemStack>> original = new ArrayList<>();
+		for (int i = 0; i < itemStackStructureModifier.size(); i++) {
+			List<ItemStack> list = itemStackStructureModifier.read(i);
+			original.add(list);
+			for (int slot = 0; slot < list.size(); slot++) {
+				ItemStack itemStack = list.get(slot);
+				if (itemStack != null && itemStack.getType() != Material.AIR) {
+					try {
+						list.set(slot, ItemComputerRegistry.computeItem(itemStack));
+					} catch (Throwable th) {
+						pl.getLogger().severe("Could not compute list item, using already set item");
+						th.printStackTrace();
+						try {
+							pl.getLogger().severe(ItemSerializer.INSTANCE.serializeItemStack(itemStack).toString());
+						} catch (Throwable th2) {
+							pl.getLogger().severe(original.toString());
+						}
+					}
+				}
+			}
+			itemStackStructureModifier.write(i, list);
+		}
+		if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR)
+			for (int i = 0; i < original.size(); i++)
+				itemStackStructureModifier.write(i, original.get(i));
 	}
 
 	@org.bukkit.event.EventHandler
@@ -120,34 +152,28 @@ public class InventoryUpdateAdapter extends PacketAdapter implements Listener {
 		}, 1);
 	}
 
-	@SuppressWarnings({ "nls" })
-	private void scheduleItemListComputation0(StructureModifier<List<ItemStack>> itemStackStructureModifier,
-			Player player, PacketContainer container, boolean filtered) {
-		List<List<ItemStack>> original = new ArrayList<>();
-		for (int i = 0; i < itemStackStructureModifier.size(); i++) {
-			List<ItemStack> list = itemStackStructureModifier.read(i);
-			original.add(list);
-			for (int slot = 0; slot < list.size(); slot++) {
-				ItemStack itemStack = list.get(slot);
-				if (itemStack != null && itemStack.getType() != Material.AIR) {
-					try {
-						list.set(slot, ItemComputerRegistry.computeItem(itemStack));
-					} catch (Throwable th) {
-						pl.getLogger().severe("Could not compute list item, using already set item");
-						th.printStackTrace();
-						pl.getLogger().severe(ItemSerializer.INSTANCE.serializeItemStack(itemStack).toString());
-					}
-				}
+	private void handleAsync(PacketEvent event) {
+		PacketContainer packet = event.getPacket();
+		if (!packet.getMeta(metaKey).isPresent()) {
+			packet.setMeta(metaKey, System.nanoTime());
+			if (event.getPacketType().equals(PacketType.Play.Server.WINDOW_ITEMS)) {
+				event.setCancelled(true);
+				scheduleItemListComputationAsync(packet.getItemListModifier(), event.getPlayer(), packet,
+						event.isFiltered());
+			} else {
+				event.setCancelled(true);
+				computeItemAsync(packet.getItemModifier(), event.getPlayer(), packet, event.isFiltered());
 			}
-			itemStackStructureModifier.write(i, list);
-		}
-		if (player.getGameMode() != GameMode.CREATIVE && player.getGameMode() != GameMode.SPECTATOR)
-			ProtocolLibrary.getProtocolManager().sendServerPacket(player, container, filtered);
-		else {
-			for (int i = 0; i < original.size(); i++)
-				itemStackStructureModifier.write(i, original.get(i));
-			ProtocolLibrary.getProtocolManager().sendServerPacket(player, container, filtered);
-		}
+		} else
+			packet.removeMeta(metaKey);
+	}
+
+	private void handleSync(PacketEvent event) {
+		PacketContainer packet = event.getPacket();
+		if (event.getPacketType().equals(PacketType.Play.Server.WINDOW_ITEMS))
+			computeItemList(packet.getItemListModifier(), event.getPlayer());
+		else
+			computeItem(packet.getItemModifier(), event.getPlayer());
 	}
 
 	@Override
@@ -159,17 +185,10 @@ public class InventoryUpdateAdapter extends PacketAdapter implements Listener {
 		if (packet.getIntegers().read(0) != 0) // ignore everything that is not player inv window id (0)
 			return;
 
-		if (!packet.getMeta(metaKey).isPresent()) {
-			packet.setMeta(metaKey, System.nanoTime());
-			if (event.getPacketType().equals(PacketType.Play.Server.WINDOW_ITEMS)) {
-				event.setCancelled(true);
-				scheduleItemListComputation(packet.getItemListModifier(), event.getPlayer(), packet,
-						event.isFiltered());
-			} else {
-				event.setCancelled(true);
-				scheduleItemComputation(packet.getItemModifier(), event.getPlayer(), packet, event.isFiltered());
-			}
-		} else
-			packet.removeMeta(metaKey);
+		if (pl.editPacketsSync())
+			handleSync(event);
+		else
+			handleAsync(event);
+
 	}
 }

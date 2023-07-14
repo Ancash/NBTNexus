@@ -39,7 +39,7 @@ public class BundleMetaSerDe implements IItemSerDe {
 		BundleMeta meta = (BundleMeta) item.getItemMeta();
 		if (meta.hasItems())
 			map.put(BUNDLE_ITEMS_TAG, meta.getItems().stream().filter(i -> i != null)
-					.map(i -> ItemSerializer.INSTANCE.serializeItemStack(i)));
+					.map(i -> ItemSerializer.INSTANCE.serializeItemStack(i)).collect(Collectors.toList()));
 		meta.setItems(null);
 		item.setItemMeta(meta);
 		return map;

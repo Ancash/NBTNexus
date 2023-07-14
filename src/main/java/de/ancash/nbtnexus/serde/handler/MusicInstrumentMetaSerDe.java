@@ -9,20 +9,26 @@ import org.bukkit.MusicInstrument;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MusicInstrumentMeta;
 
-import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
 import de.ancash.nbtnexus.serde.IItemSerDe;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
 import de.ancash.nbtnexus.serde.structure.SerDeStructure;
 import de.ancash.nbtnexus.serde.structure.SerDeStructureEntry;
 
+@SuppressWarnings("nls")
 public class MusicInstrumentMetaSerDe implements IItemSerDe {
 
 	public static final MusicInstrumentMetaSerDe INSTANCE = new MusicInstrumentMetaSerDe();
 	private static final SerDeStructure structure = new SerDeStructure();
+	private static boolean supported;
 
 	static {
-		structure.putEntry(MUSIC_INSTRUMENT_TYPE_TAG, SerDeStructureEntry.STRING);
+		try {
+			supported = Class.forName("org.bukkit.inventory.meta.MusicInstrumentMeta") != null;
+			structure.putEntry(MUSIC_INSTRUMENT_TYPE_TAG, SerDeStructureEntry.STRING);
+		} catch (ClassNotFoundException e) {
+			supported = false;
+		}
 	}
 
 	public SerDeStructure getStructure() {
@@ -45,7 +51,7 @@ public class MusicInstrumentMetaSerDe implements IItemSerDe {
 
 	@Override
 	public boolean isValid(ItemStack item) {
-		return XMaterial.GOAT_HORN.isSupported() && item.getItemMeta() instanceof MusicInstrumentMeta;
+		return supported && item.getItemMeta() instanceof MusicInstrumentMeta;
 	}
 
 	@Override

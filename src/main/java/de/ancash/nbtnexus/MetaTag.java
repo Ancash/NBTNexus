@@ -14,6 +14,9 @@ public class MetaTag {
 	public static final String ENCHANTMENT_LEVEL_TAG = "Lvl";
 	public static final String ENCHANTMENT_TYPE_TAG = "Ench";
 
+	public static final String ENCHANTMENT_STORAGE_META_TAG = "StoredEnchantments";
+	public static final String ENCHANTMENT_STORAGE_STORED_TAG = "StoredEnchs";
+
 	public static final String LORE_TAG = "Lore";
 	public static final String DISPLAYNAME_TAG = "DisplayName";
 	public static final String LOCALIZED_NAME_TAG = "LocalizedName";

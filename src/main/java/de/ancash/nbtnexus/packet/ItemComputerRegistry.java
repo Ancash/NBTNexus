@@ -21,15 +21,19 @@ public class ItemComputerRegistry {
 
 	private static final ConcurrentHashMap<String, IItemComputer> defaultComputer = new ConcurrentHashMap<String, IItemComputer>();
 	private static final ConcurrentHashMap<String, IItemComputer> placeholderComputer = new ConcurrentHashMap<String, IItemComputer>();
-	private static Logger logger;
+	private static Logger logger = NBTNexus.getInstance().getLogger();
 
 	@SuppressWarnings("nls")
 	public static void registerComputer(IItemComputer ipic, ListenerPolicy policy, JavaPlugin plugin) {
-		Validate.notNull(ipic, "ItemComputer null");
+		Validate.notNull(ipic, "IItemComputer null");
 		Validate.notNull(policy, "ListenerPolicy null");
 		Validate.notNull(plugin, "Plugin null");
-		if (logger == null)
-			logger = NBTNexus.getInstance().getLogger();
+		if (!NBTNexus.getInstance().enableExperimentalPacketEditing()) {
+			logger.warning(plugin.getName()
+					+ " tried to register an IItemComputer although experimental packet editing is disabled!");
+			return;
+		}
+		logger.warning(plugin.getName() + " registered an IItemComputer which is an experimental feature!");
 		switch (policy) {
 		case DEFAULT:
 			defaultComputer.put(plugin.getName(), ipic);

@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import de.ancash.misc.MathsUtils;
 import de.ancash.nbtnexus.NBTNexus;
 import de.ancash.nbtnexus.serde.ItemDeserializer;
 import de.ancash.nbtnexus.serde.ItemSerializer;
@@ -51,19 +52,28 @@ public class TestSerDeComparisonCommand extends NBTNexusSubCommand {
 		player.sendMessage(
 				"§eSerialized item->yaml->item->json->item->yaml in " + (System.nanoTime() - l) / 1000000d + "ms");
 		l = System.nanoTime();
-		if (SerializedItem.of(item)
-				.areEqual(SerializedItem.of(ItemDeserializer.INSTANCE.deserializeYamlToItemStack(yaml)))) {
-			player.sendMessage("§aTest successful! Compared in " + (System.nanoTime() - l) / 1000000d + "ms!");
-		} else {
-			player.sendMessage("§cTest failed! See console for the data");
-			try {
-				Bukkit.getConsoleSender().sendMessage(yaml);
-				Bukkit.getConsoleSender().sendMessage(ItemSerializer.INSTANCE.serializeItemStackToYaml(item));
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
 
-		}
+		Bukkit.getScheduler().runTaskAsynchronously(pl, () -> {
+			long ll = System.nanoTime();
+			SerializedItem a = SerializedItem.of(item);
+			SerializedItem b = SerializedItem.of(ItemDeserializer.INSTANCE.deserializeYamlToItemStack(yaml));
+			for (int i = 1; i < 10000; i++) {
+				a.areEqual(b);
+			}
+			if (a.areEqual(b)) {
+				player.sendMessage("§aComparison successful! "
+						+ MathsUtils.round((System.nanoTime() - ll) / 1000000d / 10000, 6) + "ms avg in 10.000 iters!");
+			} else {
+				player.sendMessage("§cComparison failed! See console for the data");
+				try {
+					Bukkit.getConsoleSender().sendMessage(yaml);
+					Bukkit.getConsoleSender().sendMessage(ItemSerializer.INSTANCE.serializeItemStackToYaml(item));
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+
+			}
+		});
 		return true;
 	}
 }
