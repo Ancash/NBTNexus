@@ -184,7 +184,10 @@ public class InventoryUpdateAdapter extends PacketAdapter implements Listener {
 			return;
 		if (packet.getIntegers().read(0) != 0) // ignore everything that is not player inv window id (0)
 			return;
-
+		
+		if(!pl.enableExperimentalPacketEditing())
+			return;
+			
 		if (pl.editPacketsSync())
 			handleSync(event);
 		else
