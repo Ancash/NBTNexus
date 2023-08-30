@@ -33,6 +33,10 @@ public class MetaTag {
 	public static final String BOOK_AUTHOR_TAG = "Author";
 	public static final String BOOK_TITLE_TAG = "Title";
 	public static final String BOOK_TAG = "Book";
+	public static final String BOOK_GENERATION_TAG = "Gen";
+	
+	public static final String CROSSBOW_META_TAG = "Crossbow";
+	public static final String CROSSBOW_CHARGED_PROJECTILES_TAG = "ChargedProjectiles";
 
 	public static final String BANNER_PATTERNS_TAG = "Patterns";
 	public static final String BANNER_PATTERN_COLOR_TAG = "Color";

@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.BookMeta.Generation;
 
 import de.ancash.nbtnexus.NBTTag;
 import de.ancash.nbtnexus.serde.IItemSerDe;
@@ -51,6 +52,10 @@ public class BookMetaSerDe implements IItemSerDe {
 			map.put(BOOK_TITLE_TAG, meta.getTitle());
 			meta.setTitle(null);
 		}
+		if(meta.hasGeneration()) {
+			map.put(BOOK_GENERATION_TAG, meta.getGeneration().name());
+			meta.setGeneration(null);
+		}
 		item.setItemMeta(meta);
 		return map;
 	}
@@ -68,6 +73,8 @@ public class BookMetaSerDe implements IItemSerDe {
 		bm.setTitle((String) map.get(BOOK_TITLE_TAG));
 		if (map.containsKey(BOOK_PAGES_TAG))
 			bm.setPages((List<String>) map.get(BOOK_PAGES_TAG));
+		if(map.containsKey(BOOK_GENERATION_TAG))
+			bm.setGeneration(Generation.valueOf((String) map.get(BOOK_GENERATION_TAG)));
 		item.setItemMeta(bm);
 	}
 

@@ -59,6 +59,7 @@ import de.ancash.nbtnexus.serde.handler.BannerMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BookMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BundleMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.CompassMetaSerDe;
+import de.ancash.nbtnexus.serde.handler.CrossbowMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.DamageableMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.EnchantmentStorageMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.FireworkEffectMetaSerDe;
@@ -103,6 +104,7 @@ public class ItemDeserializer {
 		itemDeserializer.add(DamageableMetaSerDe.INSTANCE);
 		itemDeserializer.add(RepairableMetaSerDe.INSTANCE);
 		itemDeserializer.add(EnchantmentStorageMetaSerDe.INSTANCE);
+		itemDeserializer.add(CrossbowMetaSerDe.INSTANCE);
 	}
 
 	public void registerDeserializer(IItemSerDe des) {
