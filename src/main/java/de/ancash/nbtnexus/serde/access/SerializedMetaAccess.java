@@ -1,8 +1,8 @@
 package de.ancash.nbtnexus.serde.access;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
-
-import de.ancash.nbtnexus.serde.SerializedItem;
 
 public abstract class SerializedMetaAccess {
 
@@ -18,11 +18,17 @@ public abstract class SerializedMetaAccess {
 		return key;
 	}
 
-	public boolean isValid(SerializedItem si) {
-		return si.getMap().containsKey(key);
-	}
-
 	public boolean isValid(Map<String, Object> map) {
 		return map.containsKey(key);
+	}
+	
+	public boolean exists(Map<String, Object> map, String key) {
+		return MapAccessUtil.exists(map, key);
+	}
+
+	@SuppressWarnings("nls")
+	protected String joinPath(String... str) {
+		return String.join(".", Arrays.asList(new String[] { key }, str).stream().map(Arrays::asList)
+				.flatMap(Collection::stream).toArray(String[]::new));
 	}
 }

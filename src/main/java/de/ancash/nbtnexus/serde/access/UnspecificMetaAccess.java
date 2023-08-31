@@ -1,10 +1,10 @@
 package de.ancash.nbtnexus.serde.access;
 
 import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.serde.access.MapAccessUtil.*;
 
 import java.util.List;
-
-import de.ancash.nbtnexus.serde.SerializedItem;
+import java.util.Map;
 
 public class UnspecificMetaAccess extends SerializedMetaAccess {
 
@@ -12,23 +12,35 @@ public class UnspecificMetaAccess extends SerializedMetaAccess {
 		super(UNSPECIFIC_META_TAG);
 	}
 
-	@SuppressWarnings("nls")
-	public String getDisplayName(SerializedItem si) {
-		return si.getString(String.join(".", UNSPECIFIC_META_TAG, DISPLAYNAME_TAG));
+	public String getDisplayName(Map<String, Object> map) {
+		return getString(map, joinPath(DISPLAYNAME_TAG));
 	}
 
-	@SuppressWarnings("nls")
-	public String getLocalizedName(SerializedItem si) {
-		return si.getString(String.join(".", UNSPECIFIC_META_TAG, LOCALIZED_NAME_TAG));
+	public String getLocalizedName(Map<String, Object> map) {
+		return getString(map, joinPath(LOCALIZED_NAME_TAG));
 	}
 
-	@SuppressWarnings("nls")
-	public int getCustomModelData(SerializedItem si) {
-		return si.getInt(String.join(".", UNSPECIFIC_META_TAG, CUSTOM_MODEL_DATA));
+	public int getCustomModelData(Map<String, Object> map) {
+		return getInt(map, joinPath(CUSTOM_MODEL_DATA));
 	}
 
-	@SuppressWarnings("nls")
-	public List<String> getLore(SerializedItem si) {
-		return si.getList(String.join(".", UNSPECIFIC_META_TAG, LORE_TAG));
+	public List<String> getLore(Map<String, Object> map) {
+		return getList(map, joinPath(LORE_TAG));
+	}
+	
+	public int getAmount(Map<String, Object> map) {
+		return getInt(map, joinPath(AMOUNT_TAG));
+	}
+	
+	public String getMaterial(Map<String, Object> map) {
+		return getString(map, joinPath(XMATERIAL_TAG));
+	}
+	
+	public List<Map<String, Object>> getEnchantments(Map<String, Object> map) {
+		return getList(map, joinPath(ENCHANTMENTS_TAG));
+	}
+	
+	public List<String> getItemFlags(Map<String, Object> map) {
+		return getList(map, joinPath(ITEM_FLAGS_TAG));
 	}
 }

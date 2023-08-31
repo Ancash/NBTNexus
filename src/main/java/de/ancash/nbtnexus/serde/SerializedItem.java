@@ -3,7 +3,6 @@ package de.ancash.nbtnexus.serde;
 import static de.ancash.nbtnexus.MetaTag.*;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,8 +16,6 @@ import java.util.function.Function;
 
 import org.bukkit.inventory.ItemStack;
 
-import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
-import de.ancash.nbtnexus.MetaTag;
 import de.ancash.nbtnexus.NBTNexus;
 import de.ancash.nbtnexus.serde.comparator.DefaultSerializedItemComparator;
 
@@ -42,54 +39,7 @@ public class SerializedItem {
 	public static SerializedItem of(Map<String, Object> map, boolean immutable) {
 		return new SerializedItem(map, immutable);
 	}
-
-	@SuppressWarnings("rawtypes")
-	private static HashMap<String, Object> deepCopy(Map<String, Object> map,
-			Function<HashMap<String, Object>, HashMap<String, Object>> mapFinalizer,
-			Function<ArrayList, ArrayList> listFinalizer) {
-
-		HashMap<String, Object> result = new HashMap<>();
-
-		for (Entry<String, Object> entry : map.entrySet())
-			result.put(entry.getKey(), deepCopy(entry.getValue(), mapFinalizer, listFinalizer));
-
-		return mapFinalizer.apply(result);
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static ArrayList deepCopy(List list,
-			Function<HashMap<String, Object>, HashMap<String, Object>> mapFinalizer,
-			Function<ArrayList, ArrayList> listFinalizer) {
-
-		ArrayList copy = new ArrayList<>(list.size());
-
-		for (int i = 0; i < list.size(); i++)
-			copy.add(deepCopy(list.get(i), mapFinalizer, listFinalizer));
-
-		return copy;
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static Object deepCopy(Object val, Function<HashMap<String, Object>, HashMap<String, Object>> mapFinalizer,
-			Function<ArrayList, ArrayList> listFinalizer) {
-
-		if (val == null || val.getClass().isPrimitive() || val instanceof String || val instanceof Number)
-			return val;
-
-		if (val instanceof Map) {
-			return deepCopy((Map<String, Object>) val, mapFinalizer, listFinalizer);
-		}
-
-		if (val instanceof List)
-			return deepCopy((List) val, mapFinalizer, listFinalizer);
-
-		if (val.getClass().isArray())
-			return deepCopyArray(val, mapFinalizer, listFinalizer);
-
-		System.out.println("could not clone " + val);
-		return val;
-	}
-//
+	
 //	public static void main(String[] args) {
 //		System.out.println(
 //				Array.newInstance(new Object[1].getClass().getComponentType(), 1).getClass().getComponentType());
@@ -121,20 +71,6 @@ public class SerializedItem {
 //		System.out.println("deep clone");
 //	}
 
-	@SuppressWarnings("rawtypes")
-	private static Object deepCopyArray(Object array,
-			Function<HashMap<String, Object>, HashMap<String, Object>> mapFinalizer,
-			Function<ArrayList, ArrayList> listFinalizer) {
-
-		int length = Array.getLength(array);
-		Object test = Array.newInstance(array.getClass().getComponentType(), length);
-		for (int i = 0; i < length; i++) {
-			Array.set(test, i, deepCopy(Array.get(array, i), mapFinalizer, listFinalizer));
-
-		}
-		return test;
-	}
-
 	@SuppressWarnings({ "unchecked", "nls" })
 	private static List<String> getKeyPaths(Map<String, Object> m, String curPath) {
 		List<String> paths = new ArrayList<>();
@@ -160,11 +96,11 @@ public class SerializedItem {
 		this.immutable = immutable;
 
 		if (immutable) {
-			this.map = deepCopy(map, m -> (HashMap<String, Object>) Collections.unmodifiableMap(m),
+			this.map = CloneUtil.deepCopy(map, m -> (HashMap<String, Object>) Collections.unmodifiableMap(m),
 					l -> (ArrayList) Collections.unmodifiableList(l));
 			keyHash = keyHashCode0();
 		} else {
-			this.map = deepCopy(map, Function.identity(), Function.identity());
+			this.map = CloneUtil.deepCopy(map, Function.identity(), Function.identity());
 			keyHash = 0;
 		}
 
@@ -185,12 +121,17 @@ public class SerializedItem {
 		return keyHashCode0();
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null)
+			return false;
+		if(!(obj instanceof SerializedItem))
+			return false;
+		return areEqualIgnoreAmount((SerializedItem) obj);
+	}
+	
 	public Set<String> getKeys() {
 		return Collections.unmodifiableSet(map.keySet());
-	}
-
-	public XMaterial getXMaterial() {
-		return XMaterial.valueOf((String) map.get(MetaTag.XMATERIAL_TAG));
 	}
 
 	public boolean isMap(String key) {
@@ -235,10 +176,6 @@ public class SerializedItem {
 		return (long) get(s);
 	}
 
-	public int getAmount() {
-		return (int) map.get(MetaTag.AMOUNT_TAG);
-	}
-
 	public Map<String, Object> getMap() {
 		return map;
 	}
@@ -256,10 +193,10 @@ public class SerializedItem {
 	}
 
 	public boolean areEqual(SerializedItem item) {
-		return DefaultSerializedItemComparator.INSTANCE.areEqualIgnoreOrder(this, item, ignoreOrder);
+		return item.keyHashCode() == keyHashCode() && DefaultSerializedItemComparator.INSTANCE.areEqualIgnoreOrder(this, item, ignoreOrder);
 	}
 
 	public boolean areEqualIgnoreAmount(SerializedItem item) {
-		return DefaultSerializedItemComparator.INSTANCE.areEqual(this, item, ignoreKey, ignoreOrder);
+		return item.keyHashCode() == keyHashCode() && DefaultSerializedItemComparator.INSTANCE.areEqual(this, item, ignoreKey, ignoreOrder);
 	}
 }
