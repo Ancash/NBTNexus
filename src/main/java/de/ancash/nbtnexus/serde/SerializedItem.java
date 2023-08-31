@@ -3,6 +3,8 @@ package de.ancash.nbtnexus.serde;
 import static de.ancash.nbtnexus.MetaTag.*;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,6 +12,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
+import java.util.function.Function;
 
 import org.bukkit.inventory.ItemStack;
 
@@ -32,13 +36,157 @@ public class SerializedItem {
 	}
 
 	public static SerializedItem of(Map<String, Object> map) {
-		return new SerializedItem(map);
+		return of(map, true);
+	}
+
+	public static SerializedItem of(Map<String, Object> map, boolean immutable) {
+		return new SerializedItem(map, immutable);
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static HashMap<String, Object> deepCopy(Map<String, Object> map,
+			Function<HashMap<String, Object>, HashMap<String, Object>> mapFinalizer,
+			Function<ArrayList, ArrayList> listFinalizer) {
+
+		HashMap<String, Object> result = new HashMap<>();
+
+		for (Entry<String, Object> entry : map.entrySet())
+			result.put(entry.getKey(), deepCopy(entry.getValue(), mapFinalizer, listFinalizer));
+
+		return mapFinalizer.apply(result);
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static ArrayList deepCopy(List list,
+			Function<HashMap<String, Object>, HashMap<String, Object>> mapFinalizer,
+			Function<ArrayList, ArrayList> listFinalizer) {
+
+		ArrayList copy = new ArrayList<>(list.size());
+
+		for (int i = 0; i < list.size(); i++)
+			copy.add(deepCopy(list.get(i), mapFinalizer, listFinalizer));
+
+		return copy;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static Object deepCopy(Object val, Function<HashMap<String, Object>, HashMap<String, Object>> mapFinalizer,
+			Function<ArrayList, ArrayList> listFinalizer) {
+
+		if (val == null || val.getClass().isPrimitive() || val instanceof String || val instanceof Number)
+			return val;
+
+		if (val instanceof Map) {
+			return deepCopy((Map<String, Object>) val, mapFinalizer, listFinalizer);
+		}
+
+		if (val instanceof List)
+			return deepCopy((List) val, mapFinalizer, listFinalizer);
+
+		if (val.getClass().isArray())
+			return deepCopyArray(val, mapFinalizer, listFinalizer);
+
+		System.out.println("could not clone " + val);
+		return val;
+	}
+//
+//	public static void main(String[] args) {
+//		System.out.println(
+//				Array.newInstance(new Object[1].getClass().getComponentType(), 1).getClass().getComponentType());
+//		System.out.println(
+//				Array.newInstance(new Object[1][].getClass().getComponentType(), 1).getClass().getComponentType());
+//		System.out.println(
+//				Array.newInstance(new Object[1][][].getClass().getComponentType(), 1).getClass().getComponentType());
+//		Object[][] test = new Object[1][1];
+//		test[0] = new Object[2];
+//		test[0][0] = 12;
+//		test[0][1] = "asdasd";
+//		Object[][] clone = (Object[][]) deepCopyArray(test, Function.identity(), Function.identity());
+//
+//		for (int a = 0; a < test.length; a++) {
+//			if (test[a] == null) {
+//				Validate.isTrue(clone[a] == null, test[a] + ":" + clone[a]);
+//				continue;
+//			}
+//			for (int b = 0; b < test[a].length; b++) {
+//				if (test[a][b] == null) {
+//					System.out.println(b + ": " + test[a][b] + "<=>" + clone[a][b]);
+//					System.out.println(test[a][b] + "<=>" + clone[a][b]);
+//					Validate.isTrue(clone[a][b] == null, test[a][b] + ":" + clone[a][b]);
+//					continue;
+//				}
+//				Validate.isTrue(clone[a][b].equals(test[a][b]));
+//			}
+//		}
+//		System.out.println("deep clone");
+//	}
+
+	@SuppressWarnings("rawtypes")
+	private static Object deepCopyArray(Object array,
+			Function<HashMap<String, Object>, HashMap<String, Object>> mapFinalizer,
+			Function<ArrayList, ArrayList> listFinalizer) {
+
+		int length = Array.getLength(array);
+		Object test = Array.newInstance(array.getClass().getComponentType(), length);
+		for (int i = 0; i < length; i++) {
+			Array.set(test, i, deepCopy(Array.get(array, i), mapFinalizer, listFinalizer));
+
+		}
+		return test;
+	}
+
+	@SuppressWarnings({ "unchecked", "nls" })
+	private static List<String> getKeyPaths(Map<String, Object> m, String curPath) {
+		List<String> paths = new ArrayList<>();
+		for (Entry<String, Object> entry : m.entrySet()) {
+			String path = String.join(".", curPath, entry.getKey());
+			if (path.startsWith("."))
+				path.replaceFirst("\\.", "");
+
+			if (!(entry.getValue() instanceof Map))
+				paths.add(path);
+			else
+				paths.addAll(getKeyPaths((Map<String, Object>) entry.getValue(), path));
+		}
+		return paths;
 	}
 
 	private final HashMap<String, Object> map;
+	private final boolean immutable;
+	private final int keyHash;
 
-	SerializedItem(Map<String, Object> map) {
-		this.map = new HashMap<>(map);
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	SerializedItem(Map<String, Object> map, boolean immutable) {
+		this.immutable = immutable;
+
+		if (immutable) {
+			this.map = deepCopy(map, m -> (HashMap<String, Object>) Collections.unmodifiableMap(m),
+					l -> (ArrayList) Collections.unmodifiableList(l));
+			keyHash = keyHashCode0();
+		} else {
+			this.map = deepCopy(map, Function.identity(), Function.identity());
+			keyHash = 0;
+		}
+
+	}
+
+	public boolean isImmutable() {
+		return immutable;
+	}
+
+	@SuppressWarnings("nls")
+	private int keyHashCode0() {
+		return getKeyPaths(map, "").hashCode();
+	}
+
+	public int keyHashCode() {
+		if (immutable)
+			return keyHash;
+		return keyHashCode0();
+	}
+
+	public Set<String> getKeys() {
+		return Collections.unmodifiableSet(map.keySet());
 	}
 
 	public XMaterial getXMaterial() {
