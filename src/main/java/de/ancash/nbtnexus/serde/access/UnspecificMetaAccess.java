@@ -27,19 +27,19 @@ public class UnspecificMetaAccess extends SerializedMetaAccess {
 	public List<String> getLore(Map<String, Object> map) {
 		return getList(map, joinPath(LORE_TAG));
 	}
-	
+
 	public int getAmount(Map<String, Object> map) {
-		return getInt(map, joinPath(AMOUNT_TAG));
+		return getInt(map, AMOUNT_TAG);
 	}
-	
+
 	public String getMaterial(Map<String, Object> map) {
-		return getString(map, joinPath(XMATERIAL_TAG));
+		return getString(map, XMATERIAL_TAG);
 	}
-	
+
 	public List<Map<String, Object>> getEnchantments(Map<String, Object> map) {
 		return getList(map, joinPath(ENCHANTMENTS_TAG));
 	}
-	
+
 	public List<String> getItemFlags(Map<String, Object> map) {
 		return getList(map, joinPath(ITEM_FLAGS_TAG));
 	}

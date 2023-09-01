@@ -38,8 +38,6 @@ public class BookMetaSerDe implements IItemSerDe {
 	public Map<String, Object> serialize(ItemStack item) {
 		Map<String, Object> map = new HashMap<>();
 		BookMeta meta = (BookMeta) item.getItemMeta();
-		if (!(meta.hasPages() || meta.hasAuthor() || meta.hasTitle()))
-			return map;
 		if (meta.hasAuthor()) {
 			map.put(BOOK_AUTHOR_TAG, meta.getAuthor());
 			meta.setAuthor(null);
@@ -52,7 +50,7 @@ public class BookMetaSerDe implements IItemSerDe {
 			map.put(BOOK_TITLE_TAG, meta.getTitle());
 			meta.setTitle(null);
 		}
-		if(meta.hasGeneration()) {
+		if (meta.hasGeneration()) {
 			map.put(BOOK_GENERATION_TAG, meta.getGeneration().name());
 			meta.setGeneration(null);
 		}
@@ -73,7 +71,7 @@ public class BookMetaSerDe implements IItemSerDe {
 		bm.setTitle((String) map.get(BOOK_TITLE_TAG));
 		if (map.containsKey(BOOK_PAGES_TAG))
 			bm.setPages((List<String>) map.get(BOOK_PAGES_TAG));
-		if(map.containsKey(BOOK_GENERATION_TAG))
+		if (map.containsKey(BOOK_GENERATION_TAG))
 			bm.setGeneration(Generation.valueOf((String) map.get(BOOK_GENERATION_TAG)));
 		item.setItemMeta(bm);
 	}

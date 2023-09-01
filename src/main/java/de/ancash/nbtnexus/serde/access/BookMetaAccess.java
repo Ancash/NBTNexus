@@ -15,11 +15,11 @@ public class BookMetaAccess extends SerializedMetaAccess {
 	public String getAuthor(Map<String, Object> map) {
 		return getString(map, joinPath(BOOK_AUTHOR_TAG));
 	}
-	
+
 	public String getTitle(Map<String, Object> map) {
 		return getString(map, joinPath(BOOK_TITLE_TAG));
 	}
-	
+
 	public List<String> getPages(Map<String, Object> map) {
 		return getList(map, joinPath(BOOK_PAGES_TAG));
 	}

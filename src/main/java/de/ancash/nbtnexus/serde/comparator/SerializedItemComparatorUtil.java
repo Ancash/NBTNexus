@@ -230,13 +230,13 @@ public class SerializedItemComparatorUtil {
 			return compareList((List<Object>) oa, (List<Object>) ob, ignoredKeys, ignoredOrder, relativePath);
 
 		if (oa.getClass().isArray())
-			return comparePrimitiveArrays(oa, ob, ignoredKeys, ignoredOrder, relativePath);
+			return compareArrays(oa, ob, ignoredKeys, ignoredOrder, relativePath);
 
 		return oa.equals(ob);
 	}
 
-	public static boolean comparePrimitiveArrays(Object oa, Object ob, Set<String> ignoredKeys,
-			Set<String> ignoredOrder, String relativePath) {
+	public static boolean compareArrays(Object oa, Object ob, Set<String> ignoredKeys, Set<String> ignoredOrder,
+			String relativePath) {
 		Validate.notNull(oa);
 		Validate.notNull(ob);
 		Validate.notNull(ignoredKeys);

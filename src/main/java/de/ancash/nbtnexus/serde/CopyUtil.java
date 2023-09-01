@@ -8,11 +8,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
-public final class CloneUtil {
+public final class CopyUtil {
 
 	@SuppressWarnings("rawtypes")
-	public static HashMap<String, Object> deepCopy(Map<String, Object> map,
-			Function<HashMap<String, Object>, HashMap<String, Object>> mapFinalizer,
+	public static Map<String, Object> deepCopy(Map<String, Object> map,
+			Function<Map<String, Object>, Map<String, Object>> mapFinalizer,
 			Function<ArrayList, ArrayList> listFinalizer) {
 
 		HashMap<String, Object> result = new HashMap<>();
@@ -24,8 +24,7 @@ public final class CloneUtil {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static ArrayList deepCopy(List list,
-			Function<HashMap<String, Object>, HashMap<String, Object>> mapFinalizer,
+	public static ArrayList deepCopy(List list, Function<Map<String, Object>, Map<String, Object>> mapFinalizer,
 			Function<ArrayList, ArrayList> listFinalizer) {
 
 		ArrayList copy = new ArrayList<>(list.size());
@@ -37,7 +36,7 @@ public final class CloneUtil {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static Object deepCopy(Object val, Function<HashMap<String, Object>, HashMap<String, Object>> mapFinalizer,
+	public static Object deepCopy(Object val, Function<Map<String, Object>, Map<String, Object>> mapFinalizer,
 			Function<ArrayList, ArrayList> listFinalizer) {
 
 		if (val == null || val.getClass().isPrimitive() || val instanceof String || val instanceof Number)
@@ -55,10 +54,9 @@ public final class CloneUtil {
 //		System.out.println("could not clone " + val);
 		return val;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
-	private static Object deepCopyArray(Object array,
-			Function<HashMap<String, Object>, HashMap<String, Object>> mapFinalizer,
+	public static Object deepCopyArray(Object array, Function<Map<String, Object>, Map<String, Object>> mapFinalizer,
 			Function<ArrayList, ArrayList> listFinalizer) {
 
 		int length = Array.getLength(array);
@@ -67,5 +65,5 @@ public final class CloneUtil {
 			Array.set(test, i, deepCopy(Array.get(array, i), mapFinalizer, listFinalizer));
 		return test;
 	}
-	
+
 }

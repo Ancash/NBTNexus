@@ -21,7 +21,7 @@ public abstract class SerializedMetaAccess {
 	public boolean isValid(Map<String, Object> map) {
 		return map.containsKey(key);
 	}
-	
+
 	public boolean exists(Map<String, Object> map, String key) {
 		return MapAccessUtil.exists(map, key);
 	}

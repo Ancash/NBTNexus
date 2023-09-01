@@ -10,12 +10,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.bukkit.inventory.ItemStack;
 
+import de.ancash.nbtnexus.MetaTag;
 import de.ancash.nbtnexus.NBTNexus;
 import de.ancash.nbtnexus.serde.comparator.DefaultSerializedItemComparator;
 
@@ -39,37 +40,6 @@ public class SerializedItem {
 	public static SerializedItem of(Map<String, Object> map, boolean immutable) {
 		return new SerializedItem(map, immutable);
 	}
-	
-//	public static void main(String[] args) {
-//		System.out.println(
-//				Array.newInstance(new Object[1].getClass().getComponentType(), 1).getClass().getComponentType());
-//		System.out.println(
-//				Array.newInstance(new Object[1][].getClass().getComponentType(), 1).getClass().getComponentType());
-//		System.out.println(
-//				Array.newInstance(new Object[1][][].getClass().getComponentType(), 1).getClass().getComponentType());
-//		Object[][] test = new Object[1][1];
-//		test[0] = new Object[2];
-//		test[0][0] = 12;
-//		test[0][1] = "asdasd";
-//		Object[][] clone = (Object[][]) deepCopyArray(test, Function.identity(), Function.identity());
-//
-//		for (int a = 0; a < test.length; a++) {
-//			if (test[a] == null) {
-//				Validate.isTrue(clone[a] == null, test[a] + ":" + clone[a]);
-//				continue;
-//			}
-//			for (int b = 0; b < test[a].length; b++) {
-//				if (test[a][b] == null) {
-//					System.out.println(b + ": " + test[a][b] + "<=>" + clone[a][b]);
-//					System.out.println(test[a][b] + "<=>" + clone[a][b]);
-//					Validate.isTrue(clone[a][b] == null, test[a][b] + ":" + clone[a][b]);
-//					continue;
-//				}
-//				Validate.isTrue(clone[a][b].equals(test[a][b]));
-//			}
-//		}
-//		System.out.println("deep clone");
-//	}
 
 	@SuppressWarnings({ "unchecked", "nls" })
 	private static List<String> getKeyPaths(Map<String, Object> m, String curPath) {
@@ -87,21 +57,26 @@ public class SerializedItem {
 		return paths;
 	}
 
-	private final HashMap<String, Object> map;
+	private final Map<String, Object> map;
 	private final boolean immutable;
 	private final int keyHash;
+	private final int hash;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	SerializedItem(Map<String, Object> map, boolean immutable) {
 		this.immutable = immutable;
 
 		if (immutable) {
-			this.map = CloneUtil.deepCopy(map, m -> (HashMap<String, Object>) Collections.unmodifiableMap(m),
+			this.map = CopyUtil.deepCopy(map, m -> Collections.unmodifiableMap(m),
 					l -> (ArrayList) Collections.unmodifiableList(l));
 			keyHash = keyHashCode0();
+			Map<String, Object> temp = new HashMap<>(map);
+			temp.remove(MetaTag.AMOUNT_TAG);
+			hash = temp.hashCode();
 		} else {
-			this.map = CloneUtil.deepCopy(map, Function.identity(), Function.identity());
+			this.map = CopyUtil.deepCopy(map, Function.identity(), Function.identity());
 			keyHash = 0;
+			hash = 0;
 		}
 
 	}
@@ -122,14 +97,23 @@ public class SerializedItem {
 	}
 
 	@Override
+	public int hashCode() {
+		if (immutable)
+			return hash;
+		Map<String, Object> temp = new HashMap<>(map);
+		temp.remove(MetaTag.AMOUNT_TAG);
+		return temp.hashCode();
+	}
+
+	@Override
 	public boolean equals(Object obj) {
-		if(obj == null)
+		if (obj == null)
 			return false;
-		if(!(obj instanceof SerializedItem))
+		if (!(obj instanceof SerializedItem))
 			return false;
 		return areEqualIgnoreAmount((SerializedItem) obj);
 	}
-	
+
 	public Set<String> getKeys() {
 		return Collections.unmodifiableSet(map.keySet());
 	}
@@ -193,10 +177,12 @@ public class SerializedItem {
 	}
 
 	public boolean areEqual(SerializedItem item) {
-		return item.keyHashCode() == keyHashCode() && DefaultSerializedItemComparator.INSTANCE.areEqualIgnoreOrder(this, item, ignoreOrder);
+		return item.keyHashCode() == keyHashCode()
+				&& DefaultSerializedItemComparator.INSTANCE.areEqualIgnoreOrder(this, item, ignoreOrder);
 	}
 
 	public boolean areEqualIgnoreAmount(SerializedItem item) {
-		return item.keyHashCode() == keyHashCode() && DefaultSerializedItemComparator.INSTANCE.areEqual(this, item, ignoreKey, ignoreOrder);
+		return item.keyHashCode() == keyHashCode()
+				&& DefaultSerializedItemComparator.INSTANCE.areEqual(this, item, ignoreKey, ignoreOrder);
 	}
 }

@@ -1,10 +1,11 @@
 package de.ancash.nbtnexus.serde.access;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public final class MapAccessUtil {
-	
+
 	@SuppressWarnings({ "unchecked", "nls" })
 	public static boolean exists(Map<String, Object> map, String key) {
 		String[] split = key.split("\\.");
@@ -21,23 +22,22 @@ public final class MapAccessUtil {
 
 	@SuppressWarnings("unchecked")
 	public static Map<String, Object> getMap(Map<String, Object> map, String key) {
-		return (Map<String, Object>) map.get(key);
+		return (Map<String, Object>) get(map, key);
 	}
 
-	@SuppressWarnings("nls")
+	@SuppressWarnings({ "nls", "unchecked" })
 	public static Object get(Map<String, Object> map, String s) {
 		String[] split = s.split("\\.");
 		if (split.length == 1)
 			return map.get(split[0]);
-		Map<String, Object> cur = map;
-		for (int i = 0; i < split.length; i++) {
-			if (i + 1 == split.length)
-				break;
-			if (cur.containsKey(split[i]) || !(cur.get(split[i]) instanceof Map))
-				return null;
-			cur = getMap(map, split[i]);
-		}
-		return cur.get(split[split.length - 1]);
+
+		if (!map.containsKey(split[0]))
+			return null;
+
+		Object val = map.get(split[0]);
+		if (val instanceof Map)
+			return get((Map<String, Object>) val, String.join(".", Arrays.copyOfRange(split, 1, split.length)));
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
