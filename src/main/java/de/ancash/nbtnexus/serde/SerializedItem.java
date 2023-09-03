@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 
 import de.ancash.nbtnexus.MetaTag;
 import de.ancash.nbtnexus.NBTNexus;
+import de.ancash.nbtnexus.serde.access.MapAccessUtil;
 import de.ancash.nbtnexus.serde.comparator.DefaultSerializedItemComparator;
 
 public class SerializedItem {
@@ -78,7 +79,6 @@ public class SerializedItem {
 			keyHash = 0;
 			hash = 0;
 		}
-
 	}
 
 	public boolean isImmutable() {
@@ -119,28 +119,15 @@ public class SerializedItem {
 	}
 
 	public boolean isMap(String key) {
-		return map.containsKey(key) && map.get(key) instanceof Map;
+		return MapAccessUtil.exists(map, key) && MapAccessUtil.get(map, key) instanceof Map;
 	}
 
-	@SuppressWarnings("unchecked")
 	public Map<String, Object> getMap(String key) {
-		return (Map<String, Object>) map.get(key);
+		return MapAccessUtil.getMap(map, key);
 	}
 
-	@SuppressWarnings("nls")
 	public Object get(String s) {
-		String[] split = s.split("\\.");
-		if (split.length == 1)
-			return map.get(split[0]);
-		Map<String, Object> cur = map;
-		for (int i = 0; i < split.length; i++) {
-			if (i + 1 == split.length)
-				break;
-			if (cur.containsKey(split[i]) || !(cur.get(split[i]) instanceof Map))
-				return null;
-			cur = getMap(split[i]);
-		}
-		return cur.get(split[split.length - 1]);
+		return MapAccessUtil.get(map, s);
 	}
 
 	@SuppressWarnings("unchecked")

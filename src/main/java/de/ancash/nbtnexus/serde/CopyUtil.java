@@ -50,8 +50,6 @@ public final class CopyUtil {
 
 		if (val.getClass().isArray())
 			return deepCopyArray(val, mapFinalizer, listFinalizer);
-
-//		System.out.println("could not clone " + val);
 		return val;
 	}
 
