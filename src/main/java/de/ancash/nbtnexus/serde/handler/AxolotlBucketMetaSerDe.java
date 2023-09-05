@@ -23,9 +23,15 @@ public class AxolotlBucketMetaSerDe implements IItemSerDe {
 
 	public static final AxolotlBucketMetaSerDe INSTANCE = new AxolotlBucketMetaSerDe();
 	private static final SerDeStructure structure = new SerDeStructure();
+	private static boolean supported;
 
 	static {
-		structure.putEntry(AXOLOTL_BUCKET_VARIANT_TAG, SerDeStructureEntry.forEnum(Variant.class));
+		try {
+			structure.putEntry(AXOLOTL_BUCKET_VARIANT_TAG, SerDeStructureEntry.forEnum(Variant.class));
+			supported = true;
+		} catch (Throwable th) {
+			supported = false;
+		}
 	}
 
 	public SerDeStructure getStructure() {
@@ -67,7 +73,7 @@ public class AxolotlBucketMetaSerDe implements IItemSerDe {
 
 	@Override
 	public boolean isValid(ItemStack item) {
-		return XMaterial.AXOLOTL_BUCKET.isSupported() && item.getItemMeta() instanceof AxolotlBucketMeta;
+		return supported && XMaterial.AXOLOTL_BUCKET.isSupported() && item.getItemMeta() instanceof AxolotlBucketMeta;
 	}
 
 	@Override
