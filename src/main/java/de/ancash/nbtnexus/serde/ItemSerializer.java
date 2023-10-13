@@ -35,6 +35,7 @@ import org.simpleyaml.configuration.file.YamlFile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 
+import de.ancash.minecraft.ReflectionUtil;
 import de.ancash.minecraft.cryptomorin.xseries.XEnchantment;
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
 import de.ancash.minecraft.nbt.NBTCompound;
@@ -166,9 +167,9 @@ public class ItemSerializer {
 	public Map<String, Object> serializeProperty(Property p) {
 		Map<String, Object> m = new HashMap<>();
 		if (p.hasSignature())
-			m.put(PROPERTY_SIGNATURE_TAG, p.getSignature());
-		m.put(PROPERTY_NAME_TAG, p.getName());
-		m.put(PROPERTY_VALUE_TAG, p.getValue());
+			m.put(PROPERTY_SIGNATURE_TAG, ReflectionUtil.getPropertySignature(p));
+		m.put(PROPERTY_NAME_TAG, ReflectionUtil.getPropertyName(p));
+		m.put(PROPERTY_VALUE_TAG, ReflectionUtil.getPropertyValue(p));
 		return m;
 	}
 

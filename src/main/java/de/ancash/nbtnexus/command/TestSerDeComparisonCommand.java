@@ -37,36 +37,38 @@ public class TestSerDeComparisonCommand extends NBTNexusSubCommand {
 			player.sendMessage("§cNo item in hand");
 			return true;
 		}
-		String yaml;
+		String yaml = null;
 		long l = System.nanoTime();
-		try {
-			yaml = ItemSerializer.INSTANCE.serializeItemStackToYaml(
-					ItemDeserializer.INSTANCE.deserializeJsonToItemStack(ItemSerializer.INSTANCE
-							.serializeItemStackToJson(ItemDeserializer.INSTANCE.deserializeYamlToItemStack(
-									ItemSerializer.INSTANCE.serializeItemStackToYaml(item)))));
-		} catch (IOException e) {
-			player.sendMessage("§cCould not serialize to yaml");
-			e.printStackTrace();
-			return true;
+		for (int i = 0; i < 1000; i++) {
+			try {
+				yaml = ItemSerializer.INSTANCE.serializeItemStackToYaml(
+						ItemDeserializer.INSTANCE.deserializeJsonToItemStack(ItemSerializer.INSTANCE
+								.serializeItemStackToJson(ItemDeserializer.INSTANCE.deserializeYamlToItemStack(
+										ItemSerializer.INSTANCE.serializeItemStackToYaml(item)))));
+			} catch (IOException e) {
+				player.sendMessage("§cCould not serialize to yaml");
+				e.printStackTrace();
+				return true;
+			}
 		}
-		player.sendMessage(
-				"§eSerialized item->yaml->item->json->item->yaml in " + (System.nanoTime() - l) / 1000000d + "ms");
+		player.sendMessage("§eSerialized item->yaml->item->json->item->yaml in "
+				+ ((System.nanoTime() - l) / 1000000d) / 1000 + " ms avg (1000 iters)");
 		l = System.nanoTime();
-
+		String copy = yaml;
 		Bukkit.getScheduler().runTaskAsynchronously(pl, () -> {
 			long ll = System.nanoTime();
 			SerializedItem a = SerializedItem.of(item);
-			SerializedItem b = SerializedItem.of(ItemDeserializer.INSTANCE.deserializeYamlToItemStack(yaml));
+			SerializedItem b = SerializedItem.of(ItemDeserializer.INSTANCE.deserializeYamlToItemStack(copy));
 			for (int i = 1; i < 10000; i++) {
 				a.areEqual(b);
 			}
 			if (a.areEqual(b)) {
 				player.sendMessage("§aComparison successful! "
-						+ MathsUtils.round((System.nanoTime() - ll) / 1000000d / 10000, 6) + "ms avg in 10.000 iters!");
+						+ MathsUtils.round((System.nanoTime() - ll) / 1000000d / 10000, 6) + "ms avg (10.000 iters)");
 			} else {
 				player.sendMessage("§cComparison failed! See console for the data");
 				try {
-					Bukkit.getConsoleSender().sendMessage(yaml);
+					Bukkit.getConsoleSender().sendMessage(copy);
 					Bukkit.getConsoleSender().sendMessage(ItemSerializer.INSTANCE.serializeItemStackToYaml(item));
 				} catch (Exception ex) {
 					ex.printStackTrace();
