@@ -1,7 +1,6 @@
 package de.ancash.nbtnexus.serde;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.Map;
 
 import javax.json.Json;
@@ -9,17 +8,19 @@ import javax.json.JsonObjectBuilder;
 
 import org.simpleyaml.configuration.ConfigurationSection;
 import org.simpleyaml.configuration.file.YamlFile;
+import org.simpleyaml.configuration.implementation.snakeyaml.SnakeYamlImplementation;
 
 public final class Serializer {
 
 	public static String toYaml(Map<String, Object> map) throws IOException {
-		YamlFile yaml = new YamlFile();
+		YamlFile yaml = new YamlFile(new SnakeYamlImplementation());
 		map.forEach(yaml::set);
 		return yaml.saveToString();
 	}
 
 	public static String toJson(Map<String, Object> map) throws IOException {
-		YamlFile yaml = YamlFile.loadConfiguration(() -> new StringReader(toYaml(map)));
+		YamlFile yaml = new YamlFile(new SnakeYamlImplementation());
+		map.forEach(yaml::set);
 		JsonObjectBuilder base = Json.createObjectBuilder();
 		add(base, yaml);
 		return base.build().toString();

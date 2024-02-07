@@ -70,9 +70,14 @@ public class MetaTag {
 
 	public static final String LEATHER_ARMOR_TAG = "LeatherArmor";
 
+	public static final String ARMOR_TAG = "Armor";
+
 	public static final String RED_TAG = "Red";
 	public static final String GREEN_TAG = "Green";
 	public static final String BLUE_TAG = "Blue";
+
+	public static final String TRIM_MATERIAL_TAG = "TrimMaterial";
+	public static final String TRIM_PATTERN_TAG = "TrimPattern";
 
 	public static final String COMPASS_TAG = "Compass";
 	public static final String LODESTONE_TRACKED_TAG = "Tracked";

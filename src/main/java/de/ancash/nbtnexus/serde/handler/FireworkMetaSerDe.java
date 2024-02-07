@@ -1,6 +1,16 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.MetaTag.BLUE_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECTS_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_COLORS_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_FADE_COLORS_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_FLICKER_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_TRAIL_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_POWER_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_TAG;
+import static de.ancash.nbtnexus.MetaTag.GREEN_TAG;
+import static de.ancash.nbtnexus.MetaTag.RED_TAG;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -66,8 +76,8 @@ public class FireworkMetaSerDe implements IItemSerDe {
 		FireworkMeta meta = (FireworkMeta) item.getItemMeta();
 		map.put(FIREWORK_POWER_TAG, meta.getPower());
 		if (meta.hasEffects())
-			map.put(FIREWORK_EFFECTS_TAG, meta.getEffects().stream()
-					.map(ItemSerializer.INSTANCE::serializeFireworkEffect).collect(Collectors.toList()));
+			map.put(FIREWORK_EFFECTS_TAG,
+					meta.getEffects().stream().map(ItemSerializer.INSTANCE::serializeFireworkEffect).collect(Collectors.toList()));
 		meta.clearEffects();
 		item.setItemMeta(meta);
 		return map;

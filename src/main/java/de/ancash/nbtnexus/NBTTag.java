@@ -25,19 +25,14 @@ import de.ancash.minecraft.nbt.NBTType;
 public enum NBTTag {
 
 	BYTE(ByteHandler.INSTANCE, NBTType.NBTTagByte, Byte.class),
-	COMPOUND(ConfigurationSectionHandler.INSTANCE, NBTType.NBTTagCompound, Map.class, HashMap.class,
-			LinkedHashMap.class),
-	DOUBLE(DoubleHandler.INSTANCE, NBTType.NBTTagDouble, Double.class),
-	FLOAT(FloatHandler.INSTANCE, NBTType.NBTTagFloat, Float.class),
-	INT(IntegerHandler.INSTANCE, NBTType.NBTTagInt, Integer.class),
-	STRING(StringHandler.INSTANCE, NBTType.NBTTagString, String.class),
-	SHORT(ShortHandler.INSTANCE, NBTType.NBTTagShort, Short.class),
-	LONG(LongHandler.INSTANCE, NBTType.NBTTagLong, Long.class),
-	BYTE_ARRAY(null, NBTType.NBTTagByteArray, Byte[].class, byte[].class),
-	INT_ARRAY(null, NBTType.NBTTagIntArray, Integer[].class, int[].class),
-	LIST(ListHandler.INSTANCE, NBTType.NBTTagList, List.class, ArrayList.class, LinkedList.class),
-	ITEM_STACK(null, null), ITEM_STACK_ARRAY(null, null), ITEM_STACK_LIST(null, null), UUID(null, null),
-	BOOLEAN(BooleanHandler.INSTANCE, null, Boolean.class), END(null, NBTType.NBTTagEnd), OBJECT(null, null);
+	COMPOUND(ConfigurationSectionHandler.INSTANCE, NBTType.NBTTagCompound, Map.class, HashMap.class, LinkedHashMap.class),
+	DOUBLE(DoubleHandler.INSTANCE, NBTType.NBTTagDouble, Double.class), FLOAT(FloatHandler.INSTANCE, NBTType.NBTTagFloat, Float.class),
+	INT(IntegerHandler.INSTANCE, NBTType.NBTTagInt, Integer.class), STRING(StringHandler.INSTANCE, NBTType.NBTTagString, String.class),
+	SHORT(ShortHandler.INSTANCE, NBTType.NBTTagShort, Short.class), LONG(LongHandler.INSTANCE, NBTType.NBTTagLong, Long.class),
+	BYTE_ARRAY(null, NBTType.NBTTagByteArray, Byte[].class, byte[].class), INT_ARRAY(null, NBTType.NBTTagIntArray, Integer[].class, int[].class),
+	LIST(ListHandler.INSTANCE, NBTType.NBTTagList, List.class, ArrayList.class, LinkedList.class), ITEM_STACK(null, null),
+	ITEM_STACK_ARRAY(null, null), ITEM_STACK_LIST(null, null), UUID(null, null), BOOLEAN(BooleanHandler.INSTANCE, null, Boolean.class),
+	END(null, NBTType.NBTTagEnd), OBJECT(null, null);
 
 	private static final Map<NBTType, NBTTag> byType = new HashMap<>();
 	private static final Map<Class<?>, NBTTag> byClazz = new HashMap<>();

@@ -28,7 +28,7 @@ public abstract class SerializedMetaAccess {
 
 	@SuppressWarnings("nls")
 	protected String joinPath(String... str) {
-		return String.join(".", Arrays.asList(new String[] { key }, str).stream().map(Arrays::asList)
-				.flatMap(Collection::stream).toArray(String[]::new));
+		return String.join(".",
+				Arrays.asList(new String[] { key }, str).stream().map(Arrays::asList).flatMap(Collection::stream).toArray(String[]::new));
 	}
 }

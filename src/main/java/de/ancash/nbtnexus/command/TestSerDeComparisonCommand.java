@@ -42,17 +42,16 @@ public class TestSerDeComparisonCommand extends NBTNexusSubCommand {
 		for (int i = 0; i < 1000; i++) {
 			try {
 				yaml = ItemSerializer.INSTANCE.serializeItemStackToYaml(
-						ItemDeserializer.INSTANCE.deserializeJsonToItemStack(ItemSerializer.INSTANCE
-								.serializeItemStackToJson(ItemDeserializer.INSTANCE.deserializeYamlToItemStack(
-										ItemSerializer.INSTANCE.serializeItemStackToYaml(item)))));
+						ItemDeserializer.INSTANCE.deserializeJsonToItemStack(ItemSerializer.INSTANCE.serializeItemStackToJson(
+								ItemDeserializer.INSTANCE.deserializeYamlToItemStack(ItemSerializer.INSTANCE.serializeItemStackToYaml(item)))));
 			} catch (IOException e) {
 				player.sendMessage("§cCould not serialize to yaml");
 				e.printStackTrace();
 				return true;
 			}
 		}
-		player.sendMessage("§eSerialized item->yaml->item->json->item->yaml in "
-				+ ((System.nanoTime() - l) / 1000000d) / 1000 + " ms avg (1000 iters)");
+		player.sendMessage(
+				"§eSerialized item->yaml->item->json->item->yaml in " + ((System.nanoTime() - l) / 1000000d) / 1000 + " ms avg (1000 iters)");
 		l = System.nanoTime();
 		String copy = yaml;
 		Bukkit.getScheduler().runTaskAsynchronously(pl, () -> {
@@ -63,8 +62,8 @@ public class TestSerDeComparisonCommand extends NBTNexusSubCommand {
 				a.areEqual(b);
 			}
 			if (a.areEqual(b)) {
-				player.sendMessage("§aComparison successful! "
-						+ MathsUtils.round((System.nanoTime() - ll) / 1000000d / 10000, 6) + "ms avg (10.000 iters)");
+				player.sendMessage(
+						"§aComparison successful! " + MathsUtils.round((System.nanoTime() - ll) / 1000000d / 10000, 6) + "ms avg (10.000 iters)");
 			} else {
 				player.sendMessage("§cComparison failed! See console for the data");
 				try {

@@ -33,13 +33,11 @@ public class KeySuggester implements IKeySuggester {
 		Set<KeySuggestion> suggestions = new HashSet<>();
 		for (String sug : base.getKeys(false)) {
 			if (base.isMap(sug))
-				suggestions.add(new KeySuggestion(sug, ConfigurationSectionHandler.INSTANCE, null,
-						base.getMap(sug).toString()));
+				suggestions.add(new KeySuggestion(sug, ConfigurationSectionHandler.INSTANCE, null, base.getMap(sug).toString()));
 			else if (base.isList(sug)) {
 				SerDeStructure list = base.getList(sug);
 				suggestions.add(new KeySuggestion(sug, ListHandler.INSTANCE,
-						new ArrayList<>(Arrays.asList(list.getListType().getHandler().defaultValue())),
-						list.toString()));
+						new ArrayList<>(Arrays.asList(list.getListType().getHandler().defaultValue())), list.toString()));
 			} else
 				suggestions.add(new KeySuggestion(sug, base.getEntry(sug).getKey().getType().getHandler()));
 		}

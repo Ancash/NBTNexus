@@ -29,8 +29,7 @@ public class ItemComputerRegistry {
 		Validate.notNull(policy, "ListenerPolicy null");
 		Validate.notNull(plugin, "Plugin null");
 		if (!NBTNexus.getInstance().enableExperimentalPacketEditing()) {
-			logger.warning(plugin.getName()
-					+ " tried to register an IItemComputer although experimental packet editing is disabled!");
+			logger.warning(plugin.getName() + " tried to register an IItemComputer although experimental packet editing is disabled!");
 			return;
 		}
 		logger.warning(plugin.getName() + " registered an IItemComputer which is an experimental feature!");

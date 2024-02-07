@@ -1,7 +1,8 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.*;
-import static de.ancash.nbtnexus.NBTNexus.*;
+import static de.ancash.nbtnexus.MetaTag.AXOLOTL_BUCKET_TAG;
+import static de.ancash.nbtnexus.MetaTag.AXOLOTL_BUCKET_VARIANT_TAG;
+import static de.ancash.nbtnexus.NBTNexus.SPLITTER;
 
 import java.util.HashMap;
 import java.util.HashSet;

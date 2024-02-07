@@ -1,6 +1,7 @@
 package de.ancash.nbtnexus.serde.access;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,37 @@ public final class MapAccessUtil {
 		Object val = map.get(split[0]);
 		if (val instanceof Map)
 			return get((Map<String, Object>) val, String.join(".", Arrays.copyOfRange(split, 1, split.length)));
+		return null;
+	}
+
+	@SuppressWarnings({ "unchecked", "nls" })
+	public static Object set(Map<String, Object> map, String s, Object val) {
+		String[] split = s.split("\\.");
+		if (split.length == 1)
+			return map.put(split[0], val);
+
+		if (!map.containsKey(split[0]))
+			map.put(split[0], new HashMap<>());
+
+		Object cur = map.get(split[0]);
+		if (cur instanceof Map)
+			return set((Map<String, Object>) cur, String.join(".", Arrays.copyOfRange(split, 1, split.length)), val);
+		map.put(split[0], new HashMap<>());
+		return set((Map<String, Object>) map.get(split[0]), String.join(".", Arrays.copyOfRange(split, 1, split.length)), val);
+	}
+
+	@SuppressWarnings({ "unchecked", "nls" })
+	public static Object remove(Map<String, Object> map, String s) {
+		String[] split = s.split("\\.");
+		if (split.length == 1)
+			return map.remove(split[0]);
+
+		if (!map.containsKey(split[0]))
+			return null;
+
+		Object val = map.get(split[0]);
+		if (val instanceof Map)
+			return remove((Map<String, Object>) val, String.join(".", Arrays.copyOfRange(split, 1, split.length)));
 		return null;
 	}
 

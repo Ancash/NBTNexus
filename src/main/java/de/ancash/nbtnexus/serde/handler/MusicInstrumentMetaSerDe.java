@@ -1,6 +1,7 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.MetaTag.MUSIC_INSTRUMENT_TAG;
+import static de.ancash.nbtnexus.MetaTag.MUSIC_INSTRUMENT_TYPE_TAG;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,8 +63,7 @@ public class MusicInstrumentMetaSerDe implements IItemSerDe {
 	@Override
 	public void deserialize(ItemStack item, Map<String, Object> map) {
 		MusicInstrumentMeta meta = (MusicInstrumentMeta) item.getItemMeta();
-		meta.setInstrument(MusicInstrument.getByKey(
-				ItemDeserializer.INSTANCE.deserializeNamespacedKey((String) map.get(MUSIC_INSTRUMENT_TYPE_TAG))));
+		meta.setInstrument(MusicInstrument.getByKey(ItemDeserializer.INSTANCE.deserializeNamespacedKey((String) map.get(MUSIC_INSTRUMENT_TYPE_TAG))));
 		item.setItemMeta(meta);
 	}
 }

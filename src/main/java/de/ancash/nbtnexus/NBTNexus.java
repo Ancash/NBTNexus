@@ -1,8 +1,8 @@
 package de.ancash.nbtnexus;
 
-import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.MetaTag.AMOUNT_TAG;
+import static de.ancash.nbtnexus.MetaTag.XMATERIAL_TAG;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -11,10 +11,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.simpleyaml.configuration.file.YamlFile;
+import org.simpleyaml.configuration.implementation.snakeyaml.SnakeYamlImplementation;
 import org.simpleyaml.exceptions.InvalidConfigurationException;
-
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
 
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
 import de.ancash.nbtnexus.NBTNexusItem.Type;
@@ -24,6 +22,7 @@ import de.ancash.nbtnexus.command.SerializeCommand;
 import de.ancash.nbtnexus.command.TestSerDeComparisonCommand;
 import de.ancash.nbtnexus.packet.InventoryUpdateAdapter;
 import de.ancash.nbtnexus.serde.IItemSerDe;
+import de.ancash.nbtnexus.serde.handler.ArmorMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.AxolotlBucketMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BannerMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BookMetaSerDe;
@@ -57,13 +56,11 @@ public class NBTNexus extends JavaPlugin {
 	@SuppressWarnings("nls")
 	public static final String SPLITTER_REGEX = "\\$";
 
-	private ProtocolManager protocolManager;
 	private static NBTNexus singleton;
 	private NBTNexusCommand cmd;
 	private final SerDeStructure structure = new SerDeStructure();
 	private InventoryUpdateAdapter iua;
-	@SuppressWarnings("nls")
-	private final YamlFile config = new YamlFile(new File("plugins/NBTNexus/config.yml"));
+	private final YamlFile config = new YamlFile(new SnakeYamlImplementation());
 	private boolean enableExperimentalPacketEditing = false;
 	private boolean packetEditingSync = false;
 
@@ -80,6 +77,7 @@ public class NBTNexus extends JavaPlugin {
 	@SuppressWarnings("nls")
 	@Override
 	public void onEnable() {
+		config.setConfigurationFile("plugins/NBTNexus/config.yml");
 		singleton = this;
 		try {
 			loadConfig();
@@ -87,12 +85,9 @@ public class NBTNexus extends JavaPlugin {
 			getLogger().severe("Could not load config");
 			e.printStackTrace();
 		}
-		structure.putEntry(AMOUNT_TAG, new SerDeStructureEntry(
-				new SerDeStructureKeySuggestion<Byte>(NBTTag.BYTE, a -> a > 0 && a <= 64), null));
-		structure.putEntry(XMATERIAL_TAG,
-				new SerDeStructureEntry(SerDeStructureKeySuggestion.forEnum(XMaterial.class),
-						SerDeStructureValueSuggestion.forEnum(Arrays.asList(XMaterial.VALUES).stream()
-								.filter(x -> x.isSupported() && x.parseItem() != null).toArray(XMaterial[]::new))));
+		structure.putEntry(AMOUNT_TAG, new SerDeStructureEntry(new SerDeStructureKeySuggestion<Byte>(NBTTag.BYTE, a -> a > 0 && a <= 64), null));
+		structure.putEntry(XMATERIAL_TAG, new SerDeStructureEntry(SerDeStructureKeySuggestion.forEnum(XMaterial.class), SerDeStructureValueSuggestion
+				.forEnum(Arrays.asList(XMaterial.VALUES).stream().filter(x -> x.isSupported() && x.parseItem() != null).toArray(XMaterial[]::new))));
 		structure.putMap(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG);
 		SerDeStructure props = structure.getMap(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG);
 		props.putEntry(NBTNexusItem.NBT_NEXUS_ITEM_TYPE_TAG, SerDeStructureEntry.forEnum(Type.class));
@@ -116,11 +111,13 @@ public class NBTNexus extends JavaPlugin {
 		registerSerDeStructure(TropicalFishBucketMetaSerDe.INSTANCE);
 		registerSerDeStructure(UnspecificMetaSerDe.INSTANCE);
 		registerSerDeStructure(EnchantmentStorageMetaSerDe.INSTANCE);
+		registerSerDeStructure(ArmorMetaSerDe.INSTANCE);
 		cmd = new NBTNexusCommand(this);
 		cmd.addSubCommand(new EditCommand(this));
 		cmd.addSubCommand(new TestSerDeComparisonCommand(this));
 		cmd.addSubCommand(new SerializeCommand(this));
 		getCommand("nbtn").setExecutor(cmd);
+//		Bukkit.getPluginManager().registerEvents(new InventoryStackListener(), singleton);
 		addPacketListener();
 	}
 
@@ -134,15 +131,16 @@ public class NBTNexus extends JavaPlugin {
 
 	@SuppressWarnings("nls")
 	private void addPacketListener() {
-		protocolManager = ProtocolLibrary.getProtocolManager();
 		if (!enableExperimentalPacketEditing) {
 			getLogger().info("Experimental editing of items in packets is disabled");
 			return;
 		}
+		if (Bukkit.getPluginManager().getPlugin("ProtocolLib") == null) {
+			getLogger().severe("ProtocolLib not found! Experimental editing disabled");
+			return;
+		}
 		getLogger().warning("Experimental editing of items in packets is enabled");
-		getLogger().info("Editing packets " + (packetEditingSync ? "sync" : "async"));
 		iua = new InventoryUpdateAdapter(this);
-		protocolManager.addPacketListener(iua);
 		Bukkit.getPluginManager().registerEvents(iua, singleton);
 	}
 
@@ -159,17 +157,14 @@ public class NBTNexus extends JavaPlugin {
 	@SuppressWarnings("nls")
 	private void checkFile(YamlFile file, String src)
 			throws org.simpleyaml.exceptions.InvalidConfigurationException, IllegalArgumentException, IOException {
-		getLogger().info(
-				"Checking " + file.getConfigurationFile().getPath() + " for completeness (comparing to " + src + ")");
-		de.ancash.misc.io.FileUtils.setMissingConfigurationSections(file, getResource(src),
-				new HashSet<>(Arrays.asList("XMaterial")));
+		getLogger().info("Checking " + file.getConfigurationFile().getPath() + " for completeness (comparing to " + src + ")");
+		de.ancash.misc.io.FileUtils.setMissingConfigurationSections(file, getResource(src), new HashSet<>(Arrays.asList("XMaterial")));
 	}
 
 	@Override
 	public void onDisable() {
 		if (iua != null) {
-			protocolManager.removePacketListeners(this);
-			iua.stop();
+			iua.disable();
 			iua = null;
 		}
 		HandlerList.unregisterAll(singleton);

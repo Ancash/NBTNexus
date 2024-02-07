@@ -1,6 +1,10 @@
 package de.ancash.nbtnexus.serde;
 
-import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.MetaTag.AMOUNT_TAG;
+import static de.ancash.nbtnexus.MetaTag.ATTRIBUTES_TAG;
+import static de.ancash.nbtnexus.MetaTag.ENCHANTMENTS_TAG;
+import static de.ancash.nbtnexus.MetaTag.ITEM_FLAGS_TAG;
+import static de.ancash.nbtnexus.MetaTag.UNSPECIFIC_META_TAG;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,10 +27,9 @@ import de.ancash.nbtnexus.serde.comparator.DefaultSerializedItemComparator;
 
 public class SerializedItem {
 
-	protected static final Set<String> ignoreKey = Collections
-			.unmodifiableSet(new HashSet<>(Arrays.asList(AMOUNT_TAG)));
-	protected static final Set<String> ignoreOrder = Collections.unmodifiableSet(
-			new HashSet<>(Arrays.asList(String.join(NBTNexus.SPLITTER, UNSPECIFIC_META_TAG, ENCHANTMENTS_TAG),
+	protected static final Set<String> ignoreKey = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(AMOUNT_TAG)));
+	protected static final Set<String> ignoreOrder = Collections
+			.unmodifiableSet(new HashSet<>(Arrays.asList(String.join(NBTNexus.SPLITTER, UNSPECIFIC_META_TAG, ENCHANTMENTS_TAG),
 					String.join(NBTNexus.SPLITTER, UNSPECIFIC_META_TAG, ITEM_FLAGS_TAG),
 					String.join(NBTNexus.SPLITTER, UNSPECIFIC_META_TAG, ATTRIBUTES_TAG))));
 
@@ -68,8 +71,7 @@ public class SerializedItem {
 		this.immutable = immutable;
 
 		if (immutable) {
-			this.map = CopyUtil.deepCopy(map, m -> Collections.unmodifiableMap(m),
-					l -> (ArrayList) Collections.unmodifiableList(l));
+			this.map = CopyUtil.deepCopy(map, m -> Collections.unmodifiableMap(m), l -> (ArrayList) Collections.unmodifiableList(l));
 			keyHash = keyHashCode0();
 			Map<String, Object> temp = new HashMap<>(map);
 			temp.remove(MetaTag.AMOUNT_TAG);
@@ -164,12 +166,10 @@ public class SerializedItem {
 	}
 
 	public boolean areEqual(SerializedItem item) {
-		return item.keyHashCode() == keyHashCode()
-				&& DefaultSerializedItemComparator.INSTANCE.areEqualIgnoreOrder(this, item, ignoreOrder);
+		return item.keyHashCode() == keyHashCode() && DefaultSerializedItemComparator.INSTANCE.areEqualIgnoreOrder(this, item, ignoreOrder);
 	}
 
 	public boolean areEqualIgnoreAmount(SerializedItem item) {
-		return item.keyHashCode() == keyHashCode()
-				&& DefaultSerializedItemComparator.INSTANCE.areEqual(this, item, ignoreKey, ignoreOrder);
+		return item.keyHashCode() == keyHashCode() && DefaultSerializedItemComparator.INSTANCE.areEqual(this, item, ignoreKey, ignoreOrder);
 	}
 }

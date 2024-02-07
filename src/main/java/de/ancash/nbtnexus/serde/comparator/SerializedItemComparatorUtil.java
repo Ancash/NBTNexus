@@ -170,8 +170,8 @@ public class SerializedItemComparatorUtil {
 //	}
 
 	@SuppressWarnings("nls")
-	public static boolean compareMap(Map<String, Object> a, Map<String, Object> b, Set<String> ignoredKeys,
-			Set<String> ignoredOrder, String relativePath) {
+	public static boolean compareMap(Map<String, Object> a, Map<String, Object> b, Set<String> ignoredKeys, Set<String> ignoredOrder,
+			String relativePath) {
 		Validate.notNull(a);
 		Validate.notNull(b);
 		Validate.notNull(ignoredKeys);
@@ -179,8 +179,7 @@ public class SerializedItemComparatorUtil {
 		Validate.notNull(relativePath);
 		Validate.isTrue(!ignoredKeys.contains(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG));
 
-		if (a.containsKey(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG)
-				|| b.containsKey(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG))
+		if (a.containsKey(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG) || b.containsKey(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG))
 			relativePath = "";
 
 		Set<String> keys = new HashSet<>();
@@ -203,8 +202,7 @@ public class SerializedItemComparatorUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static boolean compareObjects(Object oa, Object ob, Set<String> ignoredKeys, Set<String> ignoredOrder,
-			String relativePath) {
+	public static boolean compareObjects(Object oa, Object ob, Set<String> ignoredKeys, Set<String> ignoredOrder, String relativePath) {
 		if ((oa != null) != (ob != null))
 			return false;
 		if (oa == null)
@@ -223,8 +221,7 @@ public class SerializedItemComparatorUtil {
 			return false;
 
 		if (oa instanceof Map)
-			return compareMap((Map<String, Object>) oa, (Map<String, Object>) ob, ignoredKeys, ignoredOrder,
-					relativePath);
+			return compareMap((Map<String, Object>) oa, (Map<String, Object>) ob, ignoredKeys, ignoredOrder, relativePath);
 
 		if (oa instanceof List)
 			return compareList((List<Object>) oa, (List<Object>) ob, ignoredKeys, ignoredOrder, relativePath);
@@ -235,21 +232,18 @@ public class SerializedItemComparatorUtil {
 		return oa.equals(ob);
 	}
 
-	public static boolean compareArrays(Object oa, Object ob, Set<String> ignoredKeys, Set<String> ignoredOrder,
-			String relativePath) {
+	public static boolean compareArrays(Object oa, Object ob, Set<String> ignoredKeys, Set<String> ignoredOrder, String relativePath) {
 		Validate.notNull(oa);
 		Validate.notNull(ob);
 		Validate.notNull(ignoredKeys);
 		Validate.notNull(ignoredOrder);
 		Validate.notNull(relativePath);
-		return compareList(
-				Arrays.asList(IntStream.range(0, Array.getLength(oa)).boxed().map(i -> Array.get(oa, i)).toArray()),
-				Arrays.asList(IntStream.range(0, Array.getLength(ob)).boxed().map(i -> Array.get(ob, i)).toArray()),
-				ignoredKeys, ignoredOrder, relativePath);
+		return compareList(Arrays.asList(IntStream.range(0, Array.getLength(oa)).boxed().map(i -> Array.get(oa, i)).toArray()),
+				Arrays.asList(IntStream.range(0, Array.getLength(ob)).boxed().map(i -> Array.get(ob, i)).toArray()), ignoredKeys, ignoredOrder,
+				relativePath);
 	}
 
-	public static boolean compareList(List<Object> a, List<Object> b, Set<String> ignoredKeys, Set<String> ignoredOrder,
-			String relativePath) {
+	public static boolean compareList(List<Object> a, List<Object> b, Set<String> ignoredKeys, Set<String> ignoredOrder, String relativePath) {
 		Validate.notNull(ignoredKeys);
 		Validate.notNull(ignoredOrder);
 		Validate.notNull(relativePath);

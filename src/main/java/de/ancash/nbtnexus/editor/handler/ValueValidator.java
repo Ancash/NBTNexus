@@ -19,8 +19,7 @@ public class ValueValidator extends AbstractInputValidator<Object> {
 		if (root == null || !ValidatorUtil.isItemRoot(root))
 			return false;
 		String path = ValidatorUtil.getPath(root, cur);
-		return structure.containsKey(path)
-				&& (structure.isEntry(path) || (structure.isList(path) && structure.getList(path).getEntry() != null));
+		return structure.containsKey(path) && (structure.isEntry(path) || (structure.isList(path) && structure.getList(path).getEntry() != null));
 	}
 
 	@SuppressWarnings("nls")
@@ -28,8 +27,7 @@ public class ValueValidator extends AbstractInputValidator<Object> {
 	public Optional<String> isValid(ValueEditor<Object> cur, Object arg1) {
 		ConfigurationSectionEditor root = ValidatorUtil.getItemRoot(cur);
 		String path = ValidatorUtil.getPath(root, cur);
-		SerDeStructureEntry entry = structure.isList(path) ? structure.getList(path).getEntry()
-				: structure.getEntry(path);
+		SerDeStructureEntry entry = structure.isList(path) ? structure.getList(path).getEntry() : structure.getEntry(path);
 		Object cast = arg1;
 		switch (entry.getKey().getType()) {
 		case BYTE:

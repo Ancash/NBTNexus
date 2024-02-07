@@ -1,7 +1,34 @@
 package de.ancash.nbtnexus.serde;
 
-import static de.ancash.nbtnexus.MetaTag.*;
-import static de.ancash.nbtnexus.NBTNexus.*;
+import static de.ancash.nbtnexus.MetaTag.AMOUNT_TAG;
+import static de.ancash.nbtnexus.MetaTag.BLUE_TAG;
+import static de.ancash.nbtnexus.MetaTag.ENCHANTMENT_LEVEL_TAG;
+import static de.ancash.nbtnexus.MetaTag.ENCHANTMENT_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_COLORS_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_FADE_COLORS_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_FLICKER_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_TRAIL_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.GREEN_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_CENTER_X_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_CENTER_Z_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_LOCKED_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_SCALE_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_TRACKING_POSITION_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_UNLIMITED_TRACKING_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_WORLD_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_AMBIENT_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_AMPLIFIER_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_DURATION_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_SHOW_ICON_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_SHOW_PARTICLES_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.PROPERTY_NAME_TAG;
+import static de.ancash.nbtnexus.MetaTag.PROPERTY_SIGNATURE_TAG;
+import static de.ancash.nbtnexus.MetaTag.PROPERTY_VALUE_TAG;
+import static de.ancash.nbtnexus.MetaTag.RED_TAG;
+import static de.ancash.nbtnexus.MetaTag.XMATERIAL_TAG;
+import static de.ancash.nbtnexus.NBTNexus.SPLITTER_REGEX;
 
 import java.io.StringReader;
 import java.util.Arrays;
@@ -54,6 +81,7 @@ import de.ancash.nbtnexus.NBTNexus;
 import de.ancash.nbtnexus.NBTNexusItem;
 import de.ancash.nbtnexus.NBTNexusItem.Type;
 import de.ancash.nbtnexus.NBTTag;
+import de.ancash.nbtnexus.serde.handler.ArmorMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.AxolotlBucketMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BannerMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BookMetaSerDe;
@@ -105,6 +133,7 @@ public class ItemDeserializer {
 		itemDeserializer.add(RepairableMetaSerDe.INSTANCE);
 		itemDeserializer.add(EnchantmentStorageMetaSerDe.INSTANCE);
 		itemDeserializer.add(CrossbowMetaSerDe.INSTANCE);
+		itemDeserializer.add(ArmorMetaSerDe.INSTANCE);
 	}
 
 	public void registerDeserializer(IItemSerDe des) {
@@ -120,8 +149,7 @@ public class ItemDeserializer {
 	}
 
 	public Map<Enchantment, Integer> deserializeEnchantments(List<Map<String, Object>> enchs) {
-		return enchs.stream().map(this::deserializeEnchantment)
-				.collect(Collectors.toMap(d -> d.getFirst(), d -> d.getSecond()));
+		return enchs.stream().map(this::deserializeEnchantment).collect(Collectors.toMap(d -> d.getFirst(), d -> d.getSecond()));
 	}
 
 	public Duplet<Enchantment, Integer> deserializeEnchantment(Map<String, Object> ench) {
@@ -148,14 +176,12 @@ public class ItemDeserializer {
 	public PropertyMap deserializePropertyMap(Map<String, Object> map) {
 		PropertyMap pm = new PropertyMap();
 		for (Entry<String, Object> e : map.entrySet())
-			pm.putAll(e.getKey(), ((List<Map<String, Object>>) e.getValue()).stream().map(this::deserializeProperty)
-					.collect(Collectors.toList()));
+			pm.putAll(e.getKey(), ((List<Map<String, Object>>) e.getValue()).stream().map(this::deserializeProperty).collect(Collectors.toList()));
 		return pm;
 	}
 
 	public Property deserializeProperty(Map<String, Object> map) {
-		return new Property((String) map.get(PROPERTY_NAME_TAG), (String) map.get(PROPERTY_VALUE_TAG),
-				(String) map.get(PROPERTY_SIGNATURE_TAG));
+		return new Property((String) map.get(PROPERTY_NAME_TAG), (String) map.get(PROPERTY_VALUE_TAG), (String) map.get(PROPERTY_SIGNATURE_TAG));
 	}
 
 	@SuppressWarnings({ "nls" })
@@ -164,10 +190,9 @@ public class ItemDeserializer {
 	}
 
 	public PotionEffect deserializePotionEffect(Map<String, Object> effect) {
-		return new PotionEffect(PotionEffectType.getByName((String) effect.get(POTION_EFFECT_TYPE_TAG)),
-				(int) effect.get(POTION_EFFECT_DURATION_TAG), (int) effect.get(POTION_EFFECT_AMPLIFIER_TAG),
-				(boolean) effect.get(POTION_EFFECT_AMBIENT_TAG), (boolean) effect.get(POTION_EFFECT_SHOW_PARTICLES_TAG),
-				(boolean) effect.get(POTION_EFFECT_SHOW_ICON_TAG));
+		return new PotionEffect(PotionEffectType.getByName((String) effect.get(POTION_EFFECT_TYPE_TAG)), (int) effect.get(POTION_EFFECT_DURATION_TAG),
+				(int) effect.get(POTION_EFFECT_AMPLIFIER_TAG), (boolean) effect.get(POTION_EFFECT_AMBIENT_TAG),
+				(boolean) effect.get(POTION_EFFECT_SHOW_PARTICLES_TAG), (boolean) effect.get(POTION_EFFECT_SHOW_ICON_TAG));
 	}
 
 	private Map<String, Object> deserializeYaml(ConfigurationSection cs) {
@@ -182,11 +207,10 @@ public class ItemDeserializer {
 
 	@SuppressWarnings("unchecked")
 	public FireworkEffect deserializeFireworkEffect(Map<String, Object> map) {
-		return FireworkEffect.builder().trail((boolean) map.get(FIREWORK_EFFECT_TRAIL_TAG))
-				.flicker((boolean) map.get(FIREWORK_EFFECT_FLICKER_TAG))
+		return FireworkEffect.builder().trail((boolean) map.get(FIREWORK_EFFECT_TRAIL_TAG)).flicker((boolean) map.get(FIREWORK_EFFECT_FLICKER_TAG))
 				.with(FireworkEffect.Type.valueOf((String) map.get(FIREWORK_EFFECT_TYPE_TAG)))
-				.withColor(((List<Map<String, Object>>) map.get(FIREWORK_EFFECT_COLORS_TAG)).stream()
-						.map(ItemDeserializer.INSTANCE::deserializeColor).collect(Collectors.toList()))
+				.withColor(((List<Map<String, Object>>) map.get(FIREWORK_EFFECT_COLORS_TAG)).stream().map(ItemDeserializer.INSTANCE::deserializeColor)
+						.collect(Collectors.toList()))
 				.withFade(((List<Map<String, Object>>) map.get(FIREWORK_EFFECT_FADE_COLORS_TAG)).stream()
 						.map(ItemDeserializer.INSTANCE::deserializeColor).collect(Collectors.toList()))
 				.build();
@@ -274,8 +298,7 @@ public class ItemDeserializer {
 		try {
 			deserialize0(compound, map, fullKey);
 		} catch (Exception ex) {
-			throw new IllegalStateException(
-					"Could not deserialize key " + fullKey + ", value: " + map.get(fullKey) + "; map:" + map, ex);
+			throw new IllegalStateException("Could not deserialize key " + fullKey + ", value: " + map.get(fullKey) + "; map:" + map, ex);
 		}
 	}
 
@@ -364,8 +387,8 @@ public class ItemDeserializer {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Set<NBTTag> getListTypes(List list) {
-		return (Set<NBTTag>) list.stream().map(Object::getClass).map(c -> NBTTag.getByClazz((Class<?>) c))
-				.filter(i -> i != null).collect(Collectors.toSet());
+		return (Set<NBTTag>) list.stream().map(Object::getClass).map(c -> NBTTag.getByClazz((Class<?>) c)).filter(i -> i != null)
+				.collect(Collectors.toSet());
 	}
 
 	@SuppressWarnings({ "unchecked", "nls", "rawtypes" })
@@ -387,8 +410,7 @@ public class ItemDeserializer {
 
 			for (Map<String, Object> temp : mapList) {
 				if (temp.containsKey(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG)) {
-					compound.setItemStackArray(field,
-							mapList.stream().map(this::deserializeItemStack).toArray(ItemStack[]::new));
+					compound.setItemStackArray(field, mapList.stream().map(this::deserializeItemStack).toArray(ItemStack[]::new));
 					return;
 				}
 			}
@@ -424,8 +446,8 @@ public class ItemDeserializer {
 				iaList.add(arr.stream().mapToInt(Integer::valueOf).toArray());
 			break;
 		case OBJECT:
-			deserializeList0(compound, src, String.join(NBTNexus.SPLITTER,
-					String.join(NBTNexus.SPLITTER, Arrays.copyOfRange(keys, 0, 2)), actual.name()), val);
+			deserializeList0(compound, src,
+					String.join(NBTNexus.SPLITTER, String.join(NBTNexus.SPLITTER, Arrays.copyOfRange(keys, 0, 2)), actual.name()), val);
 			break;
 		case LIST:
 			throw new UnsupportedOperationException("nested lists not supported");

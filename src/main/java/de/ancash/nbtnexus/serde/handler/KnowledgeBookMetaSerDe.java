@@ -1,6 +1,7 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.MetaTag.KNOWLEDGE_BOOK_RECIPES_TAG;
+import static de.ancash.nbtnexus.MetaTag.KNOWLEDGE_BOOK_TAG;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,8 +39,8 @@ public class KnowledgeBookMetaSerDe implements IItemSerDe {
 		Map<String, Object> map = new HashMap<>();
 		KnowledgeBookMeta meta = (KnowledgeBookMeta) item.getItemMeta();
 		if (meta.hasRecipes()) {
-			map.put(KNOWLEDGE_BOOK_RECIPES_TAG, meta.getRecipes().stream()
-					.map(ItemSerializer.INSTANCE::serializeNamespacedKey).collect(Collectors.toList()));
+			map.put(KNOWLEDGE_BOOK_RECIPES_TAG,
+					meta.getRecipes().stream().map(ItemSerializer.INSTANCE::serializeNamespacedKey).collect(Collectors.toList()));
 		}
 		meta.setRecipes(new ArrayList<>());
 		item.setItemMeta(meta);
@@ -61,8 +62,8 @@ public class KnowledgeBookMetaSerDe implements IItemSerDe {
 	public void deserialize(ItemStack item, Map<String, Object> map) {
 		KnowledgeBookMeta meta = (KnowledgeBookMeta) item.getItemMeta();
 		if (map.containsKey(KNOWLEDGE_BOOK_RECIPES_TAG))
-			meta.setRecipes(((List<String>) map.get(KNOWLEDGE_BOOK_RECIPES_TAG)).stream()
-					.map(ItemDeserializer.INSTANCE::deserializeNamespacedKey).collect(Collectors.toList()));
+			meta.setRecipes(((List<String>) map.get(KNOWLEDGE_BOOK_RECIPES_TAG)).stream().map(ItemDeserializer.INSTANCE::deserializeNamespacedKey)
+					.collect(Collectors.toList()));
 		item.setItemMeta(meta);
 	}
 }

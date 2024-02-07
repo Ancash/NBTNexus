@@ -1,6 +1,7 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.MetaTag.BUNDLE_ITEMS_TAG;
+import static de.ancash.nbtnexus.MetaTag.BUNDLE_TAG;
 
 import java.util.HashMap;
 import java.util.List;
@@ -38,8 +39,8 @@ public class BundleMetaSerDe implements IItemSerDe {
 		Map<String, Object> map = new HashMap<>();
 		BundleMeta meta = (BundleMeta) item.getItemMeta();
 		if (meta.hasItems())
-			map.put(BUNDLE_ITEMS_TAG, meta.getItems().stream().filter(i -> i != null)
-					.map(i -> ItemSerializer.INSTANCE.serializeItemStack(i)).collect(Collectors.toList()));
+			map.put(BUNDLE_ITEMS_TAG, meta.getItems().stream().filter(i -> i != null).map(i -> ItemSerializer.INSTANCE.serializeItemStack(i))
+					.collect(Collectors.toList()));
 		meta.setItems(null);
 		item.setItemMeta(meta);
 		return map;
@@ -60,8 +61,8 @@ public class BundleMetaSerDe implements IItemSerDe {
 	public void deserialize(ItemStack item, Map<String, Object> map) {
 		if (map.containsKey(BUNDLE_ITEMS_TAG)) {
 			BundleMeta meta = (BundleMeta) item.getItemMeta();
-			meta.setItems(((List<Map<String, Object>>) map.get(BUNDLE_ITEMS_TAG)).stream()
-					.map(ItemDeserializer.INSTANCE::deserializeItemStack).collect(Collectors.toList()));
+			meta.setItems(((List<Map<String, Object>>) map.get(BUNDLE_ITEMS_TAG)).stream().map(ItemDeserializer.INSTANCE::deserializeItemStack)
+					.collect(Collectors.toList()));
 			item.setItemMeta(meta);
 		}
 	}

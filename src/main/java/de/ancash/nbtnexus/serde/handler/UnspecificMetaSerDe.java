@@ -1,6 +1,22 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.MetaTag.ALTERNATE_COLOR_CODE;
+import static de.ancash.nbtnexus.MetaTag.ATTRIBUTES_TAG;
+import static de.ancash.nbtnexus.MetaTag.ATTRIBUTE_AMOUNT_TAG;
+import static de.ancash.nbtnexus.MetaTag.ATTRIBUTE_NAME_TAG;
+import static de.ancash.nbtnexus.MetaTag.ATTRIBUTE_OPERATION_TAG;
+import static de.ancash.nbtnexus.MetaTag.ATTRIBUTE_SLOT_TAG;
+import static de.ancash.nbtnexus.MetaTag.ATTRIBUTE_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.ATTRIBUTE_UUID_TAG;
+import static de.ancash.nbtnexus.MetaTag.CUSTOM_MODEL_DATA;
+import static de.ancash.nbtnexus.MetaTag.DISPLAYNAME_TAG;
+import static de.ancash.nbtnexus.MetaTag.ENCHANTMENTS_TAG;
+import static de.ancash.nbtnexus.MetaTag.ENCHANTMENT_LEVEL_TAG;
+import static de.ancash.nbtnexus.MetaTag.ENCHANTMENT_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.ITEM_FLAGS_TAG;
+import static de.ancash.nbtnexus.MetaTag.LOCALIZED_NAME_TAG;
+import static de.ancash.nbtnexus.MetaTag.LORE_TAG;
+import static de.ancash.nbtnexus.MetaTag.UNSPECIFIC_META_TAG;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -131,21 +147,17 @@ public class UnspecificMetaSerDe extends SerializedMetaAccess implements IItemSe
 	@Override
 	public void deserialize(ItemStack item, Map<String, Object> map) {
 		if (map.containsKey(ENCHANTMENTS_TAG)) {
-			item.addUnsafeEnchantments(ItemDeserializer.INSTANCE
-					.deserializeEnchantments((List<Map<String, Object>>) map.get(ENCHANTMENTS_TAG)));
+			item.addUnsafeEnchantments(ItemDeserializer.INSTANCE.deserializeEnchantments((List<Map<String, Object>>) map.get(ENCHANTMENTS_TAG)));
 		}
 
 		ItemMeta meta = item.getItemMeta();
 		if (map.containsKey(LORE_TAG))
 			meta.setLore(((List<?>) map.get(LORE_TAG)).stream().map(String::valueOf)
-					.map(s -> ChatColor.translateAlternateColorCodes(ALTERNATE_COLOR_CODE, s))
-					.collect(Collectors.toList()));
+					.map(s -> ChatColor.translateAlternateColorCodes(ALTERNATE_COLOR_CODE, s)).collect(Collectors.toList()));
 		if (map.containsKey(DISPLAYNAME_TAG))
-			meta.setDisplayName(ChatColor.translateAlternateColorCodes(ALTERNATE_COLOR_CODE,
-					String.valueOf(map.get(DISPLAYNAME_TAG))));
+			meta.setDisplayName(ChatColor.translateAlternateColorCodes(ALTERNATE_COLOR_CODE, String.valueOf(map.get(DISPLAYNAME_TAG))));
 		if (map.containsKey(LOCALIZED_NAME_TAG))
-			meta.setLocalizedName(ChatColor.translateAlternateColorCodes(ALTERNATE_COLOR_CODE,
-					String.valueOf(map.get(LOCALIZED_NAME_TAG))));
+			meta.setLocalizedName(ChatColor.translateAlternateColorCodes(ALTERNATE_COLOR_CODE, String.valueOf(map.get(LOCALIZED_NAME_TAG))));
 		if (map.containsKey(CUSTOM_MODEL_DATA))
 			meta.setCustomModelData(Integer.valueOf(String.valueOf(map.get(CUSTOM_MODEL_DATA))));
 
@@ -163,12 +175,9 @@ public class UnspecificMetaSerDe extends SerializedMetaAccess implements IItemSe
 
 		for (Map<String, Object> attribute : (List<Map<String, Object>>) map.get(ATTRIBUTES_TAG)) {
 			meta.addAttributeModifier(Attribute.valueOf((String) attribute.get(ATTRIBUTE_TYPE_TAG)),
-					new AttributeModifier(UUID.fromString((String) attribute.get(ATTRIBUTE_UUID_TAG)),
-							(String) attribute.get(ATTRIBUTE_NAME_TAG), (double) attribute.get(ATTRIBUTE_AMOUNT_TAG),
-							Operation.valueOf((String) attribute.get(ATTRIBUTE_OPERATION_TAG)),
-							attribute.containsKey(ATTRIBUTE_SLOT_TAG)
-									? EquipmentSlot.valueOf((String) attribute.get(ATTRIBUTE_SLOT_TAG))
-									: null));
+					new AttributeModifier(UUID.fromString((String) attribute.get(ATTRIBUTE_UUID_TAG)), (String) attribute.get(ATTRIBUTE_NAME_TAG),
+							(double) attribute.get(ATTRIBUTE_AMOUNT_TAG), Operation.valueOf((String) attribute.get(ATTRIBUTE_OPERATION_TAG)),
+							attribute.containsKey(ATTRIBUTE_SLOT_TAG) ? EquipmentSlot.valueOf((String) attribute.get(ATTRIBUTE_SLOT_TAG)) : null));
 		}
 		item.setItemMeta(meta);
 	}

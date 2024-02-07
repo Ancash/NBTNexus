@@ -1,6 +1,20 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.MetaTag.BLUE_TAG;
+import static de.ancash.nbtnexus.MetaTag.GREEN_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_COLOR_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_ID_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_SCALING_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_CENTER_X_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_CENTER_Z_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_LOCKED_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_SCALE_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_TRACKING_POSITION_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_UNLIMITED_TRACKING_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_WORLD_TAG;
+import static de.ancash.nbtnexus.MetaTag.RED_TAG;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,8 +60,7 @@ public class MapMetaSerDe implements IItemSerDe {
 	}
 
 	@SuppressWarnings("nls")
-	private static final Set<String> bl = Collections
-			.unmodifiableSet(new HashSet<>(Arrays.asList("map" + NBTNexus.SPLITTER + NBTTag.INT)));
+	private static final Set<String> bl = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("map" + NBTNexus.SPLITTER + NBTTag.INT)));
 
 	MapMetaSerDe() {
 	}

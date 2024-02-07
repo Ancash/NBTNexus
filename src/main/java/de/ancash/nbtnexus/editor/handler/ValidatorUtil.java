@@ -34,15 +34,12 @@ import de.ancash.nbtnexus.serde.handler.UnspecificMetaSerDe;
 public class ValidatorUtil {
 
 	private static final Set<String> metaTags = Collections.unmodifiableSet(new HashSet<>(
-			Arrays.asList(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG, AxolotlBucketMetaSerDe.INSTANCE.getKey(),
-					BannerMetaSerDe.INSTANCE.getKey(), BookMetaSerDe.INSTANCE.getKey(),
-					BundleMetaSerDe.INSTANCE.getKey(), CompassMetaSerDe.INSTANCE.getKey(),
-					FireworkEffectMetaSerDe.INSTANCE.getKey(), FireworkMetaSerDe.INSTANCE.getKey(),
-					KnowledgeBookMetaSerDe.INSTANCE.getKey(), LeatherArmorMetaSerDe.INSTANCE.getKey(),
-					MapMetaSerDe.INSTANCE.getKey(), MusicInstrumentMetaSerDe.INSTANCE.getKey(),
-					PotionMetaSerDe.INSTANCE.getKey(), UnspecificMetaSerDe.INSTANCE.getKey(),
-					SkullMetaSerDe.INSTANCE.getKey(), SpawnEggMetaSerDe.INSTANCE.getKey(),
-					SuspiciousStewMetaSerDe.INSTANCE.getKey(), TropicalFishBucketMetaSerDe.INSTANCE.getKey())));
+			Arrays.asList(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG, AxolotlBucketMetaSerDe.INSTANCE.getKey(), BannerMetaSerDe.INSTANCE.getKey(),
+					BookMetaSerDe.INSTANCE.getKey(), BundleMetaSerDe.INSTANCE.getKey(), CompassMetaSerDe.INSTANCE.getKey(),
+					FireworkEffectMetaSerDe.INSTANCE.getKey(), FireworkMetaSerDe.INSTANCE.getKey(), KnowledgeBookMetaSerDe.INSTANCE.getKey(),
+					LeatherArmorMetaSerDe.INSTANCE.getKey(), MapMetaSerDe.INSTANCE.getKey(), MusicInstrumentMetaSerDe.INSTANCE.getKey(),
+					PotionMetaSerDe.INSTANCE.getKey(), UnspecificMetaSerDe.INSTANCE.getKey(), SkullMetaSerDe.INSTANCE.getKey(),
+					SpawnEggMetaSerDe.INSTANCE.getKey(), SuspiciousStewMetaSerDe.INSTANCE.getKey(), TropicalFishBucketMetaSerDe.INSTANCE.getKey())));
 
 	public static boolean isItemProperty(ValueEditor<?> cur, int depth) {
 		if (depth > 0) {

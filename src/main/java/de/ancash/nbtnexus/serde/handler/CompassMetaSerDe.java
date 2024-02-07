@@ -1,6 +1,8 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.MetaTag.COMPASS_TAG;
+import static de.ancash.nbtnexus.MetaTag.LODESTONE_LOCATION_TAG;
+import static de.ancash.nbtnexus.MetaTag.LODESTONE_TRACKED_TAG;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,8 +54,7 @@ public class CompassMetaSerDe implements IItemSerDe {
 
 	@Override
 	public boolean isValid(ItemStack item) {
-		return MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_16_R1)
-				&& item.getItemMeta() instanceof CompassMeta;
+		return MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_16_R1) && item.getItemMeta() instanceof CompassMeta;
 	}
 
 	@Override

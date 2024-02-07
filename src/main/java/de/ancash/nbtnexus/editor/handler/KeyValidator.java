@@ -46,8 +46,7 @@ public class KeyValidator implements IKeyValidator {
 		if (path.startsWith("."))
 			path = path.replaceFirst(".", "");
 		path = path.replaceFirst(root.getCurrent().getCurrentPath(), "");
-		if (structure.containsKey(path)
-				|| (NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG.equals(key) && structure.containsKey(path = key))) {
+		if (structure.containsKey(path) || (NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG.equals(key) && structure.containsKey(path = key))) {
 			NBTTag def = structure.isMap(path) ? NBTTag.COMPOUND : (NBTTag) structure.get(path);
 			NBTTag actual = NBTTag.getByHandler(type);
 			if (actual == null || (actual == def))

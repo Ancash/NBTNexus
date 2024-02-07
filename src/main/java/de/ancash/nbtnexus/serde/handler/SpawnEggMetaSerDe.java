@@ -1,6 +1,6 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.MetaTag.SPAWN_EGG_TAG;
 
 import java.util.HashMap;
 import java.util.Map;

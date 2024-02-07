@@ -1,7 +1,8 @@
 package de.ancash.nbtnexus.serde.access;
 
-import static de.ancash.nbtnexus.MetaTag.*;
-import static de.ancash.nbtnexus.serde.access.MapAccessUtil.*;
+import static de.ancash.nbtnexus.MetaTag.REPAIRABLE_REPAIR_COST_TAG;
+import static de.ancash.nbtnexus.MetaTag.REPAIRABLE_TAG;
+import static de.ancash.nbtnexus.serde.access.MapAccessUtil.getInt;
 
 import java.util.Map;
 

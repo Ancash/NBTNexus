@@ -1,6 +1,7 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.MetaTag.CROSSBOW_CHARGED_PROJECTILES_TAG;
+import static de.ancash.nbtnexus.MetaTag.CROSSBOW_META_TAG;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,8 +38,8 @@ public class CrossbowMetaSerDe implements IItemSerDe {
 		Map<String, Object> map = new HashMap<>();
 		CrossbowMeta meta = (CrossbowMeta) item.getItemMeta();
 		if (meta.hasChargedProjectiles()) {
-			map.put(CROSSBOW_CHARGED_PROJECTILES_TAG, meta.getChargedProjectiles().stream()
-					.map(ItemSerializer.INSTANCE::serializeItemStack).collect(Collectors.toList()));
+			map.put(CROSSBOW_CHARGED_PROJECTILES_TAG,
+					meta.getChargedProjectiles().stream().map(ItemSerializer.INSTANCE::serializeItemStack).collect(Collectors.toList()));
 			meta.setChargedProjectiles(null);
 			item.setItemMeta(meta);
 		}
@@ -56,8 +57,7 @@ public class CrossbowMetaSerDe implements IItemSerDe {
 		CrossbowMeta bm = (CrossbowMeta) item.getItemMeta();
 		List<Map<String, Object>> projectiles = (List<Map<String, Object>>) map.get(CROSSBOW_CHARGED_PROJECTILES_TAG);
 		if (projectiles != null)
-			bm.setChargedProjectiles(projectiles.stream().map(ItemDeserializer.INSTANCE::deserializeItemStack)
-					.collect(Collectors.toList()));
+			bm.setChargedProjectiles(projectiles.stream().map(ItemDeserializer.INSTANCE::deserializeItemStack).collect(Collectors.toList()));
 		item.setItemMeta(bm);
 	}
 

@@ -1,6 +1,21 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.MetaTag.BASE_POTION_EXTENDED_TAG;
+import static de.ancash.nbtnexus.MetaTag.BASE_POTION_TAG;
+import static de.ancash.nbtnexus.MetaTag.BASE_POTION_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.BASE_POTION_UPGRADED_TAG;
+import static de.ancash.nbtnexus.MetaTag.BLUE_TAG;
+import static de.ancash.nbtnexus.MetaTag.GREEN_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_COLOR_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECTS_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_AMBIENT_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_AMPLIFIER_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_DURATION_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_SHOW_ICON_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_SHOW_PARTICLES_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_TAG;
+import static de.ancash.nbtnexus.MetaTag.RED_TAG;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -41,11 +56,11 @@ public class PotionMetaSerDe implements IItemSerDe {
 		SerDeStructure effects = structure.getList(POTION_EFFECTS_TAG);
 		effects.putEntry(POTION_EFFECT_AMPLIFIER_TAG, SerDeStructureEntry.INT);
 		effects.putEntry(POTION_EFFECT_DURATION_TAG, SerDeStructureEntry.INT);
-		effects.putEntry(POTION_EFFECT_TYPE_TAG, new SerDeStructureEntry(
-				new SerDeStructureKeySuggestion<String>(NBTTag.STRING, s -> PotionEffectType.getByName(s) != null),
-				new SerDeStructureValueSuggestion<>(Arrays.asList(PotionEffectType.values()).stream()
-						.map(pet -> new ValueSuggestion<>(StringHandler.INSTANCE, pet.getName(), pet.getName()))
-						.collect(Collectors.toList()))));
+		effects.putEntry(POTION_EFFECT_TYPE_TAG,
+				new SerDeStructureEntry(new SerDeStructureKeySuggestion<String>(NBTTag.STRING, s -> PotionEffectType.getByName(s) != null),
+						new SerDeStructureValueSuggestion<>(Arrays.asList(PotionEffectType.values()).stream()
+								.map(pet -> new ValueSuggestion<>(StringHandler.INSTANCE, pet.getName(), pet.getName()))
+								.collect(Collectors.toList()))));
 		effects.putEntry(POTION_EFFECT_SHOW_ICON_TAG, SerDeStructureEntry.BOOLEAN);
 		effects.putEntry(POTION_EFFECT_SHOW_PARTICLES_TAG, SerDeStructureEntry.BOOLEAN);
 		effects.putEntry(POTION_EFFECT_AMBIENT_TAG, SerDeStructureEntry.BOOLEAN);
@@ -67,8 +82,8 @@ public class PotionMetaSerDe implements IItemSerDe {
 	public Map<String, Object> serialize(ItemStack item) {
 		Map<String, Object> map = new HashMap<>();
 		PotionMeta meta = (PotionMeta) item.getItemMeta();
-		map.put(POTION_EFFECTS_TAG, meta.getCustomEffects().stream().map(ItemSerializer.INSTANCE::serializePotionEffect)
-				.collect(Collectors.toList()));
+		map.put(POTION_EFFECTS_TAG,
+				meta.getCustomEffects().stream().map(ItemSerializer.INSTANCE::serializePotionEffect).collect(Collectors.toList()));
 		if (((List<?>) map.get(POTION_EFFECTS_TAG)).isEmpty())
 			map.remove(POTION_EFFECTS_TAG);
 
@@ -99,13 +114,11 @@ public class PotionMetaSerDe implements IItemSerDe {
 	public void deserialize(ItemStack item, Map<String, Object> map) {
 		PotionMeta meta = (PotionMeta) item.getItemMeta();
 		if (map.containsKey(POTION_EFFECTS_TAG))
-			((List<Map<String, Object>>) map.get(POTION_EFFECTS_TAG)).stream()
-					.map(ItemDeserializer.INSTANCE::deserializePotionEffect)
+			((List<Map<String, Object>>) map.get(POTION_EFFECTS_TAG)).stream().map(ItemDeserializer.INSTANCE::deserializePotionEffect)
 					.forEach(e -> meta.addCustomEffect(e, true));
 		Map<String, Object> potionBase = (Map<String, Object>) map.get(BASE_POTION_TAG);
 		meta.setBasePotionData(new PotionData(PotionType.valueOf((String) potionBase.get(BASE_POTION_TYPE_TAG)),
-				(boolean) potionBase.get(BASE_POTION_EXTENDED_TAG),
-				(boolean) potionBase.get(BASE_POTION_UPGRADED_TAG)));
+				(boolean) potionBase.get(BASE_POTION_EXTENDED_TAG), (boolean) potionBase.get(BASE_POTION_UPGRADED_TAG)));
 
 		if (map.containsKey(POTION_COLOR_TAG))
 			meta.setColor(ItemDeserializer.INSTANCE.deserializeColor((Map<String, Object>) map.get(POTION_COLOR_TAG)));

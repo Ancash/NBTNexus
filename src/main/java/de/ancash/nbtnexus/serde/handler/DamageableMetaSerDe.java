@@ -1,6 +1,7 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.MetaTag.DAMAGEABLE_DAMAGE_TAG;
+import static de.ancash.nbtnexus.MetaTag.DAMAGEABLE_TAG;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,8 +33,7 @@ public class DamageableMetaSerDe implements IItemSerDe {
 	}
 
 	@SuppressWarnings("nls")
-	private static final Set<String> bl = Collections
-			.unmodifiableSet(new HashSet<>(Arrays.asList("Damage" + NBTNexus.SPLITTER + NBTTag.INT)));
+	private static final Set<String> bl = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("Damage" + NBTNexus.SPLITTER + NBTTag.INT)));
 
 	DamageableMetaSerDe() {
 	}

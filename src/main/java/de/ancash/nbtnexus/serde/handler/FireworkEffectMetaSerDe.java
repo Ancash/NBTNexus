@@ -1,6 +1,14 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.MetaTag.BLUE_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_COLORS_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_FADE_COLORS_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_FLICKER_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_TRAIL_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.GREEN_TAG;
+import static de.ancash.nbtnexus.MetaTag.RED_TAG;
 
 import java.util.HashMap;
 import java.util.Map;

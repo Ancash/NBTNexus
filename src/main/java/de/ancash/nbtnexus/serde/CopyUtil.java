@@ -11,8 +11,7 @@ import java.util.function.Function;
 public final class CopyUtil {
 
 	@SuppressWarnings("rawtypes")
-	public static Map<String, Object> deepCopy(Map<String, Object> map,
-			Function<Map<String, Object>, Map<String, Object>> mapFinalizer,
+	public static Map<String, Object> deepCopy(Map<String, Object> map, Function<Map<String, Object>, Map<String, Object>> mapFinalizer,
 			Function<ArrayList, ArrayList> listFinalizer) {
 
 		HashMap<String, Object> result = new HashMap<>();

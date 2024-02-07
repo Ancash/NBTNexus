@@ -3,8 +3,6 @@ package de.ancash.nbtnexus.packet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -17,59 +15,28 @@ import org.bukkit.inventory.ItemStack;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
-import com.lmax.disruptor.BlockingWaitStrategy;
-import com.lmax.disruptor.EventHandler;
-import com.lmax.disruptor.PhasedBackoffWaitStrategy;
-import com.lmax.disruptor.dsl.ProducerType;
 
-import de.ancash.disruptor.MultiConsumerDisruptor;
 import de.ancash.nbtnexus.NBTNexus;
 import de.ancash.nbtnexus.serde.ItemSerializer;
 
-class QueueEvent {
-	Runnable r;
-}
-
-class QueueEventListener implements EventHandler<QueueEvent> {
-
-	@Override
-	public void onEvent(QueueEvent arg0, long arg1, boolean arg2) throws Exception {
-		arg0.r.run();
-	}
-}
-
 public class InventoryUpdateAdapter extends PacketAdapter implements Listener {
 
+	private ProtocolManager protocolManager;
 	private final NBTNexus pl;
 	@SuppressWarnings("nls")
 	private final String metaKey = "NBTNexusItemComputable";
-	private final MultiConsumerDisruptor<QueueEvent> disruptor = new MultiConsumerDisruptor<QueueEvent>(QueueEvent::new,
-			1024, ProducerType.MULTI,
-			new PhasedBackoffWaitStrategy(0, 100_000, TimeUnit.NANOSECONDS, new BlockingWaitStrategy()),
-			IntStream.range(0, Runtime.getRuntime().availableProcessors()).boxed().map(i -> new QueueEventListener())
-					.toArray(QueueEventListener[]::new));
 
 	public InventoryUpdateAdapter(NBTNexus pl) {
-		super(pl, ListenerPriority.HIGHEST,
-				Arrays.asList(PacketType.Play.Server.SET_SLOT, PacketType.Play.Server.WINDOW_ITEMS));
+		super(pl, ListenerPriority.HIGHEST, Arrays.asList(PacketType.Play.Server.SET_SLOT, PacketType.Play.Server.WINDOW_ITEMS));
+		protocolManager = ProtocolLibrary.getProtocolManager();
+		protocolManager.addPacketListener(this);
 		this.pl = pl;
-	}
-
-	public void stop() {
-		disruptor.stop();
-	}
-
-	private void computeItemAsync(StructureModifier<ItemStack> itemStackStructureModifier, Player player,
-			PacketContainer container, boolean filtered) {
-		disruptor.publishEvent((e, seq) -> e.r = () -> {
-			computeItem(itemStackStructureModifier, player);
-			ProtocolLibrary.getProtocolManager().sendServerPacket(player, container, filtered);
-		});
 	}
 
 	@SuppressWarnings("nls")
@@ -91,14 +58,6 @@ public class InventoryUpdateAdapter extends PacketAdapter implements Listener {
 		}
 		if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR)
 			itemStackStructureModifier.write(0, original);
-	}
-
-	private void scheduleItemListComputationAsync(StructureModifier<List<ItemStack>> itemStackStructureModifier,
-			Player player, PacketContainer container, boolean filtered) {
-		disruptor.publishEvent((e, seq) -> e.r = () -> {
-			computeItemList(itemStackStructureModifier, player);
-			ProtocolLibrary.getProtocolManager().sendServerPacket(player, container, filtered);
-		});
 	}
 
 	@SuppressWarnings({ "nls" })
@@ -152,22 +111,6 @@ public class InventoryUpdateAdapter extends PacketAdapter implements Listener {
 		}, 1);
 	}
 
-	private void handleAsync(PacketEvent event) {
-		PacketContainer packet = event.getPacket();
-		if (!packet.getMeta(metaKey).isPresent()) {
-			packet.setMeta(metaKey, System.nanoTime());
-			if (event.getPacketType().equals(PacketType.Play.Server.WINDOW_ITEMS)) {
-				event.setCancelled(true);
-				scheduleItemListComputationAsync(packet.getItemListModifier(), event.getPlayer(), packet,
-						event.isFiltered());
-			} else {
-				event.setCancelled(true);
-				computeItemAsync(packet.getItemModifier(), event.getPlayer(), packet, event.isFiltered());
-			}
-		} else
-			packet.removeMeta(metaKey);
-	}
-
 	private void handleSync(PacketEvent event) {
 		PacketContainer packet = event.getPacket();
 		if (event.getPacketType().equals(PacketType.Play.Server.WINDOW_ITEMS))
@@ -179,19 +122,17 @@ public class InventoryUpdateAdapter extends PacketAdapter implements Listener {
 	@Override
 	public void onPacketSending(PacketEvent event) {
 		PacketContainer packet = event.getPacket();
-		if (event.getPlayer().getGameMode() == GameMode.CREATIVE
-				|| event.getPlayer().getGameMode() == GameMode.SPECTATOR)
+		if (event.getPlayer().getGameMode() == GameMode.CREATIVE || event.getPlayer().getGameMode() == GameMode.SPECTATOR)
 			return;
 		if (packet.getIntegers().read(0) != 0) // ignore everything that is not player inv window id (0)
 			return;
 
 		if (!pl.enableExperimentalPacketEditing())
 			return;
+		handleSync(event);
+	}
 
-		if (pl.editPacketsSync())
-			handleSync(event);
-		else
-			handleAsync(event);
-
+	public void disable() {
+		protocolManager.removePacketListeners(pl);
 	}
 }

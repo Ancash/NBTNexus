@@ -1,6 +1,9 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.MetaTag.TROPICAL_FISH_BUCKET_BODY_COLOR_TAG;
+import static de.ancash.nbtnexus.MetaTag.TROPICAL_FISH_BUCKET_PATTERN_COLOR_TAG;
+import static de.ancash.nbtnexus.MetaTag.TROPICAL_FISH_BUCKET_PATTERN_TAG;
+import static de.ancash.nbtnexus.MetaTag.TROPICAL_FISH_BUCKET_TAG;
 
 import java.util.HashMap;
 import java.util.Map;

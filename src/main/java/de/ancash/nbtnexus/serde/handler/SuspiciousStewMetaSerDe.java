@@ -1,6 +1,13 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_AMBIENT_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_AMPLIFIER_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_DURATION_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_SHOW_ICON_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_SHOW_PARTICLES_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.SUSPICIOUS_STEW_EFFECTS_TAG;
+import static de.ancash.nbtnexus.MetaTag.SUSPICIOUS_STEW_TAG;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,11 +45,11 @@ public class SuspiciousStewMetaSerDe implements IItemSerDe {
 		SerDeStructure effects = structure.getList(SUSPICIOUS_STEW_EFFECTS_TAG);
 		effects.putEntry(POTION_EFFECT_AMPLIFIER_TAG, SerDeStructureEntry.INT);
 		effects.putEntry(POTION_EFFECT_DURATION_TAG, SerDeStructureEntry.INT);
-		effects.putEntry(POTION_EFFECT_TYPE_TAG, new SerDeStructureEntry(
-				new SerDeStructureKeySuggestion<String>(NBTTag.STRING, s -> PotionEffectType.getByName(s) != null),
-				new SerDeStructureValueSuggestion<>(Arrays.asList(PotionEffectType.values()).stream()
-						.map(pet -> new ValueSuggestion<>(StringHandler.INSTANCE, pet.getName(), pet.getName()))
-						.collect(Collectors.toList()))));
+		effects.putEntry(POTION_EFFECT_TYPE_TAG,
+				new SerDeStructureEntry(new SerDeStructureKeySuggestion<String>(NBTTag.STRING, s -> PotionEffectType.getByName(s) != null),
+						new SerDeStructureValueSuggestion<>(Arrays.asList(PotionEffectType.values()).stream()
+								.map(pet -> new ValueSuggestion<>(StringHandler.INSTANCE, pet.getName(), pet.getName()))
+								.collect(Collectors.toList()))));
 		effects.putEntry(POTION_EFFECT_SHOW_ICON_TAG, SerDeStructureEntry.BOOLEAN);
 		effects.putEntry(POTION_EFFECT_SHOW_PARTICLES_TAG, SerDeStructureEntry.BOOLEAN);
 		effects.putEntry(POTION_EFFECT_AMBIENT_TAG, SerDeStructureEntry.BOOLEAN);
@@ -53,8 +60,8 @@ public class SuspiciousStewMetaSerDe implements IItemSerDe {
 	}
 
 	@SuppressWarnings("nls")
-	private static final Set<String> bl = Collections.unmodifiableSet(new HashSet<>(
-			Arrays.asList("Effects" + NBTNexus.SPLITTER + NBTTag.LIST + NBTNexus.SPLITTER + NBTTag.COMPOUND)));
+	private static final Set<String> bl = Collections
+			.unmodifiableSet(new HashSet<>(Arrays.asList("Effects" + NBTNexus.SPLITTER + NBTTag.LIST + NBTNexus.SPLITTER + NBTTag.COMPOUND)));
 
 	SuspiciousStewMetaSerDe() {
 	}
@@ -69,8 +76,8 @@ public class SuspiciousStewMetaSerDe implements IItemSerDe {
 		Map<String, Object> map = new HashMap<>();
 		SuspiciousStewMeta meta = (SuspiciousStewMeta) item.getItemMeta();
 		if (meta.hasCustomEffects()) {
-			map.put(SUSPICIOUS_STEW_EFFECTS_TAG, meta.getCustomEffects().stream()
-					.map(ItemSerializer.INSTANCE::serializePotionEffect).collect(Collectors.toList()));
+			map.put(SUSPICIOUS_STEW_EFFECTS_TAG,
+					meta.getCustomEffects().stream().map(ItemSerializer.INSTANCE::serializePotionEffect).collect(Collectors.toList()));
 			meta.clearCustomEffects();
 		}
 		return map;
@@ -86,8 +93,7 @@ public class SuspiciousStewMetaSerDe implements IItemSerDe {
 	public void deserialize(ItemStack item, Map<String, Object> map) {
 		if (map.containsKey(SUSPICIOUS_STEW_EFFECTS_TAG)) {
 			SuspiciousStewMeta meta = (SuspiciousStewMeta) item.getItemMeta();
-			((List<Map<String, Object>>) map.get(SUSPICIOUS_STEW_EFFECTS_TAG)).stream()
-					.map(ItemDeserializer.INSTANCE::deserializePotionEffect)
+			((List<Map<String, Object>>) map.get(SUSPICIOUS_STEW_EFFECTS_TAG)).stream().map(ItemDeserializer.INSTANCE::deserializePotionEffect)
 					.forEach(e -> meta.addCustomEffect(e, true));
 			item.setItemMeta(meta);
 		}

@@ -1,6 +1,9 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.MetaTag.ENCHANTMENT_LEVEL_TAG;
+import static de.ancash.nbtnexus.MetaTag.ENCHANTMENT_STORAGE_META_TAG;
+import static de.ancash.nbtnexus.MetaTag.ENCHANTMENT_STORAGE_STORED_TAG;
+import static de.ancash.nbtnexus.MetaTag.ENCHANTMENT_TYPE_TAG;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,8 +43,7 @@ public class EnchantmentStorageMetaSerDe implements IItemSerDe {
 	public Map<String, Object> serialize(ItemStack item) {
 		Map<String, Object> map = new HashMap<>();
 		EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
-		map.put(ENCHANTMENT_STORAGE_STORED_TAG,
-				ItemSerializer.INSTANCE.serializeEnchantments(meta.getStoredEnchants()));
+		map.put(ENCHANTMENT_STORAGE_STORED_TAG, ItemSerializer.INSTANCE.serializeEnchantments(meta.getStoredEnchants()));
 		meta.getStoredEnchants().keySet().forEach(meta::removeStoredEnchant);
 		item.setItemMeta(meta);
 		return map;
@@ -56,8 +58,7 @@ public class EnchantmentStorageMetaSerDe implements IItemSerDe {
 	@Override
 	public void deserialize(ItemStack item, Map<String, Object> map) {
 		EnchantmentStorageMeta esm = (EnchantmentStorageMeta) item.getItemMeta();
-		ItemDeserializer.INSTANCE
-				.deserializeEnchantments((List<Map<String, Object>>) map.get(ENCHANTMENT_STORAGE_STORED_TAG))
+		ItemDeserializer.INSTANCE.deserializeEnchantments((List<Map<String, Object>>) map.get(ENCHANTMENT_STORAGE_STORED_TAG))
 				.forEach((e, lvl) -> esm.addStoredEnchant(e, lvl, true));
 		item.setItemMeta(esm);
 	}

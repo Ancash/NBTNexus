@@ -1,6 +1,7 @@
 package de.ancash.nbtnexus.serde.handler;
 
-import static de.ancash.nbtnexus.MetaTag.*;
+import static de.ancash.nbtnexus.MetaTag.REPAIRABLE_REPAIR_COST_TAG;
+import static de.ancash.nbtnexus.MetaTag.REPAIRABLE_TAG;
 
 import java.util.Collections;
 import java.util.HashMap;

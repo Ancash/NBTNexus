@@ -27,8 +27,8 @@ public class ListTypeValidator implements IListEditorListener {
 				}
 		}
 		if (handler.size() != 1)
-			throw new IllegalArgumentException("list has elements of different types: "
-					+ arg0.getList().stream().map(io -> io.getClass()).collect(Collectors.toList()));
+			throw new IllegalArgumentException(
+					"list has elements of different types: " + arg0.getList().stream().map(io -> io.getClass()).collect(Collectors.toList()));
 		arg0.setHandler(new ArrayList<>(handler));
 	}
 

@@ -1,7 +1,17 @@
 package de.ancash.nbtnexus.serde.access;
 
-import static de.ancash.nbtnexus.MetaTag.*;
-import static de.ancash.nbtnexus.serde.access.MapAccessUtil.*;
+import static de.ancash.nbtnexus.MetaTag.AMOUNT_TAG;
+import static de.ancash.nbtnexus.MetaTag.CUSTOM_MODEL_DATA;
+import static de.ancash.nbtnexus.MetaTag.DISPLAYNAME_TAG;
+import static de.ancash.nbtnexus.MetaTag.ENCHANTMENTS_TAG;
+import static de.ancash.nbtnexus.MetaTag.ITEM_FLAGS_TAG;
+import static de.ancash.nbtnexus.MetaTag.LOCALIZED_NAME_TAG;
+import static de.ancash.nbtnexus.MetaTag.LORE_TAG;
+import static de.ancash.nbtnexus.MetaTag.UNSPECIFIC_META_TAG;
+import static de.ancash.nbtnexus.MetaTag.XMATERIAL_TAG;
+import static de.ancash.nbtnexus.serde.access.MapAccessUtil.getInt;
+import static de.ancash.nbtnexus.serde.access.MapAccessUtil.getList;
+import static de.ancash.nbtnexus.serde.access.MapAccessUtil.getString;
 
 import java.util.List;
 import java.util.Map;

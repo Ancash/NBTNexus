@@ -1,7 +1,35 @@
 package de.ancash.nbtnexus.serde;
 
-import static de.ancash.nbtnexus.MetaTag.*;
-import static de.ancash.nbtnexus.NBTNexus.*;
+import static de.ancash.nbtnexus.MetaTag.AMOUNT_TAG;
+import static de.ancash.nbtnexus.MetaTag.BLUE_TAG;
+import static de.ancash.nbtnexus.MetaTag.ENCHANTMENT_LEVEL_TAG;
+import static de.ancash.nbtnexus.MetaTag.ENCHANTMENT_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_COLORS_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_FADE_COLORS_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_FLICKER_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_TRAIL_TAG;
+import static de.ancash.nbtnexus.MetaTag.FIREWORK_EFFECT_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.GREEN_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_CENTER_X_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_CENTER_Z_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_LOCKED_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_SCALE_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_TRACKING_POSITION_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_UNLIMITED_TRACKING_TAG;
+import static de.ancash.nbtnexus.MetaTag.MAP_VIEW_WORLD_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_AMBIENT_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_AMPLIFIER_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_DURATION_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_SHOW_ICON_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_SHOW_PARTICLES_TAG;
+import static de.ancash.nbtnexus.MetaTag.POTION_EFFECT_TYPE_TAG;
+import static de.ancash.nbtnexus.MetaTag.PROPERTY_NAME_TAG;
+import static de.ancash.nbtnexus.MetaTag.PROPERTY_SIGNATURE_TAG;
+import static de.ancash.nbtnexus.MetaTag.PROPERTY_VALUE_TAG;
+import static de.ancash.nbtnexus.MetaTag.RED_TAG;
+import static de.ancash.nbtnexus.MetaTag.XMATERIAL_TAG;
+import static de.ancash.nbtnexus.NBTNexus.SPLITTER;
+import static de.ancash.nbtnexus.NBTNexus.SPLITTER_REGEX;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -35,7 +63,7 @@ import org.simpleyaml.configuration.file.YamlFile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 
-import de.ancash.minecraft.ReflectionUtil;
+import de.ancash.minecraft.AuthLibUtil;
 import de.ancash.minecraft.cryptomorin.xseries.XEnchantment;
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
 import de.ancash.minecraft.nbt.NBTCompound;
@@ -48,6 +76,7 @@ import de.ancash.minecraft.nbt.utils.nmsmappings.ReflectionMethod;
 import de.ancash.nbtnexus.NBTNexus;
 import de.ancash.nbtnexus.NBTNexusItem;
 import de.ancash.nbtnexus.NBTTag;
+import de.ancash.nbtnexus.serde.handler.ArmorMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.AxolotlBucketMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BannerMetaSerDe;
 import de.ancash.nbtnexus.serde.handler.BookMetaSerDe;
@@ -103,6 +132,7 @@ public class ItemSerializer {
 		itemSerDe.add(RepairableMetaSerDe.INSTANCE);
 		itemSerDe.add(EnchantmentStorageMetaSerDe.INSTANCE);
 		itemSerDe.add(CrossbowMetaSerDe.INSTANCE);
+		itemSerDe.add(ArmorMetaSerDe.INSTANCE);
 	}
 
 	public void registerSerializer(IItemSerDe ims) {
@@ -148,8 +178,7 @@ public class ItemSerializer {
 	}
 
 	public List<Map<String, Object>> serializeEnchantments(Map<Enchantment, Integer> enchs) {
-		return enchs.entrySet().stream()
-				.map(entry -> ItemSerializer.INSTANCE.serializeEnchantment(entry.getKey(), entry.getValue()))
+		return enchs.entrySet().stream().map(entry -> ItemSerializer.INSTANCE.serializeEnchantment(entry.getKey(), entry.getValue()))
 				.collect(Collectors.toList());
 	}
 
@@ -167,9 +196,9 @@ public class ItemSerializer {
 	public Map<String, Object> serializeProperty(Property p) {
 		Map<String, Object> m = new HashMap<>();
 		if (p.hasSignature())
-			m.put(PROPERTY_SIGNATURE_TAG, ReflectionUtil.getPropertySignature(p));
-		m.put(PROPERTY_NAME_TAG, ReflectionUtil.getPropertyName(p));
-		m.put(PROPERTY_VALUE_TAG, ReflectionUtil.getPropertyValue(p));
+			m.put(PROPERTY_SIGNATURE_TAG, AuthLibUtil.getPropertySignature(p));
+		m.put(PROPERTY_NAME_TAG, AuthLibUtil.getPropertyName(p));
+		m.put(PROPERTY_VALUE_TAG, AuthLibUtil.getPropertyValue(p));
 		return m;
 	}
 
@@ -189,10 +218,9 @@ public class ItemSerializer {
 		map.put(FIREWORK_EFFECT_TRAIL_TAG, effect.hasTrail());
 		map.put(FIREWORK_EFFECT_FLICKER_TAG, effect.hasFlicker());
 		map.put(FIREWORK_EFFECT_TYPE_TAG, effect.getType().name());
-		map.put(FIREWORK_EFFECT_COLORS_TAG,
-				effect.getColors().stream().map(ItemSerializer.INSTANCE::serializeColor).collect(Collectors.toList()));
-		map.put(FIREWORK_EFFECT_FADE_COLORS_TAG, effect.getFadeColors().stream()
-				.map(ItemSerializer.INSTANCE::serializeColor).collect(Collectors.toList()));
+		map.put(FIREWORK_EFFECT_COLORS_TAG, effect.getColors().stream().map(ItemSerializer.INSTANCE::serializeColor).collect(Collectors.toList()));
+		map.put(FIREWORK_EFFECT_FADE_COLORS_TAG,
+				effect.getFadeColors().stream().map(ItemSerializer.INSTANCE::serializeColor).collect(Collectors.toList()));
 		return map;
 	}
 
@@ -229,8 +257,7 @@ public class ItemSerializer {
 		}
 		serializeNBTCompound(new NBTItem(is)).forEach(map::put);
 		blacklisted.forEach(map::remove);
-		Map<String, Object> nexus = (Map<String, Object>) map
-				.computeIfAbsent(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG, k -> new HashMap<>());
+		Map<String, Object> nexus = (Map<String, Object>) map.computeIfAbsent(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG, k -> new HashMap<>());
 		nexus.computeIfAbsent(NBTNexusItem.NBT_NEXUS_ITEM_TYPE_TAG, k -> NBTNexusItem.Type.SERIALIZED.name());
 //		relocate(map, relocate);
 		return map;
@@ -323,8 +350,7 @@ public class ItemSerializer {
 		}
 		if (itemArr != null && itemArr.length > 0
 				&& Arrays.stream(itemArr).filter(i -> i != null && i.getType() != Material.AIR).findAny().isPresent())
-			map.put(key + SPLITTER + NBTTag.ITEM_STACK_ARRAY,
-					Arrays.stream(itemArr).map(this::serializeItemStack).collect(Collectors.toList()));
+			map.put(key + SPLITTER + NBTTag.ITEM_STACK_ARRAY, Arrays.stream(itemArr).map(this::serializeItemStack).collect(Collectors.toList()));
 		return itemArr != null;
 	}
 
@@ -393,8 +419,7 @@ public class ItemSerializer {
 				map.put(key + SPLITTER + ntype, byteList);
 				break;
 			case INT_ARRAY:
-				map.put(key + SPLITTER + ntype,
-						Arrays.stream(nbt.getIntArray(key)).boxed().collect(Collectors.toList()));
+				map.put(key + SPLITTER + ntype, Arrays.stream(nbt.getIntArray(key)).boxed().collect(Collectors.toList()));
 				break;
 			case LIST:
 				List<?> list = serializeNBTList(nbt, key + SPLITTER + ntype);
@@ -406,8 +431,8 @@ public class ItemSerializer {
 				logger.severe("Key: " + key);
 				logger.severe("Type: " + nbt.getType(key));
 				logger.info("Value: " + NBTReflectionUtil.getData(nbt, ReflectionMethod.COMPOUND_GET, key));
-				logger.info("Compound: \n" + nbt.getKeys().stream().collect(Collectors.toMap(Function.identity(),
-						k -> NBTReflectionUtil.getData(nbt, ReflectionMethod.COMPOUND_GET, k))));
+				logger.info("Compound: \n" + nbt.getKeys().stream()
+						.collect(Collectors.toMap(Function.identity(), k -> NBTReflectionUtil.getData(nbt, ReflectionMethod.COMPOUND_GET, k))));
 				throw new UnsupportedOperationException(ntype.name());
 			}
 		}
@@ -446,8 +471,8 @@ public class ItemSerializer {
 			logger.severe("Type: " + nbt.getType(name));
 			logger.severe("List Type: " + type);
 			logger.info("Value: " + NBTReflectionUtil.getData(nbt, ReflectionMethod.COMPOUND_GET, name));
-			logger.info("Compound: \n" + nbt.getKeys().stream().collect(Collectors.toMap(Function.identity(),
-					k -> NBTReflectionUtil.getData(nbt, ReflectionMethod.COMPOUND_GET, k))));
+			logger.info("Compound: \n" + nbt.getKeys().stream()
+					.collect(Collectors.toMap(Function.identity(), k -> NBTReflectionUtil.getData(nbt, ReflectionMethod.COMPOUND_GET, k))));
 			throw new UnsupportedOperationException(type + " list not supported");
 		}
 	}
