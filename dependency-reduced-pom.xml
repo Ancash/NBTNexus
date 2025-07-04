@@ -4,7 +4,7 @@
   <groupId>de.ancash</groupId>
   <artifactId>nbtnexus</artifactId>
   <name>NBTNexus</name>
-  <version>1.1.4</version>
+  <version>1.1.5</version>
   <build>
     <plugins>
       <plugin>
@@ -72,7 +72,7 @@
     <dependency>
       <groupId>de.ancash</groupId>
       <artifactId>ilibrary</artifactId>
-      <version>3.11.0</version>
+      <version>3.12.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -96,9 +96,8 @@
   </dependencies>
   <distributionManagement>
     <repository>
-      <id>github</id>
-      <name>GitHub Ancash Apache Maven Packages</name>
-      <url>https://maven.pkg.github.com/Ancash/NBTNexus</url>
+      <id>raspi</id>
+      <url>http://denzo.algoholics.eu:25565/releases</url>
     </repository>
   </distributionManagement>
   <properties>

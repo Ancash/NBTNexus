@@ -72,11 +72,15 @@ import de.ancash.datastructures.tuples.Duplet;
 import de.ancash.datastructures.tuples.Tuple;
 import de.ancash.minecraft.cryptomorin.xseries.XEnchantment;
 import de.ancash.minecraft.cryptomorin.xseries.XMaterial;
+import de.ancash.minecraft.nbt.NBT;
 import de.ancash.minecraft.nbt.NBTCompound;
 import de.ancash.minecraft.nbt.NBTCompoundList;
 import de.ancash.minecraft.nbt.NBTContainer;
 import de.ancash.minecraft.nbt.NBTItem;
 import de.ancash.minecraft.nbt.NBTList;
+import de.ancash.minecraft.nbt.iface.ReadWriteNBT;
+import de.ancash.minecraft.nbt.iface.ReadWriteNBTCompoundList;
+import de.ancash.minecraft.nbt.iface.ReadWriteNBTList;
 import de.ancash.nbtnexus.NBTNexus;
 import de.ancash.nbtnexus.NBTNexusItem;
 import de.ancash.nbtnexus.NBTNexusItem.Type;
@@ -242,9 +246,9 @@ public class ItemDeserializer {
 				}
 		}
 		remove.forEach(map::remove);
-		NBTItem nbt = new NBTItem(item);
+		ReadWriteNBT nbt = NBT.itemStackToNBT(item);
 		deserialize(nbt, map);
-		nbt.applyNBT(item);
+		item = NBT.itemStackFromNBT(nbt);
 		return item;
 	}
 
@@ -288,13 +292,13 @@ public class ItemDeserializer {
 		return deserializeItemStack(deserializeYaml(s));
 	}
 
-	private void deserialize(NBTCompound compound, Map<String, Object> map) {
+	private void deserialize(ReadWriteNBT compound, Map<String, Object> map) {
 		for (String key : map.keySet())
 			deserialize(compound, map, key);
 	}
 
 	@SuppressWarnings("nls")
-	private void deserialize(NBTCompound compound, Map<String, Object> map, String fullKey) {
+	private void deserialize(ReadWriteNBT compound, Map<String, Object> map, String fullKey) {
 		try {
 			deserialize0(compound, map, fullKey);
 		} catch (Exception ex) {
@@ -303,7 +307,7 @@ public class ItemDeserializer {
 	}
 
 	@SuppressWarnings({ "unchecked", "nls" })
-	private void deserialize0(NBTCompound compound, Map<String, Object> map, String fullKey) {
+	private void deserialize0(ReadWriteNBT compound, Map<String, Object> map, String fullKey) {
 		String[] keys = fullKey.split(SPLITTER_REGEX);
 		String field = keys[0];
 		if (keys.length < 2)
@@ -331,12 +335,12 @@ public class ItemDeserializer {
 		}
 
 		if (tag == NBTTag.ITEM_STACK_LIST) {
-			NBTCompoundList list = compound.getCompoundList(field);
+			ReadWriteNBTCompoundList list = compound.getCompoundList(field);
 			List<Map<String, Object>> items = (List<Map<String, Object>>) map.get(fullKey);
 			items.stream().map(this::deserializeItemStack).forEach(i -> {
 				NBTContainer temp = new NBTContainer();
 				temp.setItemStack(field, i);
-				list.addCompound(temp.getCompound(field));
+				list.addCompound().mergeCompound(temp.getCompound(field));
 			});
 			return;
 		}
@@ -352,7 +356,7 @@ public class ItemDeserializer {
 	}
 
 	@SuppressWarnings({ "nls" })
-	private void deserializeList(NBTCompound compound, Map<String, Object> src, String fullKey) {
+	private void deserializeList(ReadWriteNBT compound, Map<String, Object> src, String fullKey) {
 		String[] keys = fullKey.split(SPLITTER_REGEX);
 		NBTTag listType = NBTTag.valueOf(keys[2]);
 		switch (listType) {
@@ -392,7 +396,7 @@ public class ItemDeserializer {
 	}
 
 	@SuppressWarnings({ "unchecked", "nls", "rawtypes" })
-	private void deserializeList0(NBTCompound compound, Map<String, Object> src, String fullKey, Object val) {
+	private void deserializeList0(ReadWriteNBT compound, Map<String, Object> src, String fullKey, Object val) {
 		String[] keys = fullKey.split(SPLITTER_REGEX);
 		String field = keys[0];
 		List list = (List) val;
@@ -405,7 +409,7 @@ public class ItemDeserializer {
 		NBTTag actual = types.stream().findAny().get();
 		switch (listType) {
 		case COMPOUND:
-			NBTCompoundList compoundList = compound.getCompoundList(field);
+			ReadWriteNBTCompoundList compoundList = compound.getCompoundList(field);
 			List<Map<String, Object>> mapList = (List<Map<String, Object>>) val;
 
 			for (Map<String, Object> temp : mapList) {
@@ -421,27 +425,27 @@ public class ItemDeserializer {
 			}
 			break;
 		case STRING:
-			NBTList<String> stringList = compound.getStringList(field);
+			ReadWriteNBTList<String> stringList = compound.getStringList(field);
 			stringList.addAll((Collection<String>) val);
 			break;
 		case DOUBLE:
-			NBTList<Double> dList = compound.getDoubleList(field);
+			ReadWriteNBTList<Double> dList = compound.getDoubleList(field);
 			dList.addAll((Collection<Double>) val);
 			break;
 		case INT:
-			NBTList<Integer> iList = compound.getIntegerList(field);
+			ReadWriteNBTList<Integer> iList = compound.getIntegerList(field);
 			iList.addAll((Collection<Integer>) val);
 			break;
 		case FLOAT:
-			NBTList<Float> fList = compound.getFloatList(field);
+			ReadWriteNBTList<Float> fList = compound.getFloatList(field);
 			((Collection<Number>) val).stream().map(Number::floatValue).forEach(f -> fList.add(f));
 			break;
 		case LONG:
-			NBTList<Long> lList = compound.getLongList(field);
+			ReadWriteNBTList<Long> lList = compound.getLongList(field);
 			((Collection<Number>) val).stream().map(Number::longValue).forEach(l -> lList.add(l));
 			break;
 		case INT_ARRAY:
-			NBTList<int[]> iaList = compound.getIntArrayList(field);
+			ReadWriteNBTList<int[]> iaList = compound.getIntArrayList(field);
 			for (List<Integer> arr : (List<List<Integer>>) val)
 				iaList.add(arr.stream().mapToInt(Integer::valueOf).toArray());
 			break;
@@ -456,20 +460,20 @@ public class ItemDeserializer {
 		}
 	}
 
-	private void createNBTCompound(NBTCompound parent, Map<String, Object> map, String fullKey) {
+	private void createNBTCompound(ReadWriteNBT parent, Map<String, Object> map, String fullKey) {
 		if (map.containsKey(NBTNexusItem.NBT_NEXUS_ITEM_PROPERTIES_TAG))
 			parent.setItemStack(fullKey.split(SPLITTER_REGEX)[0], deserializeItemStack(map));
 		else
-			writeToCompound(parent.addCompound(fullKey.split(SPLITTER_REGEX)[0]), map);
+			writeToCompound(parent.getOrCreateCompound(fullKey.split(SPLITTER_REGEX)[0]), map);
 	}
 
-	private void writeToCompound(NBTCompound to, Map<String, Object> map) {
+	private void writeToCompound(ReadWriteNBT to, Map<String, Object> map) {
 		for (String s : map.keySet())
 			deserialize(to, map, s);
 	}
 
 	@SuppressWarnings("unchecked")
-	private void set(NBTCompound compound, String key, NBTTag type, Object value) {
+	private void set(ReadWriteNBT compound, String key, NBTTag type, Object value) {
 		if (type == NBTTag.END)
 			return;
 		switch (type) {
